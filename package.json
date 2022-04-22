@@ -1,0 +1,33 @@
+{
+  "name": "bedi",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "//": "lodash included because error importing lodash.flow as lodash/flow in react-keyed-file-browser",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "lodash": "^4.17.21",
+    "lodash.flow": "^3.5.0",
+    "mongoose": "^6.3.0",
+    "next": "12.1.5",
+    "react": "18.0.0",
+    "react-dom": "18.0.0",
+    "react-keyed-file-browser": "^1.14.0"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/node": "^17.0.25",
+    "@types/react": "18.0.5",
+    "@types/react-dom": "18.0.1",
+    "eslint": "8.13.0",
+    "eslint-config-next": "12.1.5",
+    "eslint-config-prettier": "^8.5.0",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.3"
+  }
+}
