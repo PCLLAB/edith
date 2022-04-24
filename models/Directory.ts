@@ -1,6 +1,6 @@
 import mongoose, { Types } from "mongoose";
 
-interface Directory {
+export interface IDirectory {
   name: string;
   ownerIds: Types.Array<Types.ObjectId>;
   /** Comma delimited string of ancestor ids ex: "r,ADS93,SD422" */

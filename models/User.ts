@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 
-export interface User {
+export interface IUser {
   email: string;
   name: string;
   /** Admin priveleges */
@@ -12,7 +12,7 @@ export interface User {
   updatedAt: Date;
 }
 
-interface RawUnsafeUser extends User {
+interface RawUnsafeUser extends IUser {
   password: string;
 }
 

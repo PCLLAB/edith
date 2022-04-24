@@ -6,7 +6,7 @@ import mongoose, { Types } from "mongoose";
  *
  */
 
-export interface LogEntry {
+export interface ILogEntry {
   url: string;
   method: string;
   action: string;

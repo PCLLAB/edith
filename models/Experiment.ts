@@ -7,7 +7,7 @@ import mongoose, { Types } from "mongoose";
  *  project: Types.ObjectId;
  */
 
-export interface Experiment {
+export interface IExperiment {
   name: string;
 
   /** if disabled, save to communal cache, if enabled save to unique collection */
@@ -29,7 +29,7 @@ export interface Experiment {
 }
 
 
-const ExperimentSchema = new mongoose.Schema<Experiment>(
+const ExperimentSchema = new mongoose.Schema<IExperiment>(
   {
     name: {
       type: String,

@@ -34,6 +34,14 @@ An interesting alternative is https://github.com/TimboKZ/Chonky, but it doesn't 
 
 # Mongoose
 
+## Interfaces
+
+Right now, I'm defining the types twice, as an interface and mongoose schema. Two sources of truth isn't great and also resulted in I-prefixing to avoid name clashing, but this is the "official" method from the mongoose docs.
+
+There are some libaries that may address this, but nothing stands out as the de-facto way.
+
+https://github.com/francescov1/mongoose-tsgen
+
 ## Schemas
 
 All model fields are either required or have a sensible default. No field should be in an undefined state ever, which reduces potential errors and simplifies types because we can trust that all fields exist.

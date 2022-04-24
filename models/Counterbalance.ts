@@ -9,7 +9,7 @@ export interface ParamOption {
   [key: string]: string[];
 }
 
-export interface Counterbalance {
+export interface ICounterbalance {
   experiment: Types.ObjectId;
   /** format "&paramName=option" strings serialized as individual URL params, no need to provide */
   stack: Types.Array<string>;

@@ -1,13 +1,13 @@
 import mongoose, { Types } from "mongoose";
 
-interface ExperimentCache {
+export interface IExperimentCache {
   data: Types.Array<{}>;
   experiment: Types.ObjectId;
   /** managed by mongoose using timestamp option */
   dateCreated: Date;
 }
 
-const ExperimentCacheSchema = new mongoose.Schema<ExperimentCache>(
+const ExperimentCacheSchema = new mongoose.Schema<IExperimentCache>(
   {
     data: Array,
     experiment: {

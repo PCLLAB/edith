@@ -23,7 +23,7 @@ const dataEntryFormat = {
  * @param collectionName unique name of collection specific to an experiment
  * @returns mongoose model of collection
  */
-const modelForCollection = (collectionName: string) => {
+export const modelForCollection = (collectionName: string) => {
   if (mongoose.models[collectionName]) {
     return mongoose.models[collectionName];
   }

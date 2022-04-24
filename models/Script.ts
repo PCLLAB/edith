@@ -1,12 +1,12 @@
 import mongoose, { Types } from "mongoose";
 
-export interface Script {
+export interface IScript {
   name: string;
   author: Types.ObjectId;
   contents: string;
 }
 
-const ScriptSchema = new mongoose.Schema<Script>({
+const ScriptSchema = new mongoose.Schema<IScript>({
   name: { type: String, required: true, trim: true },
   author: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   contents: { type: String, default: "" },
