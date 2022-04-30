@@ -6,7 +6,14 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "**/*": [
+      "lint",
+      "prettier --write --ignore-unknown"
+    ]
   },
   "//": "lodash included because error importing lodash.flow as lodash/flow in react-keyed-file-browser",
   "dependencies": {
@@ -28,6 +35,9 @@
     "eslint": "8.13.0",
     "eslint-config-next": "12.1.5",
     "eslint-config-prettier": "^8.5.0",
+    "husky": "^7.0.4",
+    "lint-staged": "^12.4.1",
+    "prettier": "2.6.2",
     "ts-node": "^10.7.0",
     "typescript": "^4.6.3"
   }

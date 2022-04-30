@@ -1,0 +1,5 @@
+# The defaults are good, here for reference
+# trailingComma: "es5"
+# tabWidth: 2
+# semi: true
+# singleQuote: false
