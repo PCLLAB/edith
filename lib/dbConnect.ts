@@ -1,14 +1,7 @@
 import mongoose from 'mongoose'
+import config from './config'
 
 // https://github.com/vercel/next.js/blob/canary/examples/with-mongodb-mongoose/lib/dbConnect.js
-
-const MONGODB_URI = process.env.MONGODB_URI
-
-if (!MONGODB_URI) {
-  throw new Error(
-    'Please define the MONGODB_URI environment variable inside .env.local'
-  )
-}
 
 /**
  * Global is used here to maintain a cached connection across hot reloads
@@ -31,7 +24,7 @@ async function dbConnect() {
       bufferCommands: false,
     }
 
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
+    cached.promise = mongoose.connect(config.MONGODB_URI, opts).then((mongoose) => {
       return mongoose
     })
   }

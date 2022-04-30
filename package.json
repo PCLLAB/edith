@@ -18,10 +18,12 @@
   "//": "lodash included because error importing lodash.flow as lodash/flow in react-keyed-file-browser",
   "dependencies": {
     "bcrypt": "^5.0.1",
+    "express-jwt": "^7.5.2",
     "lodash": "^4.17.21",
     "lodash.flow": "^3.5.0",
     "mongoose": "^6.3.0",
     "next": "12.1.5",
+    "passport": "^0.5.2",
     "passport-jwt": "^4.0.0",
     "react": "18.0.0",
     "react-dom": "18.0.0",

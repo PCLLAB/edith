@@ -1,11 +1,9 @@
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
+import apiWrapper from "../../../../lib/apiWrapper";
 import dbConnect from "../../../../lib/dbConnect";
 import Experiment, { IExperiment } from "../../../../models/Experiment";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   await dbConnect();
 
   switch (req.method) {
@@ -14,10 +12,10 @@ export default async function handler(
     case "POST":
       break;
     default:
-      res.setHeader("Allow", ["GET", "PUT"]);
-      res.status(405).end(`Method ${req.method} Not Allowed`);
+      throw ["GET", "PUT"];
   }
-}
+};
+export default apiWrapper(handler);
 
 /**
  * Get All Experiments
@@ -25,12 +23,8 @@ export default async function handler(
  * GET - /api/v2/experiments (Get array of experiments)
  */
 const getExperiments: NextApiHandler = async (req, res) => {
-  try {
-    const experiments = await Experiment.find();
-    res.json(experiments);
-  } catch (err) {
-    res.status(500).end();
-  }
+  const experiments = await Experiment.find();
+  res.json(experiments);
 };
 
 const postExperiments: NextApiHandler = async (req, res) => {};
