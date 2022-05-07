@@ -31,6 +31,9 @@ https://github.com/uptick/react-keyed-file-browser
 
 An interesting alternative is https://github.com/TimboKZ/Chonky, but it doesn't support filetree view
 
+## NextJs API Routes Testing
+https://www.paigeniedringhaus.com/blog/how-to-unit-test-next-js-api-routes-with-typescript
+
 
 # Mongoose
 
@@ -50,6 +53,12 @@ Some fields are technically immutable, like `createdAt` or `dateCreated`, but I 
 
 Generally, I opted to avoid settings which will never come into effect. For example, setting `trim: true` on name fields which come from user input, but not anything computed like `prefixPath`.
 
+## async/await mongoose queries
+`Model.find()` is not a real promise, but is then-able and await-able
+`Model.find().exec()` is a real promise
+
+https://mongoosejs.com/docs/queries.html#queries-are-not-promises
+https://stackoverflow.com/questions/31549857/mongoose-what-does-the-exec-function-do
 
 # Misc.
 

@@ -1,10 +1,10 @@
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
-import apiWrapper from "../../../../lib/apiWrapper";
-import dbConnect from "../../../../lib/dbConnect";
-import Experiment, { IExperiment } from "../../../../models/Experiment";
+import initHandler, {
+  NotAllowedMethodError,
+} from "../../../../lib/initHandler";
+import Experiment from "../../../../models/Experiment";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  await dbConnect();
 
   switch (req.method) {
     case "GET":
@@ -12,10 +12,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     case "POST":
       break;
     default:
-      throw ["GET", "PUT"];
+      throw new NotAllowedMethodError(req.method, ["GET", "PUT"]);
   }
 };
-export default apiWrapper(handler);
+export default initHandler(handler);
 
 /**
  * Get All Experiments
