@@ -1,8 +1,7 @@
-import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
-import { IUser } from "../models/User";
+import { NextApiRequest, NextApiResponse } from "next";
+import { UserObj } from "../models/User";
 import dbConnect from "./dbConnect";
 import jwtAuth from "./jwtAuth";
-
 
 type NextApiHandlerWithAuth = (
   req: NextApiRequestWithAuth,
@@ -11,7 +10,7 @@ type NextApiHandlerWithAuth = (
 
 /** Includes `auth` field as decoded jwt payload */
 export interface NextApiRequestWithAuth extends NextApiRequest {
-  auth: IUser;
+  auth: UserObj;
 }
 
 /**
@@ -36,7 +35,6 @@ const initHandler = (handler: NextApiHandlerWithAuth) => {
   };
 };
 
-
 type HTTP_METHOD = "GET" | "POST" | "PUT" | "DELETE";
 
 export class NotAllowedMethodError extends Error {
@@ -47,6 +45,13 @@ export class NotAllowedMethodError extends Error {
     super(`${method} method not allowed`);
     this.name = "NotAllowedMethodError";
     this.methods = methods;
+  }
+}
+
+export class MissingArgsError extends Error {
+  constructor(args: string[]) {
+    super(`Missing args: ${args}`);
+    this.name = "MissingArgsError"
   }
 }
 
@@ -73,8 +78,11 @@ const errorHandler = (err: any, res: NextApiResponse) => {
     // express-jwt does not find a valid token
     case "UnauthorizedError":
       return res.status(401).json({ message });
+
+    case "MissingArgsError":
+      return res.status(400).json({ message });
     case "UserPermissionError":
-      return res.status(401).json({ message });
+      return res.status(403).json({ message });
     default:
       return res.status(500).json({ message });
   }

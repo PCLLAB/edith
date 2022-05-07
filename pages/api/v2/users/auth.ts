@@ -3,10 +3,11 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 import initHandler, {
+  MissingArgsError,
   NotAllowedMethodError,
 } from "../../../../lib/initHandler";
 import config from "../../../../lib/config";
-import User, { RawUnsafeUser } from "../../../../models/User";
+import User, { RawUnsafeUserDoc } from "../../../../models/User";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
@@ -14,10 +15,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const { email, password } = req.body;
 
       if (!email || !password) {
-        throw "Email and Password Required";
+        throw new MissingArgsError(
+          [email && "email", password && "password"].filter(Boolean)
+        );
       }
 
-      const UNSAFE_USER_WITH_PASSWORD: RawUnsafeUser = await User.findOne({
+      const UNSAFE_USER_WITH_PASSWORD: RawUnsafeUserDoc = await User.findOne({
         email,
       }).select("+password");
 
