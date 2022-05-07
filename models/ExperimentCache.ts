@@ -1,13 +1,21 @@
 import mongoose, { Types } from "mongoose";
 
-export interface IExperimentCache {
+export interface ExperimentCacheDoc {
+  _id: mongoose.Types.ObjectId,
   data: Types.Array<{}>;
   experiment: Types.ObjectId;
   /** managed by mongoose using timestamp option */
-  dateCreated: Date;
+  createdAt: Date;
 }
 
-const ExperimentCacheSchema = new mongoose.Schema<IExperimentCache>(
+export interface ExperimentCacheObj {
+  _id: string;
+  data: any[];
+  experiment: string;
+  createdAt: string;
+}
+
+const ExperimentCacheSchema = new mongoose.Schema<ExperimentCacheDoc>(
   {
     data: Array,
     experiment: {
@@ -15,11 +23,10 @@ const ExperimentCacheSchema = new mongoose.Schema<IExperimentCache>(
       ref: "Experiment",
       required: true,
     },
-    dateCreated: Date,
   },
   {
     timestamps: {
-      createdAt: "dateCreated", // rename to match legacy field
+      createdAt: true,
       updatedAt: false, // disabled because a data entry is readonly
     },
   }

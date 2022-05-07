@@ -1,19 +1,20 @@
 import mongoose, { Types } from "mongoose";
 
 /**
+  * CONSIDER REMOVING THIS, what point does it serve at all?
  * CHANGELOG
  * removed user field because completely unused, there are no documents with this field in the collection
  *
  */
 
-export interface ILogEntry {
+export interface LogEntryDoc {
   url: string;
   method: string;
   action: string;
   ip: string;
   experiment: Types.ObjectId;
   /** managed by mongoose using timestamp option */
-  timestamp: Date;
+  createdAt: Date;
 }
 
 const logEntrySchema = new mongoose.Schema(
@@ -27,12 +28,11 @@ const logEntrySchema = new mongoose.Schema(
       ref: "Experiment",
       required: true,
     },
-    timestamp: Date,
   },
   {
     timestamps: {
       // renamed to match old manually managed fields
-      createdAt: "timestamp",
+      createdAt: true,
       updatedAt: false,
     },
   }

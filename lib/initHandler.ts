@@ -1,11 +1,24 @@
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
+import { IUser } from "../models/User";
 import dbConnect from "./dbConnect";
 import jwtAuth from "./jwtAuth";
+
+
+type NextApiHandlerWithAuth = (
+  req: NextApiRequestWithAuth,
+  res: NextApiResponse
+) => void | Promise<void>;
+
+/** Includes `auth` field as decoded jwt payload */
+export interface NextApiRequestWithAuth extends NextApiRequest {
+  auth: IUser;
+}
+
 /**
  * Wrap all api handlers to run global middleware and error handlers
  * @param handler NextApiHandler
  */
-const initHandler = (handler: NextApiHandler) => {
+const initHandler = (handler: NextApiHandlerWithAuth) => {
   return async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       // need before jwtAuth, because we verify users
@@ -14,6 +27,7 @@ const initHandler = (handler: NextApiHandler) => {
       // run global middleware here
       await jwtAuth(req, res);
 
+      // @ts-ignore: `auth` field is added by jwtAuth
       await handler(req, res);
     } catch (err) {
       // run global error handler
@@ -22,6 +36,7 @@ const initHandler = (handler: NextApiHandler) => {
   };
 };
 
+
 type HTTP_METHOD = "GET" | "POST" | "PUT" | "DELETE";
 
 export class NotAllowedMethodError extends Error {
@@ -29,9 +44,16 @@ export class NotAllowedMethodError extends Error {
 
   // Method from NextApiRequest is optional string
   constructor(method: string | undefined, methods: HTTP_METHOD[]) {
-    super(`Method ${method} Not Allowed`);
+    super(`${method} method not allowed`);
     this.name = "NotAllowedMethodError";
     this.methods = methods;
+  }
+}
+
+export class UserPermissionError extends Error {
+  constructor() {
+    super("Must be owner of resource or superuser");
+    this.name = "UserPermissionError";
   }
 }
 
@@ -48,27 +70,14 @@ const errorHandler = (err: any, res: NextApiResponse) => {
     case "NotAllowedMethodError":
       res.setHeader("Allow", err.methods);
       return res.status(405).json({ message });
+    // express-jwt does not find a valid token
     case "UnauthorizedError":
+      return res.status(401).json({ message });
+    case "UserPermissionError":
       return res.status(401).json({ message });
     default:
       return res.status(500).json({ message });
   }
-
-  // // This accepts arrays as the Allow field for 405 Method Not Allowed
-  // if (Array.isArray(err)) {
-  //   res.setHeader("Allow", err);
-  //   return res.status(405).end(`Method ${req.method} Not Allowed`);
-  // }
-
-  // // 420 is unassigned and used here for application specific error
-  // if (typeof err === "string") {
-  //   return res.status(420).json({ message: err });
-  // }
-
-  // // express-jwt throws this when token is authorized
-  // if (err.name === "UnauthorizedError") {
-  //   return res.status(401).json({ message: err.message });
-  // }
 };
 
 export default initHandler;

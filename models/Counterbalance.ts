@@ -9,7 +9,8 @@ export interface ParamOption {
   [key: string]: string[];
 }
 
-export interface ICounterbalance {
+export interface CounterbalanceDoc {
+  _id: Types.ObjectId;
   experiment: Types.ObjectId;
   /** format "&paramName=option" strings serialized as individual URL params, no need to provide */
   stack: Types.Array<string>;
@@ -34,6 +35,14 @@ export interface ICounterbalance {
    * ...
    * ]
    */
+}
+
+export interface CounterbalanceObj
+  extends Omit<CounterbalanceDoc, "_id" | "experiment" | "stack" | "quotas"> {
+  _id: string;
+  experiment: string;
+  stack: string[];
+  quotas: Quota[];
 }
 
 const CounterbalanceSchema = new mongoose.Schema({

@@ -7,7 +7,8 @@ import mongoose, { Types } from "mongoose";
  *  project: Types.ObjectId;
  */
 
-export interface IExperiment {
+export interface ExperimentDoc {
+  _id: mongoose.Types.ObjectId;
   name: string;
 
   /** if disabled, save to communal cache, if enabled save to unique collection */
@@ -23,13 +24,24 @@ export interface IExperiment {
   prefixPath: string;
 
   /** managed by mongoose using timestamp option */
-  dateCreated: Date;
+  createdAt: Date;
   /** managed by mongoose using timestamp option */
-  dateUpdated: Date;
+  updatedAt: Date;
 }
 
+export interface ExperimentObj
+  extends Omit<
+    ExperimentDoc,
+    "_id" | "mongoDBData" | "user" | "createdAt" | "updatedAt"
+  > {
+  _id: string;
+  mongoDBData: string;
+  user: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
-const ExperimentSchema = new mongoose.Schema<IExperiment>(
+const ExperimentSchema = new mongoose.Schema<ExperimentDoc>(
   {
     name: {
       type: String,
@@ -50,11 +62,7 @@ const ExperimentSchema = new mongoose.Schema<IExperiment>(
     },
   },
   {
-    // renamed to match old manually managed fields
-    timestamps: {
-      createdAt: "dateCreated",
-      updatedAt: "dateUpdated",
-    },
+    timestamps: true,
   }
 );
 

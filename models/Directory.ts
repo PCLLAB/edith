@@ -1,6 +1,7 @@
 import mongoose, { Types } from "mongoose";
 
-export interface IDirectory {
+export interface DirectoryDoc {
+  _id: mongoose.Types.ObjectId;
   name: string;
   ownerIds: Types.Array<Types.ObjectId>;
   /** Comma delimited string of ancestor ids ex: "r,ADS93,SD422" */
@@ -8,9 +9,17 @@ export interface IDirectory {
   /** Comma delimited string of ancestor names ex: "Root,Books,Programming" */
   namedPrefixPath: string;
   /** Managed by mongoose using timestamp option*/
-  dateCreated: Date;
+  createdAt: Date;
   /** Managed by mongoose using timestamp option*/
-  dateUpdated: Date;
+  updatedAt: Date;
+}
+
+export interface DirectoryObj
+  extends Omit<DirectoryDoc, "_id" | "ownerIds" | "createdAt" | "updatedAt"> {
+  _id: string;
+  ownerIds: string[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 const arrayNotEmpty = (array: any[]) => array.length;
@@ -39,11 +48,8 @@ const DirectorySchema = new mongoose.Schema(
         "Incorrect namedPrefixPath pattern",
       ],
     },
-    dateCreated: Date,
-    dateUpdated: Date,
   },
-  // renamed to match old manually managed fields
-  { timestamps: { createdAt: "dateCreated", updatedAt: "dateUpdated" } }
+  { timestamps: true }
 );
 
 export default mongoose.models.Directory ||

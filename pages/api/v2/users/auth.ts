@@ -1,13 +1,13 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+
 import initHandler, {
   NotAllowedMethodError,
 } from "../../../../lib/initHandler";
-import User from "../../../../models/User";
-
-import jwt from "jsonwebtoken";
 import config from "../../../../lib/config";
+import User, { RawUnsafeUser } from "../../../../models/User";
 
-import bcrypt from "bcrypt";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   switch (req.method) {
     case "POST":
@@ -17,7 +17,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         throw "Email and Password Required";
       }
 
-      const UNSAFE_USER_WITH_PASSWORD = await User.findOne({ email }).select("+password");
+      const UNSAFE_USER_WITH_PASSWORD: RawUnsafeUser = await User.findOne({
+        email,
+      }).select("+password");
 
       if (!UNSAFE_USER_WITH_PASSWORD) {
         throw "User Not Found";

@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 
-export interface IUser {
+export interface UserDoc {
+  _id: mongoose.Types.ObjectId;
   email: string;
   name: string;
   /** Admin priveleges */
@@ -12,11 +13,18 @@ export interface IUser {
   updatedAt: Date;
 }
 
-interface RawUnsafeUser extends IUser {
+export interface UserObj
+  extends Omit<UserDoc, "_id" | "createdAt" | "updatedAt"> {
+  _id: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface RawUnsafeUserDoc extends UserDoc {
   password: string;
 }
 
-const UserSchema = new mongoose.Schema<RawUnsafeUser>(
+const UserSchema = new mongoose.Schema<RawUnsafeUserDoc>(
   {
     email: {
       type: String,

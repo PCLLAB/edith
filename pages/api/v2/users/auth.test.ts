@@ -2,7 +2,6 @@ jest.mock("../../../../lib/dbConnect");
 
 import { NextApiRequest, NextApiResponse } from "next";
 import {
-  createMocks,
   createRequest,
   createResponse,
   RequestMethod,

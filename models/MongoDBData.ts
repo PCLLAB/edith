@@ -4,14 +4,16 @@ import mongoose from "mongoose";
  * Removed fields:
  *  paramters: Array, // was never even used in frontend?
  */
-export interface IMongoDBData {
+export interface MongoDBDataDoc {
   sizeOnDisk: number;
   numDocuments: number;
   dataCollection: string;
   // parameters: [],
 }
 
-const MongoDBDataSchema = new mongoose.Schema<IMongoDBData>({
+export interface MongoDBDataObj extends MongoDBDataDoc {}
+
+const MongoDBDataSchema = new mongoose.Schema<MongoDBDataDoc>({
   sizeOnDisk: { type: Number, default: 0 },
   numDocuments: { type: Number, default: 0 },
   dataCollection: { type: String, required: true },
