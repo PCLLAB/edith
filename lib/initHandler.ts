@@ -57,7 +57,7 @@ export class MissingArgsError extends Error {
 
 export class UserPermissionError extends Error {
   constructor() {
-    super("Must be owner of resource or superuser");
+    super("User does not have permission");
     this.name = "UserPermissionError";
   }
 }

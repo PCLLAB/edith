@@ -12,8 +12,7 @@ const jwtMiddleware = expressjwt({
   isRevoked: async (_, token) => {
     const userId = token?.payload._id;
     if (!userId) return false;
-    const user = await User.findById(userId);
-    return !!user;
+    return !!(await User.exists({ _id: userId }));
   },
 }).unless({
   // routes without authentication

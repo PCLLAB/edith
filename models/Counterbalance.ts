@@ -9,9 +9,9 @@ export interface ParamOption {
   [key: string]: string[];
 }
 
-export interface CounterbalanceDoc {
-  _id: Types.ObjectId;
-  experiment: Types.ObjectId;
+export interface CounterbalanceDoc<IdType = Types.ObjectId> {
+  _id: IdType;
+  experiment: IdType;
   /** format "&paramName=option" strings serialized as individual URL params, no need to provide */
   stack: Types.Array<string>;
   shuffleStack: boolean;
@@ -38,9 +38,7 @@ export interface CounterbalanceDoc {
 }
 
 export interface CounterbalanceObj
-  extends Omit<CounterbalanceDoc, "_id" | "experiment" | "stack" | "quotas"> {
-  _id: string;
-  experiment: string;
+  extends Omit<CounterbalanceDoc<string>, "stack" | "quotas"> {
   stack: string[];
   quotas: Quota[];
 }

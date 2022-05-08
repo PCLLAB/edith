@@ -1,26 +1,23 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import bcrypt from "bcrypt";
 
-export interface UserDoc {
-  _id: mongoose.Types.ObjectId;
+export interface UserDoc<IdType = Types.ObjectId, DateType = Date> {
+  _id: IdType;
   email: string;
   name: string;
   /** Admin priveleges */
   superuser: boolean;
   /** managed by mongoose using timestamp option */
-  createdAt: Date;
+  createdAt: DateType;
   /** managed by mongoose using timestamp option */
-  updatedAt: Date;
+  updatedAt: DateType;
 }
 
-export interface UserObj
-  extends Omit<UserDoc, "_id" | "createdAt" | "updatedAt"> {
-  _id: string;
-  createdAt: string;
-  updatedAt: string;
-}
+export interface UserObj extends UserDoc<string, string> {}
 
-export interface RawUnsafeUserDoc extends UserDoc {
+// This lets us type lean and full mongoose objects
+// This is never JSONified, so DateType is always Date
+export interface RawUnsafeUserDoc<T=Types.ObjectId> extends UserDoc<T> {
   password: string;
 }
 

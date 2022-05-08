@@ -1,16 +1,13 @@
 import mongoose, { Types } from "mongoose";
 
-export interface ScriptDoc {
-  _id: mongoose.Types.ObjectId;
+export interface ScriptDoc<IdType = Types.ObjectId> {
+  _id: IdType;
   name: string;
-  author: Types.ObjectId;
+  author: IdType;
   contents: string;
 }
 
-export interface ScriptObj extends Omit<ScriptDoc, "_id" | "author"> {
-  _id: string;
-  author: string;
-}
+export interface ScriptObj extends ScriptDoc<string> {}
 
 const ScriptSchema = new mongoose.Schema<ScriptDoc>({
   name: { type: String, required: true, trim: true },

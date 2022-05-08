@@ -1,18 +1,16 @@
 import mongoose, { Types } from "mongoose";
 
-export interface ExperimentCacheDoc {
-  _id: mongoose.Types.ObjectId,
+export interface ExperimentCacheDoc<IdType = Types.ObjectId, DateType = Date> {
+  _id: IdType;
   data: Types.Array<{}>;
-  experiment: Types.ObjectId;
+  experiment: IdType;
   /** managed by mongoose using timestamp option */
-  createdAt: Date;
+  createdAt: DateType;
 }
 
-export interface ExperimentCacheObj {
-  _id: string;
+export interface ExperimentCacheObj
+  extends Omit<ExperimentCacheDoc<string, string>, "data"> {
   data: any[];
-  experiment: string;
-  createdAt: string;
 }
 
 const ExperimentCacheSchema = new mongoose.Schema<ExperimentCacheDoc>(

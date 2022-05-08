@@ -22,7 +22,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       const UNSAFE_USER_WITH_PASSWORD: RawUnsafeUserDoc = await User.findOne({
         email,
-      }).select("+password");
+      }).select("+password").lean();
 
       if (!UNSAFE_USER_WITH_PASSWORD) {
         throw "User Not Found";

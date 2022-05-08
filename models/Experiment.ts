@@ -7,39 +7,30 @@ import mongoose, { Types } from "mongoose";
  *  project: Types.ObjectId;
  */
 
-export interface ExperimentDoc {
-  _id: mongoose.Types.ObjectId;
+export interface ExperimentDoc<IdType = Types.ObjectId, DateType = Date> {
+  _id: IdType;
   name: string;
 
   /** if disabled, save to communal cache, if enabled save to unique collection */
   enabled: boolean;
 
   /** Document containing collection stats and ref to collection with trial data */
-  mongoDBData: Types.ObjectId;
+  mongoDBData: IdType;
 
   /** Experiment Owner */
-  user: Types.ObjectId;
+  user: IdType;
 
   /** Comma delimited string of ancestor ids ex: "r,ABC213,BADFA123," */
   prefixPath: string;
 
   /** managed by mongoose using timestamp option */
-  createdAt: Date;
+  createdAt: DateType;
   /** managed by mongoose using timestamp option */
-  updatedAt: Date;
+  updatedAt: DateType;
 }
 
-export interface ExperimentObj
-  extends Omit<
-    ExperimentDoc,
-    "_id" | "mongoDBData" | "user" | "createdAt" | "updatedAt"
-  > {
-  _id: string;
-  mongoDBData: string;
-  user: string;
-  createdAt: string;
-  updatedAt: string;
-}
+export interface ExperimentObj extends ExperimentDoc<string, string> {}
+
 
 const ExperimentSchema = new mongoose.Schema<ExperimentDoc>(
   {

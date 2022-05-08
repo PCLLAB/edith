@@ -23,7 +23,7 @@ export default initHandler(handler);
  * GET - /api/v2/experiments (Get array of experiments)
  */
 const getExperiments: NextApiHandler = async (req, res) => {
-  const experiments = await Experiment.find();
+  const experiments = await Experiment.find().lean();
   res.json(experiments);
 };
 

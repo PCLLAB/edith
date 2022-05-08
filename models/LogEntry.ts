@@ -7,12 +7,12 @@ import mongoose, { Types } from "mongoose";
  *
  */
 
-export interface LogEntryDoc {
+export interface LogEntryDoc<T=Types.ObjectId> {
   url: string;
   method: string;
   action: string;
   ip: string;
-  experiment: Types.ObjectId;
+  experiment: T;
   /** managed by mongoose using timestamp option */
   createdAt: Date;
 }
