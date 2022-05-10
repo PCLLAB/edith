@@ -7,7 +7,7 @@ export interface ScriptDoc<IdType = Types.ObjectId> {
   contents: string;
 }
 
-export interface ScriptObj extends ScriptDoc<string> {}
+export interface ScriptJson extends ScriptDoc<string> {}
 
 const ScriptSchema = new mongoose.Schema<ScriptDoc>({
   name: { type: String, required: true, trim: true },

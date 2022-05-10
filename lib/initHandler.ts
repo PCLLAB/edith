@@ -1,23 +1,25 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { UserObj } from "../models/User";
+import { UserJson } from "../models/User";
 import dbConnect from "./dbConnect";
 import jwtAuth from "./jwtAuth";
 
-type NextApiHandlerWithAuth = (
-  req: NextApiRequestWithAuth,
-  res: NextApiResponse
-) => void | Promise<void>;
-
 /** Includes `auth` field as decoded jwt payload */
 export interface NextApiRequestWithAuth extends NextApiRequest {
-  auth: UserObj;
+  auth: UserJson;
 }
+
+export type MatchAction = Partial<
+  Record<
+    HTTP_METHOD,
+    (req: NextApiRequestWithAuth, res: NextApiResponse) => void | Promise<void>
+  >
+>;
 
 /**
  * Wrap all api handlers to run global middleware and error handlers
  * @param handler NextApiHandler
  */
-const initHandler = (handler: NextApiHandlerWithAuth) => {
+const initHandler = (matcher: MatchAction) => {
   return async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       // need before jwtAuth, because we verify users
@@ -26,8 +28,15 @@ const initHandler = (handler: NextApiHandlerWithAuth) => {
       // run global middleware here
       await jwtAuth(req, res);
 
-      // @ts-ignore: `auth` field is added by jwtAuth
-      await handler(req, res);
+      if (req.method && matcher.hasOwnProperty(req.method)) {
+        // @ts-ignore: `req.auth` is added by jwtAuth
+        return await matcher[req.method as HTTP_METHOD](req, res);
+      }
+
+      throw new NotAllowedMethodError(
+        req.method,
+        Object.keys(matcher) as HTTP_METHOD[]
+      );
     } catch (err) {
       // run global error handler
       errorHandler(err, res);
@@ -51,7 +60,14 @@ export class NotAllowedMethodError extends Error {
 export class MissingArgsError extends Error {
   constructor(args: string[]) {
     super(`Missing args: ${args}`);
-    this.name = "MissingArgsError"
+    this.name = "MissingArgsError";
+  }
+}
+
+export class ModelNotFoundError extends Error {
+  constructor(model: string) {
+    super(`Model not found: ${model}`);
+    this.name = "ModelNotFoundError";
   }
 }
 
@@ -63,7 +79,6 @@ export class UserPermissionError extends Error {
 }
 
 const errorHandler = (err: any, res: NextApiResponse) => {
-  // console.log(err)
   if (typeof err === "string") {
     // Handle bad requests which is everything we throw manually
     return res.status(400).json({ message: err });
@@ -83,6 +98,8 @@ const errorHandler = (err: any, res: NextApiResponse) => {
       return res.status(400).json({ message });
     case "UserPermissionError":
       return res.status(403).json({ message });
+    case "ModelNotFoundError":
+      return res.status(404).json({ message });
     default:
       return res.status(500).json({ message });
   }

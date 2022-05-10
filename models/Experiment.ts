@@ -29,7 +29,7 @@ export interface ExperimentDoc<IdType = Types.ObjectId, DateType = Date> {
   updatedAt: DateType;
 }
 
-export interface ExperimentObj extends ExperimentDoc<string, string> {}
+export interface ExperimentJson extends ExperimentDoc<string, string> {}
 
 
 const ExperimentSchema = new mongoose.Schema<ExperimentDoc>(

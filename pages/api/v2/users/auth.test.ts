@@ -1,22 +1,22 @@
 jest.mock("../../../../lib/dbConnect");
 
 import { NextApiRequest, NextApiResponse } from "next";
-import {
-  createRequest,
-  createResponse,
-  RequestMethod,
-} from "node-mocks-http";
+import { createRequest, createResponse, RequestMethod } from "node-mocks-http";
 import dbConnect from "../../../../lib/dbConnect";
+import { getReqResMocker } from "../../../../lib/testUtils";
 import User from "../../../../models/User";
 
 import authHandler from "./auth";
 
-describe("/api/v2/users/auth ENDPOINT", () => {
+const ENDPOINT = "/api/v2/users/auth";
+
+describe(`POST ${ENDPOINT}`, () => {
   const name = "Benjamin Dover";
   const email = "benjamindover@hotmail.com";
   const password = "benjamindoveriscool";
 
   let connection: any;
+  
   beforeAll(async () => {
     connection = await dbConnect();
 
@@ -33,37 +33,7 @@ describe("/api/v2/users/auth ENDPOINT", () => {
     await connection.disconnect();
   });
 
-  const mockReqRes = (method: RequestMethod = "POST") => {
-    const req = createRequest<NextApiRequest>({
-      method,
-      url: "/api/v2/users/auth",
-    });
-    const res = createResponse<NextApiResponse>();
-    return { req, res };
-  };
-
-  it("returns 405 for invalid methods", async () => {
-    const { req, res } = mockReqRes();
-
-    req.method = "GET";
-    await authHandler(req, res);
-    expect(res.statusCode).toBe(405);
-    res.statusCode = 69;
-
-    req.method = "PUT";
-    await authHandler(req, res);
-    expect(res.statusCode).toBe(405);
-    res.statusCode = 69;
-
-    req.method = "DELETE";
-    await authHandler(req, res);
-    expect(res.statusCode).toBe(405);
-    res.statusCode = 69;
-
-    req.method = "randomsaea123";
-    await authHandler(req, res);
-    expect(res.statusCode).toBe(405);
-  });
+  const mockReqRes = getReqResMocker("POST", ENDPOINT);
 
   it("returns 400 if missing email and/or password", async () => {
     const { req, res } = mockReqRes();
@@ -84,7 +54,7 @@ describe("/api/v2/users/auth ENDPOINT", () => {
     expect(res.statusCode).toBe(400);
   });
 
-  it("returns 400 if user does not exist", async () => {
+  it("returns 404 if user does not exist", async () => {
     const { req, res } = mockReqRes();
 
     const wrongEmail = "fakeuser@yahoo.com";
@@ -94,7 +64,7 @@ describe("/api/v2/users/auth ENDPOINT", () => {
       password,
     };
     await authHandler(req, res);
-    expect(res.statusCode).toBe(400);
+    expect(res.statusCode).toBe(404);
   });
 
   it("returns 400 if password does not match", async () => {
@@ -128,5 +98,7 @@ describe("/api/v2/users/auth ENDPOINT", () => {
         user: expect.any(Object),
       })
     );
+
+    expect(res._getJSONData().user.password).toBeUndefined();
   });
 });

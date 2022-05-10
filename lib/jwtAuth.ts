@@ -1,4 +1,5 @@
 import { expressjwt } from "express-jwt";
+import { JwtPayload } from "jsonwebtoken";
 import User from "../models/User";
 import config from "./config";
 import initMiddleware from "./initMiddleware";
@@ -8,11 +9,18 @@ const jwtMiddleware = expressjwt({
   //  HS256 is symmetric (one secret), RS256 asymmetric (public private)
   //  We handle auth ourselves, so no point in being asymmetric
   algorithms: ["HS256"],
-  //  Deleted users should have token revoked
+  //  Deleted and privilege modified users should have token revoked
   isRevoked: async (_, token) => {
-    const userId = token?.payload._id;
-    if (!userId) return false;
-    return !!(await User.exists({ _id: userId }));
+    const { _id, superuser } = token?.payload as JwtPayload;
+
+    if (!_id) return true;
+
+    const user = await User.findById(_id).lean();
+    if (!user) return true;
+
+    if (superuser !== user.superuser) return true;
+
+    return false;
   },
 }).unless({
   // routes without authentication

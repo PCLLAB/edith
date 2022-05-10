@@ -13,7 +13,7 @@ export interface UserDoc<IdType = Types.ObjectId, DateType = Date> {
   updatedAt: DateType;
 }
 
-export interface UserObj extends UserDoc<string, string> {}
+export interface UserJson extends UserDoc<string, string> {}
 
 // This lets us type lean and full mongoose objects
 // This is never JSONified, so DateType is always Date

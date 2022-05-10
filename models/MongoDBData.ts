@@ -11,7 +11,7 @@ export interface MongoDBDataDoc {
   // parameters: [],
 }
 
-export interface MongoDBDataObj extends MongoDBDataDoc {}
+export interface MongoDBDataJson extends MongoDBDataDoc {}
 
 const MongoDBDataSchema = new mongoose.Schema<MongoDBDataDoc>({
   sizeOnDisk: { type: Number, default: 0 },

@@ -14,7 +14,7 @@ export interface DirectoryDoc<IdType = Types.ObjectId, DateType = Date> {
   updatedAt: DateType;
 }
 
-export interface DirectoryObj extends Omit<DirectoryDoc<string>, "ownerIds"> {
+export interface DirectoryJson extends Omit<DirectoryDoc<string>, "ownerIds"> {
   ownerIds: string[];
 }
 

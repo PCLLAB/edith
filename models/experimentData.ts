@@ -7,7 +7,7 @@ export interface DataEntryDoc {
   createdAt: Date;
 }
 
-export interface DataEntryObj {
+export interface DataEntryJson {
   data: any[];
   createdAt: string;
 }
