@@ -1,19 +1,21 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextApiHandler } from "next";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 import initHandler, {
-  MissingArgsError, ModelNotFoundError,
+  MissingArgsError,
+  ModelNotFoundError,
 } from "../../../../lib/initHandler";
 import config from "../../../../lib/config";
 import User, { RawUnsafeUserDoc } from "../../../../models/User";
 
-const post = async (req: NextApiRequest, res: NextApiResponse) => {
+const post: NextApiHandler = async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
     throw new MissingArgsError(
-      [email && "email", password && "password"].filter(Boolean)
+      // @ts-ignore: filter out falsy
+      [!email && "email", !password && "password"].filter(Boolean)
     );
   }
 
@@ -24,7 +26,7 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
     .lean();
 
   if (!UNSAFE_USER_WITH_PASSWORD) {
-    throw new ModelNotFoundError("User")
+    throw new ModelNotFoundError("User");
   }
 
   const { password: passwordHash, ...user } = UNSAFE_USER_WITH_PASSWORD;
@@ -39,7 +41,7 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
     expiresIn: "2d",
   });
 
-  res.status(200).json({
+  res.json({
     message: "Authentication successful",
     token,
     user,

@@ -1,21 +1,20 @@
-import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
+import { NextApiResponse } from "next";
 import initHandler, {
-  MissingArgsError,
   ModelNotFoundError,
-  NextApiRequestWithAuth,
-  UserPermissionError,
+  NextApiHandlerWithAuth,
+  UserPermissionError
 } from "../../../../lib/initHandler";
-import User, { RawUnsafeUserDoc } from "../../../../models/User";
+import User from "../../../../models/User";
 
-const get = async (req: NextApiRequestWithAuth, res: NextApiResponse) => {
+const get: NextApiHandlerWithAuth = async (req, res) => {
   const user = await User.findById(req.query.id).lean();
   if (!user) {
     throw new ModelNotFoundError("User");
   }
-  return res.status(200).json(user);
+  return res.json(user);
 };
 
-const put = async (req: NextApiRequestWithAuth, res: NextApiResponse) => {
+const put: NextApiHandlerWithAuth = async (req, res) => {
   const id = req.query.id;
 
   if (req.auth._id !== id && !req.auth.superuser) {
@@ -42,10 +41,10 @@ const put = async (req: NextApiRequestWithAuth, res: NextApiResponse) => {
 
   await user.save();
 
-  return res.status(200).json(user);
+  return res.json(user);
 };
 
-const del = async (req: NextApiRequestWithAuth, res: NextApiResponse) => {
+const del: NextApiHandlerWithAuth = async (req, res) => {
   if (!req.auth.superuser) {
     throw new UserPermissionError();
   }
@@ -55,7 +54,7 @@ const del = async (req: NextApiRequestWithAuth, res: NextApiResponse) => {
   const deleteResult = await User.deleteOne({ _id: id });
 
   if (deleteResult.deletedCount) {
-    return res.status(200).json({ message: "Deleted successfully" });
+    return res.json({ message: "Deleted successfully" });
   }
   throw `Delete failed. No user with id: ${id}`;
 };

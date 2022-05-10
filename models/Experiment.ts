@@ -5,6 +5,9 @@ import mongoose, { Types } from "mongoose";
  *  usesMongo: number,
  *  usesSQL: boolean,
  *  project: Types.ObjectId;
+ *  mongoDBData: Types.ObjectId;
+ * Added:
+ *  dataCollection: string, // put here instead of inside a MongoDbData document 
  */
 
 export interface ExperimentDoc<IdType = Types.ObjectId, DateType = Date> {
@@ -15,7 +18,7 @@ export interface ExperimentDoc<IdType = Types.ObjectId, DateType = Date> {
   enabled: boolean;
 
   /** Document containing collection stats and ref to collection with trial data */
-  mongoDBData: IdType;
+  dataCollection: string;
 
   /** Experiment Owner */
   user: IdType;
@@ -40,11 +43,12 @@ const ExperimentSchema = new mongoose.Schema<ExperimentDoc>(
       required: [true, "Please provide an experiment name"],
     },
     enabled: { type: Boolean, default: false },
-    mongoDBData: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "MongoDBData",
-      required: true,
-    },
+    dataCollection: String,
+    // mongoDBData: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "MongoDBData",
+    //   required: true,
+    // },
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     prefixPath: {
       type: String,

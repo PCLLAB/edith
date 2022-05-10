@@ -1,18 +1,19 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 import { UserJson } from "../models/User";
 import dbConnect from "./dbConnect";
 import jwtAuth from "./jwtAuth";
 
+export interface NextApiHandlerWithAuth {
+  (req: NextApiRequestWithAuth, res: NextApiResponse): void | Promise<void>;
+}
+
 /** Includes `auth` field as decoded jwt payload */
-export interface NextApiRequestWithAuth extends NextApiRequest {
+interface NextApiRequestWithAuth extends NextApiRequest {
   auth: UserJson;
 }
 
 export type MatchAction = Partial<
-  Record<
-    HTTP_METHOD,
-    (req: NextApiRequestWithAuth, res: NextApiResponse) => void | Promise<void>
-  >
+  Record<HTTP_METHOD, NextApiHandlerWithAuth | NextApiHandler>
 >;
 
 /**

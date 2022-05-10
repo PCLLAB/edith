@@ -8,7 +8,7 @@ import User from "../../../../models/User";
 
 const get = async (req: NextApiRequestWithAuth, res: NextApiResponse) => {
   const users = await User.find().lean();
-  return res.status(200).json(users);
+  return res.json(users);
 };
 
 const post = async (req: NextApiRequestWithAuth, res: NextApiResponse) => {
@@ -19,7 +19,8 @@ const post = async (req: NextApiRequestWithAuth, res: NextApiResponse) => {
 
   if (!email || !password || !name) {
     throw new MissingArgsError(
-      [email || "email", password || "password", name || "name"].filter(Boolean)
+      // @ts-ignore: filter out falsy
+      [!email && "email", !password && "password", !name && "name"].filter(Boolean)
     );
   }
 
@@ -34,7 +35,7 @@ const post = async (req: NextApiRequestWithAuth, res: NextApiResponse) => {
 
   const { password: _, ...user } = NEW_RAW_USER_WITH_PASSWORD.toObject();
 
-  return res.status(200).json(user);
+  return res.json(user);
 };
 
 export default initHandler({

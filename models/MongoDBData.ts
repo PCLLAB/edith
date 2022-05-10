@@ -1,24 +1,28 @@
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
 
-/** Changelog
- * Removed fields:
- *  paramters: Array, // was never even used in frontend?
- */
-export interface MongoDBDataDoc {
-  sizeOnDisk: number;
-  numDocuments: number;
-  dataCollection: string;
-  // parameters: [],
-}
+// /** 
+//  * Consider removing...
+//  * this serves no purpose, estimatedDocumentCount() does same thing
+//  * 
+//  * Changelog
+//  * Removed fields:
+//  *  paramters: Array, // was never even used in frontend?
+//  */
+// export interface MongoDBDataDoc {
+//   sizeOnDisk: number;
+//   numDocuments: number;
+//   dataCollection: string;
+//   // parameters: [],
+// }
 
-export interface MongoDBDataJson extends MongoDBDataDoc {}
+// export interface MongoDBDataJson extends MongoDBDataDoc {}
 
-const MongoDBDataSchema = new mongoose.Schema<MongoDBDataDoc>({
-  sizeOnDisk: { type: Number, default: 0 },
-  numDocuments: { type: Number, default: 0 },
-  dataCollection: { type: String, required: true },
-  // parameters: Array,
-});
+// const MongoDBDataSchema = new mongoose.Schema<MongoDBDataDoc>({
+//   sizeOnDisk: { type: Number, default: 0 },
+//   numDocuments: { type: Number, default: 0 },
+//   dataCollection: { type: String, required: true },
+//   // parameters: Array,
+// });
 
-export default mongoose.models.MongoDBData ||
-  mongoose.model("MongoDBData", MongoDBDataSchema);
+// export default mongoose.models.MongoDBData ||
+//   mongoose.model("MongoDBData", MongoDBDataSchema);

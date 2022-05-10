@@ -1,11 +1,7 @@
 jest.mock("../../../../lib/dbConnect");
-
-import { NextApiRequest, NextApiResponse } from "next";
-import { createRequest, createResponse, RequestMethod } from "node-mocks-http";
 import dbConnect from "../../../../lib/dbConnect";
 import { getReqResMocker } from "../../../../lib/testUtils";
 import User from "../../../../models/User";
-
 import authHandler from "./auth";
 
 const ENDPOINT = "/api/v2/users/auth";

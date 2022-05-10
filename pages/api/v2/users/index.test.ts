@@ -3,10 +3,9 @@ jest.mock("../../../../lib/dbConnect");
 import dbConnect from "../../../../lib/dbConnect";
 import {
   getCreatedUserAndToken,
-  getReqResMocker,
+  getReqResMocker
 } from "../../../../lib/testUtils";
 import { UserDoc } from "../../../../models/User";
-
 import indexHandler from "./index";
 
 const ENDPOINT = "/api/v2/users";
