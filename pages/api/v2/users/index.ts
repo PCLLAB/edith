@@ -1,17 +1,17 @@
 import { NextApiResponse } from "next";
 import initHandler, {
-  NextApiRequestWithAuth,
   UserPermissionError,
   MissingArgsError,
+  NextApiHandlerWithAuth,
 } from "../../../../lib/initHandler";
 import User from "../../../../models/User";
 
-const get = async (req: NextApiRequestWithAuth, res: NextApiResponse) => {
+const get: NextApiHandlerWithAuth = async (req, res) => {
   const users = await User.find().lean();
   return res.json(users);
 };
 
-const post = async (req: NextApiRequestWithAuth, res: NextApiResponse) => {
+const post: NextApiHandlerWithAuth = async (req, res) => {
   if (!req.auth.superuser) {
     throw new UserPermissionError();
   }
@@ -20,7 +20,9 @@ const post = async (req: NextApiRequestWithAuth, res: NextApiResponse) => {
   if (!email || !password || !name) {
     throw new MissingArgsError(
       // @ts-ignore: filter out falsy
-      [!email && "email", !password && "password", !name && "name"].filter(Boolean)
+      [!email && "email", !password && "password", !name && "name"].filter(
+        Boolean
+      )
     );
   }
 

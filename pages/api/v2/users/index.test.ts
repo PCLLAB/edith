@@ -33,7 +33,6 @@ describe(`GET ${ENDPOINT}`, () => {
 
   it("returns 200 and two users", async () => {
     const { req, res } = mockReqRes(token);
-    req.query.id = user._id.toString();
 
     await indexHandler(req, res);
     expect(res.statusCode).toBe(200);

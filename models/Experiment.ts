@@ -61,5 +61,8 @@ const ExperimentSchema = new mongoose.Schema<ExperimentDoc>(
   }
 );
 
+export const Archive = mongoose.models.Archive ||
+  mongoose.model("Archive", ExperimentSchema);
+
 export default mongoose.models.Experiment ||
   mongoose.model("Experiment", ExperimentSchema);

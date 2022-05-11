@@ -80,6 +80,7 @@ export class UserPermissionError extends Error {
 }
 
 const errorHandler = (err: any, res: NextApiResponse) => {
+  console.log(err)
   if (typeof err === "string") {
     // Handle bad requests which is everything we throw manually
     return res.status(400).json({ message: err });

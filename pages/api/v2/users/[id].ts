@@ -2,7 +2,7 @@ import { NextApiResponse } from "next";
 import initHandler, {
   ModelNotFoundError,
   NextApiHandlerWithAuth,
-  UserPermissionError
+  UserPermissionError,
 } from "../../../../lib/initHandler";
 import User from "../../../../models/User";
 
@@ -27,19 +27,21 @@ const put: NextApiHandlerWithAuth = async (req, res) => {
     throw new UserPermissionError();
   }
 
-  const user = await User.findById(id);
+  const user = await User.findByIdAndUpdate(
+    id,
+    {
+      email,
+      password,
+      name,
+      superuser,
+    },
+    { new: true }
+  );
 
   // TODO this shouldn't be possible b/c existence checked in jwtAuth before handler runs
   if (!user) {
     throw new ModelNotFoundError("User");
   }
-
-  if (email) user.email = email;
-  if (password) user.password = password;
-  if (name) user.name = name;
-  if (superuser) user.superuser = superuser;
-
-  await user.save();
 
   return res.json(user);
 };
@@ -53,10 +55,10 @@ const del: NextApiHandlerWithAuth = async (req, res) => {
 
   const deleteResult = await User.deleteOne({ _id: id });
 
-  if (deleteResult.deletedCount) {
-    return res.json({ message: "Deleted successfully" });
+  if (!deleteResult.deletedCount) {
+    throw new ModelNotFoundError("User");
   }
-  throw `Delete failed. No user with id: ${id}`;
+  return res.json({ message: "Deleted successfully" });
 };
 
 export default initHandler({

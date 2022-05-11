@@ -42,6 +42,14 @@ describe(`GET ${ENDPOINT}`, () => {
 
     expect(res._getJSONData().password).toBeUndefined();
   });
+
+  it("returns 404 if bad valid objectid", async () => {
+    const { req, res } = mockReqRes(token);
+    req.query.id = "123456789012"
+
+    await idHandler(req, res);
+    expect(res.statusCode).toBe(404);
+  });
 });
 
 describe(`PUT ${ENDPOINT}`, () => {
@@ -146,6 +154,14 @@ describe(`DELETE ${ENDPOINT}`, () => {
     expect(res.statusCode).toBe(403);
   });
 
+  it("returns 404 if bad valid objectid", async () => {
+    const { req, res } = mockReqRes(superToken);
+    req.query.id = "123456789012"
+
+    await idHandler(req, res);
+    expect(res.statusCode).toBe(404);
+  });
+  
   it("returns 200 if superuser", async () => {
     const { req, res } = mockReqRes(superToken);
     req.query.id = user._id.toString();
