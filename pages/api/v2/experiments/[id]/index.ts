@@ -53,7 +53,31 @@ const del: NextApiHandlerWithAuth = async (req, res) => {
   });
 };
 
+const post: NextApiHandlerWithAuth = async (req, res) => {
+  const id = req.query.id;
+
+  const archivedExp = await Archive.findById(id);
+  
+  if (!archivedExp) {
+    throw new ModelNotFoundError("Archived Experiment");
+  }
+
+  const experiment = new Experiment(archivedExp.toObject());
+  await experiment.save();
+
+  const deletedArchive = await archivedExp.delete();
+
+  if (!deletedArchive) {
+    throw `Delete failed: ${archivedExp._id}`;
+  }
+
+  return res.json({
+    message: `Restored: ${archivedExp._id}`,
+  });
+};
+
 export default initHandler({
+  POST: post,
   PUT: put,
   DELETE: del,
 });
