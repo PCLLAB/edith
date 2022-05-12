@@ -1,9 +1,12 @@
 import initHandler, {
   ModelNotFoundError,
   NextApiHandlerWithAuth,
-  UserPermissionError,
 } from "../../../../../lib/initHandler";
 import Experiment, { Archive } from "../../../../../models/Experiment";
+
+// These endpoints allow any user to update any experiment
+// This reflects the collaborative way this is used
+// Maybe do a share, private, public thing?
 
 const put: NextApiHandlerWithAuth = async (req, res) => {
   const id = req.query.id;
@@ -36,20 +39,18 @@ const del: NextApiHandlerWithAuth = async (req, res) => {
     throw new ModelNotFoundError("Experiment");
   }
 
-  if (req.auth._id !== experiment.user.toString() && !req.auth.superuser) {
-    throw new UserPermissionError();
-  }
-
   const archivedExp = new Archive(experiment.toObject());
   await archivedExp.save();
 
-  const deleteResult = await Experiment.deleteOne({ _id: id });
+  const deletedExp = await experiment.delete();
 
-  if (!deleteResult.deletedCount) {
-    throw new ModelNotFoundError("Experiment");
+  if (!deletedExp) {
+    throw `Delete failed: ${experiment._id}`;
   }
 
-  return res.json({ message: "Successfully archived experiment" });
+  return res.json({
+    message: `Archived: ${experiment._id}`,
+  });
 };
 
 export default initHandler({

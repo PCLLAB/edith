@@ -44,3 +44,24 @@ export const getCreatedUserAndToken = async (superuser = false) => {
 
   return { user, token };
 };
+
+/**
+ *  ObjectIds are 12 bytes, but string representation is 24 hexadecimal chars 
+ *  @returns string containing 24 hexademical chars 
+ */
+export const getValidObjectId = () => {
+  const charBank = "0123456789abcdef";
+  let res = "";
+  for (let i = 0; i < 24; i++) {
+    res += charBank[Math.floor(Math.random() * charBank.length)];
+  }
+  return res;
+};
+
+export const getValidPrefixPath = (parents = 0) => {
+  let res = "r";
+  for (let i = 0; i < parents; i++) {
+    res += `,${getValidObjectId()}`;
+  }
+  return res;
+};

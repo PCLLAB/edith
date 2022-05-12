@@ -4,6 +4,7 @@ import dbConnect from "../../../../lib/dbConnect";
 import {
   getCreatedUserAndToken,
   getReqResMocker,
+  getValidPrefixPath,
 } from "../../../../lib/testUtils";
 import Experiment from "../../../../models/Experiment";
 import { UserDoc } from "../../../../models/User";
@@ -63,7 +64,7 @@ describe(`POST ${ENDPOINT}`, () => {
   const mockReqRes = getReqResMocker("POST", ENDPOINT);
 
   const name = "created exp";
-  const prefixPath = "r,fakeparent";
+  const prefixPath = getValidPrefixPath();
   const enabled = true;
 
   it("returns 400 if missing name", async () => {

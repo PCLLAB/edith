@@ -80,9 +80,8 @@ export class UserPermissionError extends Error {
 }
 
 const errorHandler = (err: any, res: NextApiResponse) => {
-  console.log(err)
   if (typeof err === "string") {
-    // Handle bad requests which is everything we throw manually
+    // Handle one off errors
     return res.status(400).json({ message: err });
   }
 
@@ -92,11 +91,13 @@ const errorHandler = (err: any, res: NextApiResponse) => {
     case "NotAllowedMethodError":
       res.setHeader("Allow", err.methods);
       return res.status(405).json({ message });
-    // express-jwt does not find a valid token
-    case "UnauthorizedError":
+    case "UnauthorizedError": // express-jwt does not find a valid token
       return res.status(401).json({ message });
-
     case "MissingArgsError":
+      return res.status(400).json({ message });
+    case "ValidationError": // mongoose update/save validation error
+      return res.status(400).json({ message });
+    case "CastError": // mongoose, usually for invalid objectids
       return res.status(400).json({ message });
     case "UserPermissionError":
       return res.status(403).json({ message });

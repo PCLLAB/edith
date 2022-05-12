@@ -34,7 +34,7 @@ const DirectorySchema = new mongoose.Schema(
     prefixPath: {
       type: String,
       default: "r",
-      match: [/^r(,[A-Za-z\d\-_\s]+)*$/, "Incorrect prefixpath pattern"],
+      match: [/^r(,([a-z\d]){24})*$/, "Incorrect prefixpath pattern"],
     },
     namedPrefixPath: {
       type: String,

@@ -1,4 +1,3 @@
-import { NextApiResponse } from "next";
 import initHandler, {
   ModelNotFoundError,
   NextApiHandlerWithAuth,
