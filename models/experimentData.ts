@@ -29,7 +29,7 @@ const dataEntryFormat = {
  */
 export const modelForCollection = (collectionName: string) => {
   if (mongoose.models[collectionName]) {
-    return mongoose.models[collectionName];
+    return mongoose.models[collectionName] as mongoose.Model<DataEntryDoc>;
   }
 
   const dataEntrySchema = new mongoose.Schema<DataEntryDoc>(dataEntryFormat, {

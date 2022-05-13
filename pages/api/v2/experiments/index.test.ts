@@ -41,8 +41,16 @@ describe(`GET ${ENDPOINT}`, () => {
   it("returns 200 and all experiments", async () => {
     const { req, res } = mockReqRes(token);
 
-    const exp1 = { name: "exp1", user: user._id.toString() };
-    const exp2 = { name: "exp2", user: user._id.toString() };
+    const exp1 = {
+      name: "exp1",
+      user: user._id.toString(),
+      dataCollection: "placeholder",
+    };
+    const exp2 = {
+      name: "exp2",
+      user: user._id.toString(),
+      dataCollection: "placeholder",
+    };
 
     await Experiment.create([exp1, exp2]);
 
@@ -86,19 +94,21 @@ describe(`POST ${ENDPOINT}`, () => {
     req.body = {
       name,
     };
-    
+
     await indexHandler(req, res);
 
     expect(res.statusCode).toBe(200);
-    expect(res._getJSONData()).toEqual(expect.objectContaining({
-      name,
-      enabled: false,
-      prefixPath: "r",
-      user: user._id.toString() ,
-      dataCollection: expect.any(String),
-      createdAt: expect.any(String),
-      updatedAt: expect.any(String),
-    }))
+    expect(res._getJSONData()).toEqual(
+      expect.objectContaining({
+        name,
+        enabled: false,
+        prefixPath: "r",
+        user: user._id.toString(),
+        dataCollection: expect.any(String),
+        createdAt: expect.any(String),
+        updatedAt: expect.any(String),
+      })
+    );
   });
 
   it("accepts prefixPath and enabled ", async () => {
@@ -113,14 +123,16 @@ describe(`POST ${ENDPOINT}`, () => {
     await indexHandler(req, res);
 
     expect(res.statusCode).toBe(200);
-    expect(res._getJSONData()).toEqual(expect.objectContaining({
-      name,
-      enabled,
-      prefixPath,
-      user: user._id.toString() ,
-      dataCollection: expect.any(String),
-      createdAt: expect.any(String),
-      updatedAt: expect.any(String),
-    }))
+    expect(res._getJSONData()).toEqual(
+      expect.objectContaining({
+        name,
+        enabled,
+        prefixPath,
+        user: user._id.toString(),
+        dataCollection: expect.any(String),
+        createdAt: expect.any(String),
+        updatedAt: expect.any(String),
+      })
+    );
   });
 });

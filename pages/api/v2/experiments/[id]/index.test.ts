@@ -51,7 +51,11 @@ describe(`PUT ${ENDPOINT}`, () => {
   it("returns 200 and updates name, enabled, user, prefixpath", async () => {
     const { req, res } = mockReqRes(token);
 
-    const expInfo = { name: "exp1", user: user._id.toString() };
+    const expInfo = {
+      name: "exp1",
+      user: user._id.toString(),
+      dataCollection: "placeholder",
+    };
     const exp = await Experiment.create(expInfo);
 
     const updates = {
@@ -95,7 +99,11 @@ describe(`DELETE ${ENDPOINT}`, () => {
   it("returns 200 if experiment exists", async () => {
     const { req, res } = mockReqRes(token);
 
-    const expInfo = { name: "tobedeleted", user: user._id.toString() };
+    const expInfo = {
+      name: "tobedeleted",
+      user: user._id.toString(),
+      dataCollection: "placeholder",
+    };
     const exp = await Experiment.create(expInfo);
 
     req.query.id = exp._id;
@@ -130,7 +138,12 @@ describe(`POST ${ENDPOINT}`, () => {
   it("returns 200 if archived experiment exists", async () => {
     const { req, res } = mockReqRes(token);
 
-    const expInfo = { name: "tobearchived", user: user._id.toString() };
+    const expInfo = {
+      name: "tobearchived",
+      user: user._id.toString(),
+
+      dataCollection: "placeholder",
+    };
     const exp = await Archive.create(expInfo);
 
     req.query.id = exp._id.toString();
@@ -141,12 +154,16 @@ describe(`POST ${ENDPOINT}`, () => {
   });
 });
 
-describe.only(`ARCHIVE and RESTORE ${ENDPOINT}`, () => {
+describe(`ARCHIVE and RESTORE ${ENDPOINT}`, () => {
   const archiveReqRes = getReqResMocker("DELETE", ENDPOINT);
   const restoreReqRes = getReqResMocker("POST", ENDPOINT);
 
   it("archive and restore successfully", async () => {
-    const expInfo = { name: "zombie experiment", user: user._id.toString() };
+    const expInfo = {
+      name: "zombie experiment",
+      user: user._id.toString(),
+      dataCollection: "placeholder",
+    };
     const experiment = await Experiment.create(expInfo);
 
     const { req: archiveReq, res: archiveRes } = archiveReqRes(token);
@@ -165,7 +182,6 @@ describe.only(`ARCHIVE and RESTORE ${ENDPOINT}`, () => {
     const missingExp = await Experiment.findById(experiment._id);
     expect(missingExp).toBeNull();
 
-    
     const { req: restoreReq, res: restoreRes } = restoreReqRes(token);
     restoreReq.query.id = experiment._id.toString();
 

@@ -7,7 +7,7 @@ import mongoose, { Types } from "mongoose";
  *  project: Types.ObjectId;
  *  mongoDBData: Types.ObjectId;
  * Added:
- *  dataCollection: string, // put here instead of inside a MongoDbData document 
+ *  dataCollection: string, // put here instead of inside a MongoDbData document
  */
 
 export interface ExperimentDoc<IdType = Types.ObjectId, DateType = Date> {
@@ -34,7 +34,6 @@ export interface ExperimentDoc<IdType = Types.ObjectId, DateType = Date> {
 
 export interface ExperimentJson extends ExperimentDoc<string, string> {}
 
-
 const ExperimentSchema = new mongoose.Schema<ExperimentDoc>(
   {
     name: {
@@ -43,7 +42,7 @@ const ExperimentSchema = new mongoose.Schema<ExperimentDoc>(
       required: [true, "Please provide an experiment name"],
     },
     enabled: { type: Boolean, default: false },
-    dataCollection: String,
+    dataCollection: { type: String, required: true },
     // mongoDBData: {
     //   type: mongoose.Schema.Types.ObjectId,
     //   ref: "MongoDBData",
@@ -61,8 +60,8 @@ const ExperimentSchema = new mongoose.Schema<ExperimentDoc>(
   }
 );
 
-export const Archive = mongoose.models.Archive ||
-  mongoose.model("Archive", ExperimentSchema);
+export const Archive =
+  mongoose.models.Archive || mongoose.model("Archive", ExperimentSchema);
 
 export default mongoose.models.Experiment ||
   mongoose.model("Experiment", ExperimentSchema);
