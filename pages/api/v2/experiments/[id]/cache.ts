@@ -1,4 +1,5 @@
 import initHandler, {
+  ModelNotFoundError,
   NextApiHandlerWithAuth,
 } from "../../../../../lib/initHandler";
 import ExperimentCache from "../../../../../models/ExperimentCache";
@@ -14,7 +15,14 @@ const del: NextApiHandlerWithAuth = async (req, res) => {
   const id = req.query.id;
   const deleteResult = await ExperimentCache.deleteMany({ experiment: id });
 
-  res.json({ message: `Deleted ${deleteResult.deletedCount}: ${id}` });
+  if (!deleteResult.deletedCount) {
+    throw new ModelNotFoundError("ExperimentCache");
+  }
+
+  res.json({
+    message: `Deleted ${deleteResult.deletedCount}: ${id}`,
+    deleted: 2,
+  });
 };
 
 export default initHandler({

@@ -8,7 +8,7 @@ import {
 } from "../../../../lib/testUtils";
 import Experiment from "../../../../models/Experiment";
 import { UserDoc } from "../../../../models/User";
-import indexHandler from "./index";
+import handler from "./index";
 
 const ENDPOINT = "/api/v2/experiments";
 
@@ -32,7 +32,7 @@ describe(`GET ${ENDPOINT}`, () => {
   it("returns 200 and empty list", async () => {
     const { req, res } = mockReqRes(token);
 
-    await indexHandler(req, res);
+    await handler(req, res);
 
     expect(res.statusCode).toBe(200);
     expect(res._getJSONData()).toStrictEqual([]);
@@ -54,7 +54,7 @@ describe(`GET ${ENDPOINT}`, () => {
 
     await Experiment.create([exp1, exp2]);
 
-    await indexHandler(req, res);
+    await handler(req, res);
 
     expect(res.statusCode).toBe(200);
 
@@ -83,7 +83,7 @@ describe(`POST ${ENDPOINT}`, () => {
       enabled,
     };
 
-    await indexHandler(req, res);
+    await handler(req, res);
 
     expect(res.statusCode).toBe(400);
   });
@@ -95,7 +95,7 @@ describe(`POST ${ENDPOINT}`, () => {
       name,
     };
 
-    await indexHandler(req, res);
+    await handler(req, res);
 
     expect(res.statusCode).toBe(200);
     expect(res._getJSONData()).toEqual(
@@ -120,7 +120,7 @@ describe(`POST ${ENDPOINT}`, () => {
       enabled,
     };
 
-    await indexHandler(req, res);
+    await handler(req, res);
 
     expect(res.statusCode).toBe(200);
     expect(res._getJSONData()).toEqual(

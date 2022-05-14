@@ -5,9 +5,9 @@ import {
   getCreatedUserAndToken,
   getReqResMocker,
 } from "../../../../lib/testUtils";
-import User, { UserDoc, UserJson } from "../../../../models/User";
+import { UserDoc } from "../../../../models/User";
 
-import idHandler from "./[id]";
+import handler from "./[id]";
 
 const ENDPOINT = "/api/v2/users/[id]";
 
@@ -36,7 +36,7 @@ describe(`GET ${ENDPOINT}`, () => {
     const { req, res } = mockReqRes(token);
     req.query.id = user._id.toString();
 
-    await idHandler(req, res);
+    await handler(req, res);
     expect(res.statusCode).toBe(200);
     expect(res._getJSONData()).toStrictEqual(JSON.parse(JSON.stringify(user)));
 
@@ -47,7 +47,7 @@ describe(`GET ${ENDPOINT}`, () => {
     const { req, res } = mockReqRes(token);
     req.query.id = "123456789012"
 
-    await idHandler(req, res);
+    await handler(req, res);
     expect(res.statusCode).toBe(404);
   });
 });
@@ -71,7 +71,7 @@ describe(`PUT ${ENDPOINT}`, () => {
     const { req, res } = mockReqRes(putToken);
     req.query.id = putSuperUser._id.toString();
 
-    await idHandler(req, res);
+    await handler(req, res);
     expect(res.statusCode).toBe(403);
   });
 
@@ -83,7 +83,7 @@ describe(`PUT ${ENDPOINT}`, () => {
       superuser: true,
     };
 
-    await idHandler(req, res);
+    await handler(req, res);
     expect(res.statusCode).toBe(403);
   });
 
@@ -108,7 +108,7 @@ describe(`PUT ${ENDPOINT}`, () => {
       email: newEmail,
     };
 
-    await idHandler(req, res);
+    await handler(req, res);
     expect(res.statusCode).toBe(200);
     expect(res._getJSONData()).toMatchObject({
       name: newName,
@@ -132,7 +132,7 @@ describe(`PUT ${ENDPOINT}`, () => {
       superuser: newSuperuser,
     };
 
-    await idHandler(req, res);
+    await handler(req, res);
     expect(res.statusCode).toBe(200);
     expect(res._getJSONData()).toMatchObject({
       name: newName,
@@ -150,7 +150,7 @@ describe(`DELETE ${ENDPOINT}`, () => {
     const { req, res } = mockReqRes(token);
     req.query.id = user._id.toString();
 
-    await idHandler(req, res);
+    await handler(req, res);
     expect(res.statusCode).toBe(403);
   });
 
@@ -158,7 +158,7 @@ describe(`DELETE ${ENDPOINT}`, () => {
     const { req, res } = mockReqRes(superToken);
     req.query.id = "123456789012"
 
-    await idHandler(req, res);
+    await handler(req, res);
     expect(res.statusCode).toBe(404);
   });
   
@@ -166,7 +166,7 @@ describe(`DELETE ${ENDPOINT}`, () => {
     const { req, res } = mockReqRes(superToken);
     req.query.id = user._id.toString();
 
-    await idHandler(req, res);
+    await handler(req, res);
     expect(res.statusCode).toBe(200);
   });
 });

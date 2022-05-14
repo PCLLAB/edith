@@ -6,7 +6,7 @@ import {
   getReqResMocker
 } from "../../../../lib/testUtils";
 import { UserDoc } from "../../../../models/User";
-import indexHandler from "./index";
+import handler from "./index";
 
 const ENDPOINT = "/api/v2/users";
 
@@ -34,7 +34,7 @@ describe(`GET ${ENDPOINT}`, () => {
   it("returns 200 and two users", async () => {
     const { req, res } = mockReqRes(token);
 
-    await indexHandler(req, res);
+    await handler(req, res);
     expect(res.statusCode).toBe(200);
     expect(res._getJSONData()).toStrictEqual([
       JSON.parse(JSON.stringify(user)),
@@ -49,35 +49,35 @@ describe(`POST ${ENDPOINT}`, () => {
   it("returns 403 for non superuser", async () => {
     const { req, res } = mockReqRes(token);
 
-    await indexHandler(req, res);
+    await handler(req, res);
     expect(res.statusCode).toBe(403);
   });
 
   it("returns 400 for if missing email or email or password", async () => {
     const { req, res } = mockReqRes(superToken);
 
-    await indexHandler(req, res);
+    await handler(req, res);
     expect(res.statusCode).toBe(400);
 
     req.body = {
       name: "bendover",
       email: "bendover@hotmail.com",
     };
-    await indexHandler(req, res);
+    await handler(req, res);
     expect(res.statusCode).toBe(400);
 
     req.body = {
       email: "bendover@hotmail.com",
       password: "bendoveriscool",
     };
-    await indexHandler(req, res);
+    await handler(req, res);
     expect(res.statusCode).toBe(400);
 
     req.body = {
       name: "bendover",
       password: "bendoveriscool",
     };
-    await indexHandler(req, res);
+    await handler(req, res);
     expect(res.statusCode).toBe(400);
   });
 
@@ -92,7 +92,7 @@ describe(`POST ${ENDPOINT}`, () => {
       email,
       password: "bendoveriscool",
     };
-    await indexHandler(req, res);
+    await handler(req, res);
 
     expect(res.statusCode).toBe(200);
     expect(res._getJSONData()).toMatchObject({ name, email });

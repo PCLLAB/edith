@@ -2,7 +2,7 @@ jest.mock("../../../../lib/dbConnect");
 import dbConnect from "../../../../lib/dbConnect";
 import { getReqResMocker } from "../../../../lib/testUtils";
 import User from "../../../../models/User";
-import authHandler from "./auth";
+import handler from "./auth";
 
 const ENDPOINT = "/api/v2/users/auth";
 
@@ -34,19 +34,19 @@ describe(`POST ${ENDPOINT}`, () => {
   it("returns 400 if missing email and/or password", async () => {
     const { req, res } = mockReqRes();
 
-    await authHandler(req, res);
+    await handler(req, res);
     expect(res.statusCode).toBe(400);
 
     req.body = {
       email,
     };
-    await authHandler(req, res);
+    await handler(req, res);
     expect(res.statusCode).toBe(400);
 
     req.body = {
       password,
     };
-    await authHandler(req, res);
+    await handler(req, res);
     expect(res.statusCode).toBe(400);
   });
 
@@ -59,7 +59,7 @@ describe(`POST ${ENDPOINT}`, () => {
       email: wrongEmail,
       password,
     };
-    await authHandler(req, res);
+    await handler(req, res);
     expect(res.statusCode).toBe(404);
   });
 
@@ -74,7 +74,7 @@ describe(`POST ${ENDPOINT}`, () => {
       email,
       password: wrongPassword,
     };
-    await authHandler(req, res);
+    await handler(req, res);
     expect(res.statusCode).toBe(400);
   });
 
@@ -85,7 +85,7 @@ describe(`POST ${ENDPOINT}`, () => {
       email,
       password,
     };
-    await authHandler(req, res);
+    await handler(req, res);
     expect(res.statusCode).toBe(200);
     expect(res._getJSONData()).toEqual(
       expect.objectContaining({

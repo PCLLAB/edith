@@ -9,7 +9,7 @@ import {
 } from "../../../../../lib/testUtils";
 import Experiment, { Archive } from "../../../../../models/Experiment";
 import { UserDoc } from "../../../../../models/User";
-import indexHandler from "./index";
+import handler from "./index";
 
 const ENDPOINT = "/api/v2/experiments/[id]";
 
@@ -34,7 +34,7 @@ describe(`PUT ${ENDPOINT}`, () => {
     const { req, res } = mockReqRes(token);
     req.query.id = "abds";
 
-    await indexHandler(req, res);
+    await handler(req, res);
 
     expect(res.statusCode).toBe(400);
   });
@@ -43,7 +43,7 @@ describe(`PUT ${ENDPOINT}`, () => {
     const { req, res } = mockReqRes(token);
     req.query.id = getValidObjectId();
 
-    await indexHandler(req, res);
+    await handler(req, res);
 
     expect(res.statusCode).toBe(404);
   });
@@ -68,7 +68,7 @@ describe(`PUT ${ENDPOINT}`, () => {
     req.query.id = exp._id;
     req.body = updates;
 
-    await indexHandler(req, res);
+    await handler(req, res);
 
     expect(res.statusCode).toBe(200);
     expect(res._getJSONData()).toMatchObject(updates);
@@ -82,7 +82,7 @@ describe(`DELETE ${ENDPOINT}`, () => {
     const { req, res } = mockReqRes(token);
     req.query.id = "abds";
 
-    await indexHandler(req, res);
+    await handler(req, res);
 
     expect(res.statusCode).toBe(400);
   });
@@ -91,7 +91,7 @@ describe(`DELETE ${ENDPOINT}`, () => {
     const { req, res } = mockReqRes(token);
     req.query.id = getValidObjectId();
 
-    await indexHandler(req, res);
+    await handler(req, res);
 
     expect(res.statusCode).toBe(404);
   });
@@ -108,7 +108,7 @@ describe(`DELETE ${ENDPOINT}`, () => {
 
     req.query.id = exp._id;
 
-    await indexHandler(req, res);
+    await handler(req, res);
 
     expect(res.statusCode).toBe(200);
   });
@@ -121,7 +121,7 @@ describe(`POST ${ENDPOINT}`, () => {
     const { req, res } = mockReqRes(token);
     req.query.id = "abds";
 
-    await indexHandler(req, res);
+    await handler(req, res);
 
     expect(res.statusCode).toBe(400);
   });
@@ -130,7 +130,7 @@ describe(`POST ${ENDPOINT}`, () => {
     const { req, res } = mockReqRes(token);
     req.query.id = getValidObjectId();
 
-    await indexHandler(req, res);
+    await handler(req, res);
 
     expect(res.statusCode).toBe(404);
   });
@@ -148,7 +148,7 @@ describe(`POST ${ENDPOINT}`, () => {
 
     req.query.id = exp._id.toString();
 
-    await indexHandler(req, res);
+    await handler(req, res);
 
     expect(res.statusCode).toBe(200);
   });
@@ -169,7 +169,7 @@ describe(`ARCHIVE and RESTORE ${ENDPOINT}`, () => {
     const { req: archiveReq, res: archiveRes } = archiveReqRes(token);
     archiveReq.query.id = experiment._id.toString();
 
-    await indexHandler(archiveReq, archiveRes);
+    await handler(archiveReq, archiveRes);
 
     expect(archiveRes.statusCode).toBe(200);
     const archived = await Archive.findById(experiment._id);
@@ -185,7 +185,7 @@ describe(`ARCHIVE and RESTORE ${ENDPOINT}`, () => {
     const { req: restoreReq, res: restoreRes } = restoreReqRes(token);
     restoreReq.query.id = experiment._id.toString();
 
-    await indexHandler(restoreReq, restoreRes);
+    await handler(restoreReq, restoreRes);
 
     expect(restoreRes.statusCode).toBe(200);
     const restored = await Experiment.findById(experiment._id);
