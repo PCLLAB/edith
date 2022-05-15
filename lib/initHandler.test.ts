@@ -1,37 +1,126 @@
-// TODO move to initHandler.test.ts
-// describe(`MIDDLEWARE ${ENDPOINT}`, () => {
-//   const mockReqRes = getReqResMocker("GET", ENDPOINT, token);
+jest.mock("./dbConnect");
 
-//   it("returns 401 if lacking token", async () => {
-//     const { req, res } = mockReqRes();
-//     req.headers.authorization = ""
+import dbConnect from "./dbConnect";
+import { getCreatedUserAndToken, getReqResMocker } from "./testUtils";
+import initHandler from "./initHandler";
+import { NextApiRequest, NextApiResponse } from "next";
 
-//     await idHandler(req, res);
-//     expect(res.statusCode).toBe(401);
-//   });
+const PRIVATE_ENDPOINT = "/api/v2";
+const PUBLIC_ENDPOINT = "/api/v2/users/auth";
 
-// });
+let token: string;
 
-  // TODO move to initHandler.test.ts
-  // it("returns 405 for invalid methods", async () => {
-  //   const { req, res } = mockReqRes();
+let connection: any;
 
-  //   req.method = "GET";
-  //   await authHandler(req, res);
-  //   expect(res.statusCode).toBe(405);
-  //   res.statusCode = 69;
+beforeAll(async () => {
+  connection = await dbConnect();
+  ({ token } = await getCreatedUserAndToken());
+});
 
-  //   req.method = "PUT";
-  //   await authHandler(req, res);
-  //   expect(res.statusCode).toBe(405);
-  //   res.statusCode = 69;
+afterAll(async () => {
+  await connection.disconnect();
+});
 
-  //   req.method = "DELETE";
-  //   await authHandler(req, res);
-  //   expect(res.statusCode).toBe(405);
-  //   res.statusCode = 69;
+describe(`JWT TOKEN AUTH initHandler`, () => {
+  const mockReqRes = getReqResMocker("GET", PRIVATE_ENDPOINT);
 
-  //   req.method = "randomsaea123";
-  //   await authHandler(req, res);
-  //   expect(res.statusCode).toBe(405);
-  // });
+  const mockPublicReqRes = getReqResMocker("GET", PUBLIC_ENDPOINT);
+
+  const handler = initHandler({
+    GET: (req: NextApiRequest, res: NextApiResponse) => {
+      res.end();
+    },
+  });
+
+  it("returns 200 if lacking token on path without auth required", async () => {
+    const { req, res } = mockPublicReqRes();
+
+    await handler(req, res);
+    expect(res.statusCode).toBe(200);
+  });
+
+  it("returns 401 if lacking token on authorized path", async () => {
+    const { req, res } = mockReqRes();
+
+    await handler(req, res);
+    expect(res.statusCode).toBe(401);
+  });
+
+  it("returns 200 if token on authorized path", async () => {
+    const { req, res } = mockReqRes(token);
+
+    await handler(req, res);
+    expect(res.statusCode).toBe(200);
+  });
+});
+
+describe(`MATCH ACTION initHandler`, () => {
+  const mockReqRes = getReqResMocker("GET", PRIVATE_ENDPOINT);
+
+  const matcher = {
+    GET: (req: NextApiRequest, res: NextApiResponse) => {
+      res.status(200).end();
+    },
+    PUT: (req: NextApiRequest, res: NextApiResponse) => {
+      res.status(200).end();
+    },
+  };
+
+  it("returns 405 for invalid methods", async () => {
+    const { req, res } = mockReqRes(token);
+    const handler = initHandler({});
+
+    req.method = "GET";
+    await handler(req, res);
+    expect(res.statusCode).toBe(405);
+    res.statusCode = 69;
+
+    req.method = "PUT";
+    await handler(req, res);
+    expect(res.statusCode).toBe(405);
+    res.statusCode = 69;
+
+    req.method = "POST";
+    await handler(req, res);
+    expect(res.statusCode).toBe(405);
+    res.statusCode = 69;
+
+    req.method = "DELETE";
+    await handler(req, res);
+    expect(res.statusCode).toBe(405);
+    res.statusCode = 69;
+
+    req.method = "randomsaea123";
+    await handler(req, res);
+    expect(res.statusCode).toBe(405);
+  });
+
+  it("returns 200 for valid methods", async () => {
+    const { req, res } = mockReqRes(token);
+    const handler = initHandler(matcher);
+
+    req.method = "GET";
+    await handler(req, res);
+    expect(res.statusCode).toBe(200);
+    res.statusCode = 69;
+
+    req.method = "PUT";
+    await handler(req, res);
+    expect(res.statusCode).toBe(200);
+    res.statusCode = 69;
+
+    req.method = "POST";
+    await handler(req, res);
+    expect(res.statusCode).toBe(405);
+    res.statusCode = 69;
+
+    req.method = "DELETE";
+    await handler(req, res);
+    expect(res.statusCode).toBe(405);
+    res.statusCode = 69;
+
+    req.method = "randomsaea123";
+    await handler(req, res);
+    expect(res.statusCode).toBe(405);
+  });
+});
