@@ -18,6 +18,11 @@ export interface DirectoryJson extends Omit<DirectoryDoc<string>, "ownerIds"> {
   ownerIds: string[];
 }
 
+export const ROOT_DIRECTORY = {
+  path: "r",
+  namedPath: "Root",
+};
+
 const arrayNotEmpty = (array: any[]) => array.length;
 
 const DirectorySchema = new mongoose.Schema(
