@@ -2,7 +2,7 @@ import initHandler, {
   ModelNotFoundError,
   NextApiHandlerWithAuth,
 } from "../../../../../lib/initHandler";
-import Experiment, { Archive } from "../../../../../models/Experiment";
+import Experiment, { ArchivedExperiment } from "../../../../../models/Experiment";
 
 // These endpoints allow any user to update any experiment
 // This reflects the collaborative way this is used
@@ -39,7 +39,7 @@ const del: NextApiHandlerWithAuth = async (req, res) => {
     throw new ModelNotFoundError("Experiment");
   }
 
-  const archivedExp = new Archive(experiment.toObject());
+  const archivedExp = new ArchivedExperiment(experiment.toObject());
   await archivedExp.save();
 
   const deletedExp = await experiment.delete();
@@ -56,10 +56,10 @@ const del: NextApiHandlerWithAuth = async (req, res) => {
 const post: NextApiHandlerWithAuth = async (req, res) => {
   const id = req.query.id;
 
-  const archivedExp = await Archive.findById(id);
+  const archivedExp = await ArchivedExperiment.findById(id);
   
   if (!archivedExp) {
-    throw new ModelNotFoundError("Archived Experiment");
+    throw new ModelNotFoundError("ArchivedExperiment");
   }
 
   const experiment = new Experiment(archivedExp.toObject());

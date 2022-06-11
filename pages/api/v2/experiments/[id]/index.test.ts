@@ -7,7 +7,7 @@ import {
   getValidObjectId,
   getValidPrefixPath,
 } from "../../../../../lib/testUtils";
-import Experiment, { Archive } from "../../../../../models/Experiment";
+import Experiment, { ArchivedExperiment } from "../../../../../models/Experiment";
 import { UserDoc } from "../../../../../models/User";
 import handler from "./index";
 
@@ -144,7 +144,7 @@ describe(`POST ${ENDPOINT}`, () => {
 
       dataCollection: "placeholder",
     };
-    const exp = await Archive.create(expInfo);
+    const exp = await ArchivedExperiment.create(expInfo);
 
     req.query.id = exp._id.toString();
 
@@ -172,7 +172,7 @@ describe(`ARCHIVE and RESTORE ${ENDPOINT}`, () => {
     await handler(archiveReq, archiveRes);
 
     expect(archiveRes.statusCode).toBe(200);
-    const archived = await Archive.findById(experiment._id);
+    const archived = await ArchivedExperiment.findById(experiment._id);
     expect(archived.toObject()).toEqual(
       expect.objectContaining({
         ...experiment.toObject(),
@@ -195,7 +195,7 @@ describe(`ARCHIVE and RESTORE ${ENDPOINT}`, () => {
         updatedAt: expect.any(Date),
       })
     );
-    const missingArch = await Archive.findById(experiment._id);
+    const missingArch = await ArchivedExperiment.findById(experiment._id);
     expect(missingArch).toBeNull();
   });
 });

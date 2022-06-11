@@ -21,7 +21,7 @@ const del: NextApiHandlerWithAuth = async (req, res) => {
 
   res.json({
     message: `Deleted ${deleteResult.deletedCount}: ${id}`,
-    deleted: 2,
+    deleted: deleteResult.deletedCount,
   });
 };
 
