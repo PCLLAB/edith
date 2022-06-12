@@ -47,7 +47,7 @@ export const getCreatedUserAndToken = async (superuser = false) => {
 
 /**
  *  ObjectIds are 12 bytes, but string representation is 24 hexadecimal chars 
- *  @returns string containing 24 hexademical chars 
+ *  @returns pseudorandom string containing 24 hexademical chars 
  */
 export const getValidObjectId = () => {
   const charBank = "0123456789abcdef";

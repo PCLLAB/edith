@@ -4,7 +4,6 @@ import dbConnect from "../../../../lib/dbConnect";
 import {
   getCreatedUserAndToken,
   getReqResMocker,
-  getValidPrefixPath,
 } from "../../../../lib/testUtils";
 import Directory from "../../../../models/Directory";
 import { UserDoc } from "../../../../models/User";
