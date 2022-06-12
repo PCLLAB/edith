@@ -6,7 +6,7 @@ import {
   getReqResMocker,
   getValidObjectId,
 } from "../../../../../lib/testUtils";
-import ExperimentCache from "../../../../../models/ExperimentCache";
+import { CachedDataEntry } from "../../../../../models/DataEntry";
 import handler from "./cache";
 
 const ENDPOINT = "/api/v2/experiments/[id]/cache";
@@ -67,7 +67,7 @@ describe(`GET ${ENDPOINT}`, () => {
       experiment: getValidObjectId(),
     };
 
-    await ExperimentCache.create([matchEntry, matchEntry, missEntry]);
+    await CachedDataEntry.create([matchEntry, matchEntry, missEntry]);
 
     req.query.id = matchEntry.experiment;
 
@@ -113,7 +113,7 @@ describe(`DELETE ${ENDPOINT}`, () => {
       ],
       experiment: getValidObjectId(),
     };
-    await ExperimentCache.create([matchEntry, matchEntry]);
+    await CachedDataEntry.create([matchEntry, matchEntry]);
     req.query.id = matchEntry.experiment;
 
     await handler(req, res);

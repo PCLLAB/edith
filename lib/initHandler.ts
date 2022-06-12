@@ -65,7 +65,7 @@ export class MissingArgsError extends Error {
   }
 }
 
-type Model = "Directory" | "Experiment" | "User" | "ExperimentCache" | "ArchivedExperiment"
+type Model = "Directory" | "Experiment" | "User" | "CachedDataEntry" | "ArchivedExperiment"
 
 export class ModelNotFoundError extends Error {
   constructor(model: Model) {

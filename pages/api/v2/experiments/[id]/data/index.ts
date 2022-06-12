@@ -3,7 +3,7 @@ import initHandler, {
   NextApiHandlerWithAuth,
 } from "../../../../../../lib/initHandler";
 import Experiment from "../../../../../../models/Experiment";
-import { modelForCollection } from "../../../../../../models/experimentData";
+import { modelForCollection } from "../../../../../../models/DataEntry";
 
 const get: NextApiHandlerWithAuth = async (req, res) => {
   const id = req.query.id;
@@ -26,6 +26,8 @@ const post: NextApiHandlerWithAuth = async (req, res) => {
   if (!expObj) {
     throw new ModelNotFoundError("Experiment");
   }
+
+  // TODO cached data entry
 
   const DataModel = modelForCollection(expObj.dataCollection);
   const entry = new DataModel({

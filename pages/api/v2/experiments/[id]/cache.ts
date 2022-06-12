@@ -2,21 +2,21 @@ import initHandler, {
   ModelNotFoundError,
   NextApiHandlerWithAuth,
 } from "../../../../../lib/initHandler";
-import ExperimentCache from "../../../../../models/ExperimentCache";
+import { CachedDataEntry } from "../../../../../models/DataEntry";
 
 const get: NextApiHandlerWithAuth = async (req, res) => {
   const id = req.query.id;
-  const data = await ExperimentCache.find({ experiment: id });
+  const data = await CachedDataEntry.find({ experiment: id });
 
   res.json(data);
 };
 
 const del: NextApiHandlerWithAuth = async (req, res) => {
   const id = req.query.id;
-  const deleteResult = await ExperimentCache.deleteMany({ experiment: id });
+  const deleteResult = await CachedDataEntry.deleteMany({ experiment: id });
 
   if (!deleteResult.deletedCount) {
-    throw new ModelNotFoundError("ExperimentCache");
+    throw new ModelNotFoundError("CachedDataEntry");
   }
 
   res.json({

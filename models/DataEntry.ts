@@ -1,16 +1,27 @@
 import mongoose, { Types } from "mongoose";
 
-export interface DataEntryDoc {
+export interface DataEntryDoc<IdType = Types.ObjectId, DateType = Date> {
   /** Array of objects containing trial data from jsPsych */
+  _id: IdType;
   data: Types.Array<{}>;
   /** Managed by mongoose using timestamp option */
   createdAt: Date;
 }
 
-export interface DataEntryJson {
+export interface DataEntryJson
+  extends Omit<DataEntryDoc<string, string>, "data"> {
   data: any[];
-  createdAt: string;
 }
+
+
+export interface CachedDataEntryDoc extends DataEntryDoc {
+  experiment: Types.ObjectId;
+}
+
+export interface CachedDataEntryJson extends DataEntryJson {
+  experiment: string;
+}
+
 
 const dataEntryFormat = {
   data: {
@@ -41,3 +52,25 @@ export const modelForCollection = (collectionName: string) => {
   });
   return mongoose.model(collectionName, dataEntrySchema);
 };
+
+
+
+const CachedDataEntrySchema = new mongoose.Schema<CachedDataEntryDoc>(
+  {
+    ...dataEntryFormat,
+    experiment: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Experiment",
+      required: true,
+    },
+  },
+  {
+    timestamps: {
+      createdAt: true,
+      updatedAt: false, // disabled because a data entry is readonly
+    },
+  }
+);
+
+export const CachedDataEntry = mongoose.models.CachedDataEntry ||
+  mongoose.model("CachedDataEntry", CachedDataEntrySchema);
