@@ -19,8 +19,8 @@ export interface DirectoryJson extends Omit<DirectoryDoc<string>, "ownerIds"> {
 }
 
 export const ROOT_DIRECTORY = {
-  path: "r",
-  namedPath: "Root",
+  _id: "r",
+  name: "Root",
 };
 
 const arrayNotEmpty = (array: any[]) => array.length;

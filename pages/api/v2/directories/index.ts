@@ -3,7 +3,7 @@ import initHandler, {
   ModelNotFoundError,
   NextApiHandlerWithAuth,
 } from "../../../../lib/initHandler";
-import Directory, { ROOT_DIRECTORY } from "../../../../models/Directory";
+import Directory from "../../../../models/Directory";
 
 /**
  * Get All Directories

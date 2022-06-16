@@ -65,6 +65,13 @@ export class MissingArgsError extends Error {
   }
 }
 
+export class InvalidArgsError extends Error {
+  constructor(args: string[]) {
+    super(`Invalid args: ${args}`);
+    this.name = "InvalidArgsError";
+  }
+}
+
 type Model = "Directory" | "Experiment" | "User" | "CachedDataEntry" | "ArchivedExperiment"
 
 export class ModelNotFoundError extends Error {
@@ -97,6 +104,8 @@ const errorHandler = (err: any, res: NextApiResponse) => {
     case "UnauthorizedError": // express-jwt does not find a valid token
       return res.status(401).json({ message });
     case "MissingArgsError":
+      return res.status(400).json({ message });
+    case "InvalidArgsError":
       return res.status(400).json({ message });
     case "ValidationError": // mongoose update/save validation error
       return res.status(400).json({ message });
