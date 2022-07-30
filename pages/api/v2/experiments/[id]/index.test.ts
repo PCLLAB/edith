@@ -1,13 +1,16 @@
 jest.mock("../../../../../lib/dbConnect");
 
 import dbConnect from "../../../../../lib/dbConnect";
+import { ModelNotFoundError } from "../../../../../lib/initHandler";
 import {
   getCreatedUserAndToken,
   getReqResMocker,
   getValidObjectId,
   getValidPrefixPath,
 } from "../../../../../lib/testUtils";
-import Experiment, { ArchivedExperiment } from "../../../../../models/Experiment";
+import Experiment, {
+  ArchivedExperiment,
+} from "../../../../../models/Experiment";
 import { UserDoc } from "../../../../../models/User";
 import handler from "./index";
 
@@ -179,13 +182,21 @@ describe(`ARCHIVE and RESTORE ${ENDPOINT}`, () => {
         updatedAt: expect.any(Date),
       })
     );
-    const missingExp = await Experiment.findById(experiment._id);
-    expect(missingExp).toBeNull();
+
+    expect(
+      async () => await Experiment.findById(experiment._id)
+    ).rejects.toThrow(new ModelNotFoundError("Experiment"));
 
     const { req: restoreReq, res: restoreRes } = restoreReqRes(token);
     restoreReq.query.id = experiment._id.toString();
 
     await handler(restoreReq, restoreRes);
+
+    // This causes a non-failing error if placed at the end of the test
+    // MongoClient seems to disconnect?
+    expect(
+      async () => await ArchivedExperiment.findById(experiment._id)
+    ).rejects.toThrow(new ModelNotFoundError("Experiment"));
 
     expect(restoreRes.statusCode).toBe(200);
     const restored = await Experiment.findById(experiment._id);
@@ -195,7 +206,5 @@ describe(`ARCHIVE and RESTORE ${ENDPOINT}`, () => {
         updatedAt: expect.any(Date),
       })
     );
-    const missingArch = await ArchivedExperiment.findById(experiment._id);
-    expect(missingArch).toBeNull();
   });
 });

@@ -25,10 +25,6 @@ const post: NextApiHandler = async (req, res) => {
     .select("+password")
     .lean();
 
-  if (!UNSAFE_USER_WITH_PASSWORD) {
-    throw new ModelNotFoundError("User");
-  }
-
   const { password: passwordHash, ...user } = UNSAFE_USER_WITH_PASSWORD;
 
   const passwordMatch = await bcrypt.compare(password, passwordHash);

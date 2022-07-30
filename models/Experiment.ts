@@ -1,4 +1,6 @@
 import mongoose, { Types } from "mongoose";
+import { ModelNotFoundError } from "../lib/initHandler";
+import { throwIfNull } from "../lib/throwIfNull";
 
 /** CHANGELOG
  * Removed fields:
@@ -59,6 +61,8 @@ const ExperimentSchema = new mongoose.Schema<ExperimentDoc>(
     timestamps: true,
   }
 );
+
+ExperimentSchema.plugin(throwIfNull("Experiment"));
 
 export const ArchivedExperiment =
   mongoose.models.ArchivedExperiment ||

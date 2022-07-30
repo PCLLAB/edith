@@ -7,9 +7,6 @@ import User from "../../../../models/User";
 
 const get: NextApiHandlerWithAuth = async (req, res) => {
   const user = await User.findById(req.query.id).lean();
-  if (!user) {
-    throw new ModelNotFoundError("User");
-  }
   return res.json(user);
 };
 
@@ -36,11 +33,6 @@ const put: NextApiHandlerWithAuth = async (req, res) => {
     },
     { new: true }
   );
-
-  // TODO this shouldn't be possible b/c existence checked in jwtAuth before handler runs
-  if (!user) {
-    throw new ModelNotFoundError("User");
-  }
 
   return res.json(user);
 };

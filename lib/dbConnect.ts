@@ -1,5 +1,5 @@
-import mongoose from 'mongoose'
-import config from './config'
+import mongoose from "mongoose";
+import config from "./config";
 
 // https://github.com/vercel/next.js/blob/canary/examples/with-mongodb-mongoose/lib/dbConnect.js
 
@@ -8,28 +8,30 @@ import config from './config'
  * in development. This prevents connections growing exponentially
  * during API Route usage.
  */
-let cached = global.mongoose
+let cached = global.mongoose;
 
 if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null }
+  cached = global.mongoose = { conn: null, promise: null };
 }
 
-async function dbConnect() {
+async function dbConnect(): Promise<mongoose.Connection> {
   if (cached.conn) {
-    return cached.conn
+    return cached.conn;
   }
 
   if (!cached.promise) {
     const opts = {
       bufferCommands: false,
-    }
+    };
 
-    cached.promise = mongoose.connect(config.MONGODB_URI, opts).then((mongoose) => {
-      return mongoose
-    })
+    cached.promise = mongoose
+      .connect(config.MONGODB_URI, opts)
+      .then((mongoose) => {
+        return mongoose;
+      });
   }
-  cached.conn = await cached.promise
-  return cached.conn
+  cached.conn = await cached.promise;
+  return cached.conn;
 }
 
-export default dbConnect
+export default dbConnect;

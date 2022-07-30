@@ -1,4 +1,6 @@
 import mongoose, { Types } from "mongoose";
+import { ModelNotFoundError } from "../lib/initHandler";
+import { throwIfNull } from "../lib/throwIfNull";
 
 export interface DirectoryDoc<IdType = Types.ObjectId, DateType = Date> {
   _id: IdType;
@@ -25,7 +27,7 @@ export const ROOT_DIRECTORY = {
 
 const arrayNotEmpty = (array: any[]) => array.length;
 
-const DirectorySchema = new mongoose.Schema(
+const DirectorySchema = new mongoose.Schema<DirectoryDoc>(
   {
     name: {
       type: String,
@@ -52,6 +54,8 @@ const DirectorySchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+DirectorySchema.plugin(throwIfNull("Directory"));
 
 export default mongoose.models.Directory ||
   mongoose.model("Directory", DirectorySchema);

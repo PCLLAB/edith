@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next/types";
 import { createRequest, createResponse, RequestMethod } from "node-mocks-http";
 import jwt from "jsonwebtoken";
-import User, { UserJson } from "../models/User";
+import User from "../models/User";
 import config from "./config";
 
 export const getReqResMocker =
@@ -46,8 +46,8 @@ export const getCreatedUserAndToken = async (superuser = false) => {
 };
 
 /**
- *  ObjectIds are 12 bytes, but string representation is 24 hexadecimal chars 
- *  @returns pseudorandom string containing 24 hexademical chars 
+ *  ObjectIds are 12 bytes, but string representation is 24 hexadecimal chars
+ *  @returns pseudorandom string containing 24 hexademical chars
  */
 export const getValidObjectId = () => {
   const charBank = "0123456789abcdef";

@@ -1,4 +1,5 @@
 import mongoose, { Types } from "mongoose";
+import { throwIfNull } from "../lib/throwIfNull";
 
 export interface Quota {
   amount: number;
@@ -57,6 +58,8 @@ const CounterbalanceSchema = new mongoose.Schema({
   // array default is []
   quotas: [mongoose.Schema.Types.Mixed],
 });
+
+CounterbalanceSchema.plugin(throwIfNull("Counterbalance"));
 
 export default mongoose.models.Counterbalance ||
   mongoose.model("Counterbalance", CounterbalanceSchema);

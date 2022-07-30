@@ -9,9 +9,6 @@ const get: NextApiHandlerWithAuth = async (req, res) => {
   const id = req.query.id;
 
   const expObj = await Experiment.findById(id).lean();
-  if (!expObj) {
-    throw new ModelNotFoundError("Experiment");
-  }
 
   const DataModel = modelForCollection(expObj.dataCollection);
   const data = await DataModel.find({});
@@ -23,9 +20,6 @@ const post: NextApiHandlerWithAuth = async (req, res) => {
   const id = req.query.id;
 
   const expObj = await Experiment.findById(id).lean();
-  if (!expObj) {
-    throw new ModelNotFoundError("Experiment");
-  }
 
   // TODO cached data entry
 

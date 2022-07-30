@@ -15,8 +15,8 @@ const jwtMiddleware = expressjwt({
 
     if (!_id) return true;
 
+    //TODO this throws is user doesn't exist, is that right?
     const user = await User.findById(_id).lean();
-    if (!user) return true;
 
     if (superuser !== user.superuser) return true;
 

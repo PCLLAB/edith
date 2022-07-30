@@ -72,10 +72,18 @@ export class InvalidArgsError extends Error {
   }
 }
 
-type Model = "Directory" | "Experiment" | "User" | "CachedDataEntry" | "ArchivedExperiment"
+export type ModelType =
+  | "Directory"
+  | "Experiment"
+  | "User"
+  | "Script"
+  | "DataEntry"
+  | "CachedDataEntry"
+  | "ArchivedExperiment"
+  | "Counterbalance";
 
 export class ModelNotFoundError extends Error {
-  constructor(model: Model) {
+  constructor(model: ModelType) {
     super(`Model not found: ${model}`);
     this.name = "ModelNotFoundError";
   }

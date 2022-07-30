@@ -1,4 +1,5 @@
 import mongoose, { Types } from "mongoose";
+import { throwIfNull } from "../lib/throwIfNull";
 
 export interface DataEntryDoc<IdType = Types.ObjectId, DateType = Date> {
   /** Array of objects containing trial data from jsPsych */
@@ -13,7 +14,6 @@ export interface DataEntryJson
   data: any[];
 }
 
-
 export interface CachedDataEntryDoc extends DataEntryDoc {
   experiment: Types.ObjectId;
 }
@@ -21,7 +21,6 @@ export interface CachedDataEntryDoc extends DataEntryDoc {
 export interface CachedDataEntryJson extends DataEntryJson {
   experiment: string;
 }
-
 
 const dataEntryFormat = {
   data: {
@@ -50,10 +49,9 @@ export const modelForCollection = (collectionName: string) => {
       updatedAt: false, // disabled because a data entry is readonly
     },
   });
+  dataEntrySchema.plugin(throwIfNull("DataEntry"));
   return mongoose.model(collectionName, dataEntrySchema);
 };
-
-
 
 const CachedDataEntrySchema = new mongoose.Schema<CachedDataEntryDoc>(
   {
@@ -71,6 +69,8 @@ const CachedDataEntrySchema = new mongoose.Schema<CachedDataEntryDoc>(
     },
   }
 );
+CachedDataEntrySchema.plugin(throwIfNull("CachedDataEntry"));
 
-export const CachedDataEntry = mongoose.models.CachedDataEntry ||
+export const CachedDataEntry =
+  mongoose.models.CachedDataEntry ||
   mongoose.model("CachedDataEntry", CachedDataEntrySchema);

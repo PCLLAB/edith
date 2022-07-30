@@ -34,10 +34,6 @@ const post: NextApiHandlerWithAuth = async (req, res) => {
 
   const parentDir = await Directory.findById(parent).lean();
 
-  if (!parentDir) {
-    throw new ModelNotFoundError("Directory");
-  }
-
   const prefixPath = `${parentDir.prefixPath},${parentDir._id}`;
   const namedPrefixPath = `${parentDir.namedPrefixPath},${parentDir.name}`;
 

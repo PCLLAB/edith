@@ -1,5 +1,6 @@
 import mongoose, { Types } from "mongoose";
 import bcrypt from "bcrypt";
+import { throwIfNull } from "../lib/throwIfNull";
 
 export interface UserDoc<IdType = Types.ObjectId, DateType = Date> {
   _id: IdType;
@@ -17,7 +18,7 @@ export interface UserJson extends UserDoc<string, string> {}
 
 // This lets us type lean and full mongoose objects
 // This is never JSONified, so DateType is always Date
-export interface RawUnsafeUserDoc<T=Types.ObjectId> extends UserDoc<T> {
+export interface RawUnsafeUserDoc<T = Types.ObjectId> extends UserDoc<T> {
   password: string;
 }
 
@@ -52,15 +53,16 @@ const UserSchema = new mongoose.Schema<RawUnsafeUserDoc>(
   }
 );
 
-UserSchema.pre("save", function (next) {
+UserSchema.pre("save", function () {
   const user = this;
 
-  if (!user.isModified("password")) return next();
+  if (!user.isModified("password")) return;
   const salt = bcrypt.genSaltSync(5);
   const hash = bcrypt.hashSync(user.password, salt);
   user.password = hash;
-  next();
 });
+
+UserSchema.plugin(throwIfNull("User"));
 
 // UserSchema.methods.comparePassword = function (
 //   candidatePassword: string,

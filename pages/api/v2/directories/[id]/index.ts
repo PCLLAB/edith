@@ -10,10 +10,6 @@ const get: NextApiHandlerWithAuth = async (req, res) => {
 
   const dir = await Directory.findById(id).lean();
 
-  if (!dir) {
-    throw new ModelNotFoundError("Directory");
-  }
-
   res.json(dir);
 };
 
@@ -22,10 +18,6 @@ const put: NextApiHandlerWithAuth = async (req, res) => {
 
   const dir = await Directory.findById(id);
 
-  if (!dir) {
-    throw new ModelNotFoundError("Directory");
-  }
-
   const { name, ownerIds, prefixPath } = req.body;
 
   if (ownerIds) {
@@ -33,6 +25,7 @@ const put: NextApiHandlerWithAuth = async (req, res) => {
     await dir.save();
   }
 
+  // allows renaming to '' iff prefixPath defined
   if (prefixPath || name) {
     await moveDirectory(dir, { name, prefixPath });
   }

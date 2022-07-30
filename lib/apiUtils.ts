@@ -29,8 +29,10 @@ export const moveDirectory = async (
   { name, prefixPath }: { name: string; prefixPath: string }
 ) => {
   const newParentId = getIdFromPath(prefixPath);
-  const newParentDir = await Directory.findById(newParentId).lean();
-
+  const newParentDir =
+    newParentId === ROOT_DIRECTORY._id
+      ? ROOT_DIRECTORY
+      : await Directory.findById(newParentId).lean();
   if (!newParentDir || getPath(newParentDir) !== prefixPath) {
     throw new InvalidArgsError(["prefixPath"]);
   }
@@ -40,16 +42,16 @@ export const moveDirectory = async (
   const newPath = `${prefixPath},${dir._id}`;
 
   const oldNamedPath = `${dir.namedPrefixPath},${dir.name}`;
-  const newNamedPath = `${getNamedPath(newParentDir)},${dir.name}`;
+  const newNamedPath = `${getNamedPath(newParentDir)},${name}`;
 
-  // const db = await mongoose.createConnection(config.MONGODB_URI).asPromise();
   const db = await dbConnect();
   const session = await db.startSession();
 
   session.startTransaction();
 
-  await session.withTransaction(async () => {
+  try {
     const dirs = await Directory.find({ prefixPath: oldPathRegex }).lean();
+    console.log("need to change dirs", dirs.length);
     const dirUpdates = dirs.map((dir) => {
       const pathUpdate = prefixPath
         ? { prefixPath: dir.prefixPath.replace(oldPath, newPath) }
@@ -69,25 +71,33 @@ export const moveDirectory = async (
         },
       };
     });
-
     await Directory.bulkWrite(dirUpdates);
 
     if (!prefixPath) {
       return;
     }
-
     const exps = await Experiment.find({ prefixPath: oldPathRegex });
+    console.log("need to change exps", exps.length);
     const expUpdates = exps.map((exp) => {
       return {
         updateOne: {
-          filter: { _id: dir._id },
-          update: { prefixPath: dir.prefixPath.replace(oldPath, newPath) },
+          filter: { _id: exp._id },
+          update: { prefixPath: exp.prefixPath.replace(oldPath, newPath) },
         },
       };
     });
-
     await Experiment.bulkWrite(expUpdates);
-  });
+  } catch (err) {
+    session.abortTransaction();
+    await session.endSession();
+    return;
+  }
 
+  dir.name = name;
+  dir.prefixPath = prefixPath;
+  dir.namedPrefixPath = getNamedPath(newParentDir);
+  await dir.save();
+
+  session.commitTransaction();
   await session.endSession();
 };
