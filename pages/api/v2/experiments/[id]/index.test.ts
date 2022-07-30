@@ -7,6 +7,7 @@ import {
   getReqResMocker,
   getValidObjectId,
   getValidPrefixPath,
+  ReqResMocker,
 } from "../../../../../lib/testUtils";
 import Experiment, {
   ArchivedExperiment,
@@ -21,9 +22,16 @@ let token: string;
 
 let connection: any;
 
+let mockPutReqRes: ReqResMocker;
+let mockDelReqRes: ReqResMocker;
+let mockPostReqRes: ReqResMocker;
+
 beforeAll(async () => {
   connection = await dbConnect();
   ({ user, token } = await getCreatedUserAndToken());
+  mockPutReqRes = getReqResMocker("PUT", ENDPOINT, token);
+  mockDelReqRes = getReqResMocker("DELETE", ENDPOINT, token);
+  mockPostReqRes = getReqResMocker("POST", ENDPOINT, token);
 });
 
 afterAll(async () => {
@@ -31,11 +39,12 @@ afterAll(async () => {
 });
 
 describe(`PUT ${ENDPOINT}`, () => {
-  const mockReqRes = getReqResMocker("PUT", ENDPOINT);
-
   it("returns 400 if invalid id", async () => {
-    const { req, res } = mockReqRes(token);
-    req.query.id = "abds";
+    const { req, res } = mockPutReqRes({
+      query: {
+        id: "abds",
+      },
+    });
 
     await handler(req, res);
 
@@ -43,8 +52,11 @@ describe(`PUT ${ENDPOINT}`, () => {
   });
 
   it("returns 404 if bad valid id", async () => {
-    const { req, res } = mockReqRes(token);
-    req.query.id = getValidObjectId();
+    const { req, res } = mockPutReqRes({
+      query: {
+        id: getValidObjectId(),
+      },
+    });
 
     await handler(req, res);
 
@@ -52,8 +64,6 @@ describe(`PUT ${ENDPOINT}`, () => {
   });
 
   it("returns 200 and updates name, enabled, user, prefixpath", async () => {
-    const { req, res } = mockReqRes(token);
-
     const expInfo = {
       name: "exp1",
       user: user._id.toString(),
@@ -68,8 +78,12 @@ describe(`PUT ${ENDPOINT}`, () => {
       prefixPath: getValidPrefixPath(),
     };
 
-    req.query.id = exp._id;
-    req.body = updates;
+    const { req, res } = mockPutReqRes({
+      body: updates,
+      query: {
+        id: exp._id,
+      },
+    });
 
     await handler(req, res);
 
@@ -79,10 +93,8 @@ describe(`PUT ${ENDPOINT}`, () => {
 });
 
 describe(`DELETE ${ENDPOINT}`, () => {
-  const mockReqRes = getReqResMocker("DELETE", ENDPOINT);
-
   it("returns 400 if invalid id", async () => {
-    const { req, res } = mockReqRes(token);
+    const { req, res } = mockDelReqRes();
     req.query.id = "abds";
 
     await handler(req, res);
@@ -91,7 +103,7 @@ describe(`DELETE ${ENDPOINT}`, () => {
   });
 
   it("returns 404 if bad valid id", async () => {
-    const { req, res } = mockReqRes(token);
+    const { req, res } = mockDelReqRes();
     req.query.id = getValidObjectId();
 
     await handler(req, res);
@@ -100,7 +112,7 @@ describe(`DELETE ${ENDPOINT}`, () => {
   });
 
   it("returns 200 if experiment exists", async () => {
-    const { req, res } = mockReqRes(token);
+    const { req, res } = mockDelReqRes();
 
     const expInfo = {
       name: "tobedeleted",
@@ -118,10 +130,8 @@ describe(`DELETE ${ENDPOINT}`, () => {
 });
 
 describe(`POST ${ENDPOINT}`, () => {
-  const mockReqRes = getReqResMocker("POST", ENDPOINT);
-
   it("returns 400 if invalid id", async () => {
-    const { req, res } = mockReqRes(token);
+    const { req, res } = mockPostReqRes();
     req.query.id = "abds";
 
     await handler(req, res);
@@ -130,7 +140,7 @@ describe(`POST ${ENDPOINT}`, () => {
   });
 
   it("returns 404 if bad valid id", async () => {
-    const { req, res } = mockReqRes(token);
+    const { req, res } = mockPostReqRes();
     req.query.id = getValidObjectId();
 
     await handler(req, res);
@@ -139,7 +149,7 @@ describe(`POST ${ENDPOINT}`, () => {
   });
 
   it("returns 200 if archived experiment exists", async () => {
-    const { req, res } = mockReqRes(token);
+    const { req, res } = mockPostReqRes();
 
     const expInfo = {
       name: "tobearchived",
@@ -158,10 +168,9 @@ describe(`POST ${ENDPOINT}`, () => {
 });
 
 describe(`ARCHIVE and RESTORE ${ENDPOINT}`, () => {
-  const archiveReqRes = getReqResMocker("DELETE", ENDPOINT);
-  const restoreReqRes = getReqResMocker("POST", ENDPOINT);
-
   it("archive and restore successfully", async () => {
+    const archiveReqRes = getReqResMocker("DELETE", ENDPOINT, token);
+    const restoreReqRes = getReqResMocker("POST", ENDPOINT, token);
     const expInfo = {
       name: "zombie experiment",
       user: user._id.toString(),
@@ -169,8 +178,11 @@ describe(`ARCHIVE and RESTORE ${ENDPOINT}`, () => {
     };
     const experiment = await Experiment.create(expInfo);
 
-    const { req: archiveReq, res: archiveRes } = archiveReqRes(token);
-    archiveReq.query.id = experiment._id.toString();
+    const { req: archiveReq, res: archiveRes } = archiveReqRes({
+      query: {
+        id: experiment._id.toString(),
+      },
+    });
 
     await handler(archiveReq, archiveRes);
 
@@ -187,8 +199,11 @@ describe(`ARCHIVE and RESTORE ${ENDPOINT}`, () => {
       async () => await Experiment.findById(experiment._id)
     ).rejects.toThrow(new ModelNotFoundError("Experiment"));
 
-    const { req: restoreReq, res: restoreRes } = restoreReqRes(token);
-    restoreReq.query.id = experiment._id.toString();
+    const { req: restoreReq, res: restoreRes } = restoreReqRes({
+      query: {
+        id: experiment._id.toString(),
+      },
+    });
 
     await handler(restoreReq, restoreRes);
 

@@ -3,7 +3,7 @@ jest.mock("../../../../lib/dbConnect");
 import dbConnect from "../../../../lib/dbConnect";
 import {
   getCreatedUserAndToken,
-  getReqResMocker
+  getReqResMocker,
 } from "../../../../lib/testUtils";
 import { UserDoc } from "../../../../models/User";
 import handler from "./index";
@@ -29,10 +29,9 @@ afterAll(async () => {
 });
 
 describe(`GET ${ENDPOINT}`, () => {
-  const mockReqRes = getReqResMocker("GET", ENDPOINT);
-
   it("returns 200 and two users", async () => {
-    const { req, res } = mockReqRes(token);
+    const mockReqRes = getReqResMocker("GET", ENDPOINT, token);
+    const { req, res } = mockReqRes();
 
     await handler(req, res);
     expect(res.statusCode).toBe(200);
@@ -47,14 +46,14 @@ describe(`POST ${ENDPOINT}`, () => {
   const mockReqRes = getReqResMocker("POST", ENDPOINT);
 
   it("returns 403 for non superuser", async () => {
-    const { req, res } = mockReqRes(token);
+    const { req, res } = mockReqRes({ token });
 
     await handler(req, res);
     expect(res.statusCode).toBe(403);
   });
 
   it("returns 400 for if missing email or email or password", async () => {
-    const { req, res } = mockReqRes(superToken);
+    const { req, res } = mockReqRes({ token: superToken });
 
     await handler(req, res);
     expect(res.statusCode).toBe(400);
@@ -82,16 +81,18 @@ describe(`POST ${ENDPOINT}`, () => {
   });
 
   it("returns 200 and created user", async () => {
-    const { req, res } = mockReqRes(superToken);
-
     const email = "bendover@hotmail.com";
     const name = "bendover";
 
-    req.body = {
-      name,
-      email,
-      password: "bendoveriscool",
-    };
+    const { req, res } = mockReqRes({
+      body: {
+        name,
+        email,
+        password: "bendoveriscool",
+      },
+      token: superToken,
+    });
+
     await handler(req, res);
 
     expect(res.statusCode).toBe(200);

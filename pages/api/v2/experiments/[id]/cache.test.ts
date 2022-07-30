@@ -5,6 +5,7 @@ import {
   getCreatedUserAndToken,
   getReqResMocker,
   getValidObjectId,
+  ReqResMocker,
 } from "../../../../../lib/testUtils";
 import { CachedDataEntry } from "../../../../../models/DataEntry";
 import handler from "./cache";
@@ -15,9 +16,14 @@ let token: string;
 
 let connection: any;
 
+let mockGetReqRes: ReqResMocker;
+let mockDelReqRes: ReqResMocker;
+
 beforeAll(async () => {
   connection = await dbConnect();
   ({ token } = await getCreatedUserAndToken());
+  mockGetReqRes = getReqResMocker("GET", ENDPOINT, token);
+  mockDelReqRes = getReqResMocker("DELETE", ENDPOINT, token);
 });
 
 afterAll(async () => {
@@ -25,10 +31,8 @@ afterAll(async () => {
 });
 
 describe(`GET ${ENDPOINT}`, () => {
-  const mockReqRes = getReqResMocker("GET", ENDPOINT);
-
   it("returns 400 if invalid id", async () => {
-    const { req, res } = mockReqRes(token);
+    const { req, res } = mockGetReqRes();
     req.query.id = "abds";
 
     await handler(req, res);
@@ -37,7 +41,7 @@ describe(`GET ${ENDPOINT}`, () => {
   });
 
   it("returns empty list if bad valid id", async () => {
-    const { req, res } = mockReqRes(token);
+    const { req, res } = mockGetReqRes();
     req.query.id = getValidObjectId();
 
     await handler(req, res);
@@ -47,7 +51,7 @@ describe(`GET ${ENDPOINT}`, () => {
   });
 
   it("returns 200 and list containing matches", async () => {
-    const { req, res } = mockReqRes(token);
+    const { req, res } = mockGetReqRes();
 
     const matchEntry = {
       data: [
@@ -82,10 +86,8 @@ describe(`GET ${ENDPOINT}`, () => {
 });
 
 describe(`DELETE ${ENDPOINT}`, () => {
-  const mockReqRes = getReqResMocker("DELETE", ENDPOINT);
-
   it("returns 400 if invalid id", async () => {
-    const { req, res } = mockReqRes(token);
+    const { req, res } = mockDelReqRes();
     req.query.id = "abds";
 
     await handler(req, res);
@@ -94,7 +96,7 @@ describe(`DELETE ${ENDPOINT}`, () => {
   });
 
   it("returns 404 if bad valid id", async () => {
-    const { req, res } = mockReqRes(token);
+    const { req, res } = mockDelReqRes();
     req.query.id = getValidObjectId();
 
     await handler(req, res);
@@ -103,7 +105,7 @@ describe(`DELETE ${ENDPOINT}`, () => {
   });
 
   it("returns 200 and deletes all matching cache entries", async () => {
-    const { req, res } = mockReqRes(token);
+    const { req, res } = mockDelReqRes();
 
     const matchEntry = {
       data: [
@@ -119,6 +121,6 @@ describe(`DELETE ${ENDPOINT}`, () => {
     await handler(req, res);
 
     expect(res.statusCode).toBe(200);
-    expect(res._getJSONData()).toMatchObject({deleted: 2})
+    expect(res._getJSONData()).toMatchObject({ deleted: 2 });
   });
 });

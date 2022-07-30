@@ -17,9 +17,17 @@ let token: string;
 
 let connection: any;
 
+let mockGetReqRes: ReturnType<typeof getReqResMocker>;
+let mockPostReqRes: ReturnType<typeof getReqResMocker>;
+
+// Check out jest execution order if don't know why stuff is in beforeAll
+// https://gist.github.com/tamlyn/dd6d54cdbe6eccd51a4bc61f5844bec4
 beforeAll(async () => {
   connection = await dbConnect();
   ({ user, token } = await getCreatedUserAndToken());
+
+  mockGetReqRes = getReqResMocker("GET", ENDPOINT, token);
+  mockPostReqRes = getReqResMocker("POST", ENDPOINT, token);
 });
 
 afterAll(async () => {
@@ -27,10 +35,8 @@ afterAll(async () => {
 });
 
 describe(`GET ${ENDPOINT}`, () => {
-  const mockReqRes = getReqResMocker("GET", ENDPOINT);
-
   it("returns 200 and empty list", async () => {
-    const { req, res } = mockReqRes(token);
+    const { req, res } = mockGetReqRes({ token });
 
     await handler(req, res);
 
@@ -39,7 +45,7 @@ describe(`GET ${ENDPOINT}`, () => {
   });
 
   it("returns 200 and all experiments", async () => {
-    const { req, res } = mockReqRes(token);
+    const { req, res } = mockGetReqRes();
 
     const exp1 = {
       name: "exp1",
@@ -69,19 +75,17 @@ describe(`GET ${ENDPOINT}`, () => {
 });
 
 describe(`POST ${ENDPOINT}`, () => {
-  const mockReqRes = getReqResMocker("POST", ENDPOINT);
-
   const name = "created exp";
   const prefixPath = getValidPrefixPath();
   const enabled = true;
 
   it("returns 400 if missing name", async () => {
-    const { req, res } = mockReqRes(token);
-
-    req.body = {
-      prefixPath,
-      enabled,
-    };
+    const { req, res } = mockPostReqRes({
+      body: {
+        prefixPath,
+        enabled,
+      },
+    });
 
     await handler(req, res);
 
@@ -89,11 +93,11 @@ describe(`POST ${ENDPOINT}`, () => {
   });
 
   it("returns 200 if name provided", async () => {
-    const { req, res } = mockReqRes(token);
-
-    req.body = {
-      name,
-    };
+    const { req, res } = mockPostReqRes({
+      body: {
+        name,
+      },
+    });
 
     await handler(req, res);
 
@@ -112,13 +116,13 @@ describe(`POST ${ENDPOINT}`, () => {
   });
 
   it("accepts prefixPath and enabled ", async () => {
-    const { req, res } = mockReqRes(token);
-
-    req.body = {
-      name,
-      prefixPath,
-      enabled,
-    };
+    const { req, res } = mockPostReqRes({
+      body: {
+        name,
+        prefixPath,
+        enabled,
+      },
+    });
 
     await handler(req, res);
 

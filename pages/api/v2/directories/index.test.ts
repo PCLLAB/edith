@@ -4,6 +4,7 @@ import dbConnect from "../../../../lib/dbConnect";
 import {
   getCreatedUserAndToken,
   getReqResMocker,
+  ReqResMocker,
 } from "../../../../lib/testUtils";
 import Directory from "../../../../models/Directory";
 import { UserDoc } from "../../../../models/User";
@@ -16,9 +17,14 @@ let token: string;
 
 let connection: any;
 
+let mockGetReqRes: ReqResMocker;
+let mockPostReqRes: ReqResMocker;
+
 beforeAll(async () => {
   connection = await dbConnect();
   ({ user, token } = await getCreatedUserAndToken());
+  mockGetReqRes = getReqResMocker("GET", ENDPOINT, token);
+  mockPostReqRes = getReqResMocker("POST", ENDPOINT, token);
 });
 
 afterAll(async () => {
@@ -26,10 +32,8 @@ afterAll(async () => {
 });
 
 describe(`GET ${ENDPOINT}`, () => {
-  const mockReqRes = getReqResMocker("GET", ENDPOINT);
-
   it("returns 200 and empty list", async () => {
-    const { req, res } = mockReqRes(token);
+    const { req, res } = mockGetReqRes();
 
     await handler(req, res);
 
@@ -38,7 +42,7 @@ describe(`GET ${ENDPOINT}`, () => {
   });
 
   it("returns 200 and all directories", async () => {
-    const { req, res } = mockReqRes(token);
+    const { req, res } = mockGetReqRes();
 
     const dir1 = {
       name: "exp1",
@@ -66,12 +70,10 @@ describe(`GET ${ENDPOINT}`, () => {
 });
 
 describe(`POST ${ENDPOINT}`, () => {
-  const mockReqRes = getReqResMocker("POST", ENDPOINT);
-
   const name = "created dir";
 
   it("returns 400 if missing name", async () => {
-    const { req, res } = mockReqRes(token);
+    const { req, res } = mockPostReqRes();
 
     req.body = {};
 
@@ -81,7 +83,7 @@ describe(`POST ${ENDPOINT}`, () => {
   });
 
   it("returns 200 if name provided", async () => {
-    const { req, res } = mockReqRes(token);
+    const { req, res } = mockPostReqRes();
 
     req.body = {
       name,
@@ -103,8 +105,6 @@ describe(`POST ${ENDPOINT}`, () => {
   });
 
   it("accepts parent", async () => {
-    const { req, res } = mockReqRes(token);
-
     const dir1 = {
       name: "exp1",
       ownerIds: [user._id.toString()],
@@ -113,10 +113,12 @@ describe(`POST ${ENDPOINT}`, () => {
     const parent = new Directory(dir1);
     await parent.save();
 
-    req.body = {
-      name,
-      parent: parent._id.toString(),
-    };
+    const { req, res } = mockPostReqRes({
+      body: {
+        name,
+        parent: parent._id.toString(),
+      },
+    });
 
     await handler(req, res);
 

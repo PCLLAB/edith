@@ -1,14 +1,43 @@
-import { NextApiRequest, NextApiResponse } from "next/types";
+import { NextApiHandler, NextApiRequest, NextApiResponse } from "next/types";
 import { createRequest, createResponse, RequestMethod } from "node-mocks-http";
 import jwt from "jsonwebtoken";
 import User from "../models/User";
 import config from "./config";
 
+interface MockRequestOptions {
+  body?: NextApiRequest["body"];
+  query?: NextApiRequest["query"];
+  token?: string;
+}
+
+export type ReqResMocker = ReturnType<typeof getReqResMocker>;
+export type ApiCallMocker = ReturnType<typeof getApiCallMocker>;
+
+export const getApiCallMocker = (
+  method: RequestMethod,
+  /** Url is needed to determined if auth required */
+  url: string,
+  handler: NextApiHandler,
+  defaultToken?: string
+) => {
+  const reqResMocker = getReqResMocker(method, url, defaultToken);
+
+  return async (opt?: MockRequestOptions) => {
+    const { req, res } = reqResMocker(opt);
+    await handler(req, res);
+    return res._getJSONData();
+  };
+};
+
 export const getReqResMocker =
-  (method: RequestMethod, url: string) => (token?: string) => {
+  (method: RequestMethod, url: string, defaultToken?: string) =>
+  (opt?: MockRequestOptions) => {
+    const token = opt?.token ?? defaultToken;
     const req = createRequest<NextApiRequest>({
       method,
       url,
+      body: opt?.body,
+      query: opt?.query,
       headers: token
         ? {
             authorization: `Bearer ${token}`,

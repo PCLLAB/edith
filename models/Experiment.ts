@@ -1,5 +1,4 @@
 import mongoose, { Types } from "mongoose";
-import { ModelNotFoundError } from "../lib/initHandler";
 import { throwIfNull } from "../lib/throwIfNull";
 
 /** CHANGELOG

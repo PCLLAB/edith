@@ -9,6 +9,9 @@ import Experiment from "../../../../models/Experiment";
  *
  * GET - /api/v2/experiments (Get array of experiments)
  */
+
+export const ENDPOINT = "/api/v2/experiments";
+
 const get: NextApiHandlerWithAuth = async (req, res) => {
   const experiments = await Experiment.find().lean();
   res.json(experiments);

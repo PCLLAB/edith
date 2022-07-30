@@ -39,6 +39,13 @@ describe(`JWT TOKEN AUTH initHandler`, () => {
     expect(res.statusCode).toBe(200);
   });
 
+  it("returns 200 if has token on path without auth required", async () => {
+    const { req, res } = mockPublicReqRes({ token });
+
+    await handler(req, res);
+    expect(res.statusCode).toBe(200);
+  });
+
   it("returns 401 if lacking token on authorized path", async () => {
     const { req, res } = mockReqRes();
 
@@ -47,7 +54,7 @@ describe(`JWT TOKEN AUTH initHandler`, () => {
   });
 
   it("returns 200 if token on authorized path", async () => {
-    const { req, res } = mockReqRes(token);
+    const { req, res } = mockReqRes({ token });
 
     await handler(req, res);
     expect(res.statusCode).toBe(200);
@@ -67,7 +74,7 @@ describe(`MATCH ACTION initHandler`, () => {
   };
 
   it("returns 405 for invalid methods", async () => {
-    const { req, res } = mockReqRes(token);
+    const { req, res } = mockReqRes({ token });
     const handler = initHandler({});
 
     req.method = "GET";
@@ -96,7 +103,7 @@ describe(`MATCH ACTION initHandler`, () => {
   });
 
   it("returns 200 for valid methods", async () => {
-    const { req, res } = mockReqRes(token);
+    const { req, res } = mockReqRes({ token });
     const handler = initHandler(matcher);
 
     req.method = "GET";

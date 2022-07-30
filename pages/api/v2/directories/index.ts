@@ -10,6 +10,8 @@ import Directory from "../../../../models/Directory";
  *
  * GET - /api/v2/directories (Get array of directories)
  */
+export const ENDPOINT = "/api/v2/directories";
+
 const get: NextApiHandlerWithAuth = async (req, res) => {
   const dirs = await Directory.find().lean();
   res.json(dirs);

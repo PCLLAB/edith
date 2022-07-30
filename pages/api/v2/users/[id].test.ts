@@ -4,6 +4,7 @@ import dbConnect from "../../../../lib/dbConnect";
 import {
   getCreatedUserAndToken,
   getReqResMocker,
+  ReqResMocker,
 } from "../../../../lib/testUtils";
 import { UserDoc } from "../../../../models/User";
 
@@ -14,15 +15,20 @@ const ENDPOINT = "/api/v2/users/[id]";
 let user: UserDoc;
 let token: string;
 
-let superUser: UserDoc;
 let superToken: string;
 
 let connection: any;
 
+let mockGetReqRes: ReqResMocker;
+let mockDelReqRes: ReqResMocker;
+
 beforeAll(async () => {
   connection = await dbConnect();
   ({ user, token } = await getCreatedUserAndToken());
-  ({ user: superUser, token: superToken } = await getCreatedUserAndToken(true));
+  ({ token: superToken } = await getCreatedUserAndToken(true));
+
+  mockGetReqRes = getReqResMocker("GET", ENDPOINT, token);
+  mockDelReqRes = getReqResMocker("DELETE", ENDPOINT);
 });
 
 afterAll(async () => {
@@ -30,11 +36,12 @@ afterAll(async () => {
 });
 
 describe(`GET ${ENDPOINT}`, () => {
-  const mockReqRes = getReqResMocker("GET", ENDPOINT);
-
   it("returns 200 and user", async () => {
-    const { req, res } = mockReqRes(token);
-    req.query.id = user._id.toString();
+    const { req, res } = mockGetReqRes({
+      query: {
+        id: user._id.toString(),
+      },
+    });
 
     await handler(req, res);
     expect(res.statusCode).toBe(200);
@@ -44,8 +51,11 @@ describe(`GET ${ENDPOINT}`, () => {
   });
 
   it("returns 404 if bad valid objectid", async () => {
-    const { req, res } = mockReqRes(token);
-    req.query.id = "123456789012"
+    const { req, res } = mockGetReqRes({
+      query: {
+        id: "123456789012",
+      },
+    });
 
     await handler(req, res);
     expect(res.statusCode).toBe(404);
@@ -59,35 +69,39 @@ describe(`PUT ${ENDPOINT}`, () => {
   let putSuperUser: UserDoc;
   let putSuperToken: string;
 
+  const mockReqRes = getReqResMocker("PUT", ENDPOINT);
+
   beforeAll(async () => {
     ({ user: putUser, token: putToken } = await getCreatedUserAndToken());
     ({ user: putSuperUser, token: putSuperToken } =
       await getCreatedUserAndToken(true));
   });
 
-  const mockReqRes = getReqResMocker("PUT", ENDPOINT);
-
   it("returns 403 if not own user and not superuser", async () => {
-    const { req, res } = mockReqRes(putToken);
-    req.query.id = putSuperUser._id.toString();
+    const { req, res } = mockReqRes({
+      query: { id: putSuperUser._id.toString() },
+      token: putToken,
+    });
 
     await handler(req, res);
     expect(res.statusCode).toBe(403);
   });
 
   it("returns 403 if change superuser without permission", async () => {
-    const { req, res } = mockReqRes(putToken);
-    req.query.id = putUser._id.toString();
-
-    req.body = {
-      superuser: true,
-    };
+    const { req, res } = mockReqRes({
+      query: { id: putUser._id.toString() },
+      body: {
+        superuser: true,
+      },
+      token: putToken,
+    });
 
     await handler(req, res);
     expect(res.statusCode).toBe(403);
   });
 
   // Not actually possible, see implementation
+  // jwt auth protects paths
   // it("returns 404 if user does not exist", async () => {
   //   const { req, res } = mockReqRes(token);
   //   req.query.id = "somerandomid";
@@ -97,16 +111,19 @@ describe(`PUT ${ENDPOINT}`, () => {
   // });
 
   it("returns 200 if own user", async () => {
-    const { req, res } = mockReqRes(putToken);
-    req.query.id = putUser._id.toString();
-
     const newName = "fred";
     const newEmail = "fred@fred.com";
 
-    req.body = {
-      name: newName,
-      email: newEmail,
-    };
+    const { req, res } = mockReqRes({
+      query: {
+        id: putUser._id.toString(),
+      },
+      body: {
+        name: newName,
+        email: newEmail,
+      },
+      token: putToken,
+    });
 
     await handler(req, res);
     expect(res.statusCode).toBe(200);
@@ -119,18 +136,21 @@ describe(`PUT ${ENDPOINT}`, () => {
   });
 
   it("returns 200 if superuser", async () => {
-    const { req, res } = mockReqRes(putSuperToken);
-    req.query.id = putUser._id.toString();
-
     const newName = "bread";
     const newEmail = "bread@bread.com";
     const newSuperuser = true;
 
-    req.body = {
-      name: newName,
-      email: newEmail,
-      superuser: newSuperuser,
-    };
+    const { req, res } = mockReqRes({
+      query: {
+        id: putUser._id.toString(),
+      },
+      body: {
+        name: newName,
+        email: newEmail,
+        superuser: newSuperuser,
+      },
+      token: putSuperToken,
+    });
 
     await handler(req, res);
     expect(res.statusCode).toBe(200);
@@ -144,27 +164,36 @@ describe(`PUT ${ENDPOINT}`, () => {
 });
 
 describe(`DELETE ${ENDPOINT}`, () => {
-  const mockReqRes = getReqResMocker("DELETE", ENDPOINT);
-
   it("returns 403 if not superuser", async () => {
-    const { req, res } = mockReqRes(token);
-    req.query.id = user._id.toString();
+    const { req, res } = mockDelReqRes({
+      query: {
+        id: user._id.toString(),
+      },
+      token,
+    });
 
     await handler(req, res);
     expect(res.statusCode).toBe(403);
   });
 
   it("returns 404 if bad valid objectid", async () => {
-    const { req, res } = mockReqRes(superToken);
-    req.query.id = "123456789012"
-
+    const { req, res } = mockDelReqRes({
+      query: {
+        id: "123456789012",
+      },
+      token: superToken,
+    });
     await handler(req, res);
     expect(res.statusCode).toBe(404);
   });
-  
+
   it("returns 200 if superuser", async () => {
-    const { req, res } = mockReqRes(superToken);
-    req.query.id = user._id.toString();
+    const { req, res } = mockDelReqRes({
+      query: {
+        id: user._id.toString(),
+      },
+      token: superToken,
+    });
 
     await handler(req, res);
     expect(res.statusCode).toBe(200);
