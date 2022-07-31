@@ -25,9 +25,11 @@ const put: NextApiHandlerWithAuth = async (req, res) => {
     await dir.save();
   }
 
-  // allows renaming to '' iff prefixPath defined
   if (prefixPath || name) {
-    await moveDirectory(dir, { name, prefixPath });
+    await moveDirectory(dir, {
+      name: name ?? dir.name,
+      prefixPath: prefixPath ?? dir.prefixPath,
+    });
   }
 
   res.json(dir);

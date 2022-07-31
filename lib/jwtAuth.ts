@@ -15,10 +15,10 @@ const jwtMiddleware = expressjwt({
 
     if (!_id) return true;
 
-    //TODO this throws is user doesn't exist, is that right?
+    //TODO this throws if user doesn't exist, is that right?
     try {
-      // const user = await User.findById(_id).lean();
-      // if (superuser !== user.superuser) return true;
+      const user = await User.findById(_id).lean();
+      if (superuser !== user.superuser) return true;
     } catch (e) {
       return true;
     }

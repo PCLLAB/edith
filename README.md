@@ -1,5 +1,7 @@
 # bedi
 
+![Test Workflow](https://github.com/zhengkyl/bedi/actions/workflows/test.yml/badge.svg)
+
 better experiment data interface
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
@@ -27,6 +29,7 @@ yarn dev
 The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
 ### Testing
+
 https://www.paigeniedringhaus.com/blog/how-to-unit-test-next-js-api-routes-with-typescript
 
 I'm using MongoMemoryServer, and creating a new one in each test file to avoid race conditions.
@@ -36,7 +39,6 @@ I'm using MongoMemoryServer, and creating a new one in each test file to avoid r
 https://github.com/uptick/react-keyed-file-browser
 
 An interesting alternative is https://github.com/TimboKZ/Chonky, but it doesn't support filetree view
-
 
 ## Mongoose
 

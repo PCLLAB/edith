@@ -1,6 +1,7 @@
 import mongoose, { Types } from "mongoose";
 import bcrypt from "bcrypt";
 import { throwIfNull } from "../lib/throwIfNull";
+import { ModelNotFoundError } from "../lib/initHandler";
 
 export interface UserDoc<IdType = Types.ObjectId, DateType = Date> {
   _id: IdType;
@@ -62,20 +63,15 @@ UserSchema.pre("save", function () {
   user.password = hash;
 });
 
-UserSchema.plugin(throwIfNull("User"));
+UserSchema.post(
+  ["findOne", "findOneAndUpdate", "findOneAndDelete", "findOneAndRemove"],
+  (doc) => {
+    if (!doc) throw new ModelNotFoundError("User");
+  }
+);
 
-// UserSchema.methods.comparePassword = function (
-//   candidatePassword: string,
-//   callback
-// ) {
-//   bcrypt.compare(candidatePassword, this.password, function (err, isMatch) {
-//     if (err) {
-//       return callback(err);
-//     }
-
-//     callback(null, isMatch);
-//   });
-// };
+// this causes test to fail for some reason, so explicitly duplicated above
+// UserSchema.plugin(throwIfNull("User"));
 
 export default mongoose.models.User || mongoose.model("User", UserSchema);
 

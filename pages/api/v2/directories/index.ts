@@ -1,3 +1,4 @@
+import { getIdFromPath } from "../../../../lib/apiUtils";
 import initHandler, {
   MissingArgsError,
   ModelNotFoundError,
@@ -18,14 +19,14 @@ const get: NextApiHandlerWithAuth = async (req, res) => {
 };
 
 const post: NextApiHandlerWithAuth = async (req, res) => {
-  const { name, parent } = req.body;
+  const { name, prefixPath } = req.body;
   const user = req.auth._id;
 
   if (!name) {
     throw new MissingArgsError(["name"]);
   }
 
-  if (!parent) {
+  if (!prefixPath) {
     const dir = new Directory({
       name,
       ownerIds: [user],
@@ -34,9 +35,9 @@ const post: NextApiHandlerWithAuth = async (req, res) => {
     return res.json(dir);
   }
 
-  const parentDir = await Directory.findById(parent).lean();
+  const parentId = getIdFromPath(prefixPath);
+  const parentDir = await Directory.findById(parentId).lean();
 
-  const prefixPath = `${parentDir.prefixPath},${parentDir._id}`;
   const namedPrefixPath = `${parentDir.namedPrefixPath},${parentDir.name}`;
 
   const dir = new Directory({

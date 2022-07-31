@@ -1,8 +1,5 @@
 jest.mock("../../../../../lib/dbConnect");
-// jest.unmock("../../../../../lib/throwIfNull");
-// jest.unmock("../../../../../models/Experiment");
-// jest.unmock("../../../../../models/User");
-jest.unmock("../../../../../lib/throwIfNull");
+
 import { getNamedPath, getPath } from "../../../../../lib/apiUtils";
 import dbConnect from "../../../../../lib/dbConnect";
 import {
@@ -13,14 +10,10 @@ import {
   getValidObjectId,
   ReqResMocker,
 } from "../../../../../lib/testUtils";
-import Directory, { ROOT_DIRECTORY } from "../../../../../models/Directory";
-import { UserDoc } from "../../../../../models/User";
-import handler from "./index";
-import dirHandler, { ENDPOINT as DIR_ENDPOINT } from "../index";
+import { ROOT_DIRECTORY } from "../../../../../models/Directory";
 import expHandler, { ENDPOINT as EXP_ENDPOINT } from "../../experiments/index";
-import Experiment from "../../../../../models/Experiment";
-import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
-import { MockRequest } from "node-mocks-http";
+import dirHandler, { ENDPOINT as DIR_ENDPOINT } from "../index";
+import handler from "./index";
 
 const ENDPOINT = "/api/v2/directories/[id]";
 
@@ -115,19 +108,9 @@ describe(`PUT ${ENDPOINT}`, () => {
         name: "dir1",
       },
     });
-    console.log(dir);
 
     const newName = "better name";
     const { req, res } = mockPutReqRes({
-      query: {
-        id: dir._id,
-      },
-      body: {
-        name: newName,
-      },
-    });
-
-    console.log({
       query: {
         id: dir._id,
       },
@@ -162,7 +145,7 @@ describe(`PUT ${ENDPOINT}`, () => {
     const newPrefixPath = getPath(ROOT_DIRECTORY);
 
     const { req, res } = mockPutReqRes({
-      query: { id: dir1.id },
+      query: { id: dir2._id },
       body: {
         prefixPath: newPrefixPath,
       },
@@ -173,7 +156,7 @@ describe(`PUT ${ENDPOINT}`, () => {
     expect(res.statusCode).toBe(200);
     expect(res._getJSONData()).toMatchObject({
       prefixPath: newPrefixPath,
-      namedPrefixPath: `${getNamedPath(ROOT_DIRECTORY)},${dir2.name}`,
+      namedPrefixPath: getNamedPath(ROOT_DIRECTORY),
     });
   });
 
@@ -207,7 +190,7 @@ describe(`PUT ${ENDPOINT}`, () => {
     const parent = await mockPostDirectory({
       body: {
         name: "parent directory",
-        parent: grandparent._id,
+        prefixPath: getPath(grandparent),
       },
     });
 
@@ -221,7 +204,7 @@ describe(`PUT ${ENDPOINT}`, () => {
     const you = await mockPostDirectory({
       body: {
         name: "main directory",
-        parent: parent._id,
+        prefixPath: getPath(parent),
       },
     });
 
@@ -235,7 +218,7 @@ describe(`PUT ${ENDPOINT}`, () => {
     const child = await mockPostDirectory({
       body: {
         name: "child directory",
-        parent: you._id,
+        prefixPath: getPath(you),
       },
     });
 
@@ -259,7 +242,7 @@ describe(`PUT ${ENDPOINT}`, () => {
 
     await handler(req, res);
 
-    expect(res._getJSONData().statusCode).toBe(200);
+    expect(res.statusCode).toBe(200);
 
     const mockGetDirectories = getApiCallMocker(
       "GET",
@@ -309,7 +292,11 @@ describe(`PUT ${ENDPOINT}`, () => {
     expect(allExps).toEqual(
       expect.arrayContaining([
         expect.objectContaining(uncle),
-        expect.objectContaining(sibling),
+        expect.objectContaining({
+          ...sibling,
+          updatedAt: expect.not.stringMatching(sibling.updatedAt),
+          prefixPath: `${getPath(ROOT_DIRECTORY)},${parent._id}`,
+        }),
         expect.objectContaining({
           ...otherchild,
           updatedAt: expect.not.stringMatching(otherchild.updatedAt),
@@ -318,7 +305,7 @@ describe(`PUT ${ENDPOINT}`, () => {
         expect.objectContaining({
           ...grandchild,
           updatedAt: expect.not.stringMatching(grandchild.updatedAt),
-          prefixPath: `${getPath(ROOT_DIRECTORY)},${parent._id},${you._id}${
+          prefixPath: `${getPath(ROOT_DIRECTORY)},${parent._id},${you._id},${
             child._id
           }`,
         }),

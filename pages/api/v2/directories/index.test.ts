@@ -104,7 +104,7 @@ describe(`POST ${ENDPOINT}`, () => {
     );
   });
 
-  it("accepts parent", async () => {
+  it("accepts prefixPath", async () => {
     const dir1 = {
       name: "exp1",
       ownerIds: [user._id.toString()],
@@ -116,7 +116,7 @@ describe(`POST ${ENDPOINT}`, () => {
     const { req, res } = mockPostReqRes({
       body: {
         name,
-        parent: parent._id.toString(),
+        prefixPath: `r,${parent._id.toString()}`,
       },
     });
 
