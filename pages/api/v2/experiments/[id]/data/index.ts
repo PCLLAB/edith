@@ -1,11 +1,11 @@
 import initHandler, {
   ModelNotFoundError,
-  NextApiHandlerWithAuth,
+  TypedApiHandlerWithAuth,
 } from "../../../../../../lib/initHandler";
 import Experiment from "../../../../../../models/Experiment";
 import { modelForCollection } from "../../../../../../models/DataEntry";
 
-const get: NextApiHandlerWithAuth = async (req, res) => {
+const get: TypedApiHandlerWithAuth = async (req, res) => {
   const id = req.query.id;
 
   const expObj = await Experiment.findById(id).lean();
@@ -16,7 +16,7 @@ const get: NextApiHandlerWithAuth = async (req, res) => {
   res.json(data);
 };
 
-const post: NextApiHandlerWithAuth = async (req, res) => {
+const post: TypedApiHandlerWithAuth = async (req, res) => {
   const id = req.query.id;
 
   const expObj = await Experiment.findById(id).lean();

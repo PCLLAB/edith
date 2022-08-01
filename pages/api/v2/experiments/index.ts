@@ -1,6 +1,6 @@
 import initHandler, {
   MissingArgsError,
-  NextApiHandlerWithAuth,
+  TypedApiHandlerWithAuth,
 } from "../../../../lib/initHandler";
 import Experiment from "../../../../models/Experiment";
 
@@ -12,12 +12,12 @@ import Experiment from "../../../../models/Experiment";
 
 export const ENDPOINT = "/api/v2/experiments";
 
-const get: NextApiHandlerWithAuth = async (req, res) => {
+const get: TypedApiHandlerWithAuth = async (req, res) => {
   const experiments = await Experiment.find().lean();
   res.json(experiments);
 };
 
-const post: NextApiHandlerWithAuth = async (req, res) => {
+const post: TypedApiHandlerWithAuth = async (req, res) => {
   const { name, prefixPath, enabled } = req.body;
   const user = req.auth._id;
 

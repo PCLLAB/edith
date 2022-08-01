@@ -1,17 +1,17 @@
 import initHandler, {
   ModelNotFoundError,
-  NextApiHandlerWithAuth,
+  TypedApiHandlerWithAuth,
 } from "../../../../../lib/initHandler";
 import { CachedDataEntry } from "../../../../../models/DataEntry";
 
-const get: NextApiHandlerWithAuth = async (req, res) => {
+const get: TypedApiHandlerWithAuth = async (req, res) => {
   const id = req.query.id;
   const data = await CachedDataEntry.find({ experiment: id });
 
   res.json(data);
 };
 
-const del: NextApiHandlerWithAuth = async (req, res) => {
+const del: TypedApiHandlerWithAuth = async (req, res) => {
   const id = req.query.id;
   const deleteResult = await CachedDataEntry.deleteMany({ experiment: id });
 

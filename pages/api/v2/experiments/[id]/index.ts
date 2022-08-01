@@ -1,6 +1,6 @@
 import initHandler, {
   ModelNotFoundError,
-  NextApiHandlerWithAuth,
+  TypedApiHandlerWithAuth,
 } from "../../../../../lib/initHandler";
 import Experiment, {
   ArchivedExperiment,
@@ -10,7 +10,7 @@ import Experiment, {
 // This reflects the collaborative way this is used
 // Maybe do a share, private, public thing?
 
-const put: NextApiHandlerWithAuth = async (req, res) => {
+const put: TypedApiHandlerWithAuth = async (req, res) => {
   const id = req.query.id;
 
   const { name, enabled, user, prefixPath } = req.body;
@@ -28,7 +28,7 @@ const put: NextApiHandlerWithAuth = async (req, res) => {
   res.json(experiment);
 };
 
-const del: NextApiHandlerWithAuth = async (req, res) => {
+const del: TypedApiHandlerWithAuth = async (req, res) => {
   const id = req.query.id;
 
   const experiment = await Experiment.findById(id);
@@ -47,7 +47,7 @@ const del: NextApiHandlerWithAuth = async (req, res) => {
   });
 };
 
-const post: NextApiHandlerWithAuth = async (req, res) => {
+const post: TypedApiHandlerWithAuth = async (req, res) => {
   const id = req.query.id;
 
   const archivedExp = await ArchivedExperiment.findById(id);

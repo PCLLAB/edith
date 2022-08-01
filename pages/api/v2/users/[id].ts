@@ -1,16 +1,16 @@
 import initHandler, {
   ModelNotFoundError,
-  NextApiHandlerWithAuth,
+  TypedApiHandlerWithAuth,
   UserPermissionError,
 } from "../../../../lib/initHandler";
 import User from "../../../../models/User";
 
-const get: NextApiHandlerWithAuth = async (req, res) => {
+const get: TypedApiHandlerWithAuth = async (req, res) => {
   const user = await User.findById(req.query.id).lean();
   return res.json(user);
 };
 
-const put: NextApiHandlerWithAuth = async (req, res) => {
+const put: TypedApiHandlerWithAuth = async (req, res) => {
   const id = req.query.id;
 
   if (req.auth._id !== id && !req.auth.superuser) {
@@ -37,7 +37,7 @@ const put: NextApiHandlerWithAuth = async (req, res) => {
   return res.json(user);
 };
 
-const del: NextApiHandlerWithAuth = async (req, res) => {
+const del: TypedApiHandlerWithAuth = async (req, res) => {
   if (!req.auth.superuser) {
     throw new UserPermissionError();
   }

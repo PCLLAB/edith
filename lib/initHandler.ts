@@ -1,19 +1,37 @@
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
+
 import { UserJson } from "../models/User";
 import dbConnect from "./dbConnect";
 import jwtAuth from "./jwtAuth";
 
-export interface NextApiHandlerWithAuth {
-  (req: NextApiRequestWithAuth, res: NextApiResponse): void | Promise<void>;
-}
+export type TypedApiHandlerWithAuth<
+  T extends RequestOverride | void = void,
+  U = any
+> = (
+  req: T extends void ? TypedApiRequestWithAuth : TypedApiRequestWithAuth & T,
+  res: NextApiResponse<U>
+) => void | Promise<void>;
+
+export type TypedApiHandler<
+  T extends RequestOverride | void = void,
+  U = any
+> = (
+  req: T extends void ? NextApiRequest : NextApiRequest & T,
+  res: NextApiResponse<U>
+) => void | Promise<void>;
 
 /** Includes `auth` field as decoded jwt payload */
-interface NextApiRequestWithAuth extends NextApiRequest {
+interface TypedApiRequestWithAuth extends NextApiRequest {
   auth: UserJson;
 }
 
+interface RequestOverride {
+  query?: NextApiRequest["query"];
+  body?: NextApiRequest["body"];
+}
+
 export type MatchAction = Partial<
-  Record<HTTP_METHOD, NextApiHandlerWithAuth | NextApiHandler>
+  Record<HTTP_METHOD, TypedApiHandlerWithAuth<any> | TypedApiHandler>
 >;
 
 /**
@@ -28,6 +46,23 @@ const initHandler = (matcher: MatchAction) => {
 
       // run global middleware here
       await jwtAuth(req, res);
+
+      // const parseString = (s: string) => {
+      //   if (s === "true") return true;
+      //   if (s === "false") return false;
+      //   const intVal = parseInt(s);
+      //   if (intVal !== NaN) return intVal;
+
+      //   return s;
+      // };
+
+      // Object.entries(req.query).forEach(
+      //   ([key, value]) =>
+      //     (req.query[key] =
+      //       typeof value === "string"
+      //         ? parseString(value)
+      //         : value.map((item) => parseString(item)))
+      // );
 
       if (req.method && matcher.hasOwnProperty(req.method)) {
         // @ts-ignore: `req.auth` is added by jwtAuth

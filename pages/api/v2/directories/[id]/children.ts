@@ -1,11 +1,16 @@
 import initHandler, {
-  NextApiHandlerWithAuth,
+  TypedApiHandlerWithAuth,
 } from "../../../../../lib/initHandler";
 
-const get: NextApiHandlerWithAuth = async (req, res) => {
-  const id = req.query.id;
+type QueryProps = {
+  id: string;
+  depth: string;
+  experiments?: any;
+  directories?: boolean;
+};
 
-  const { depth = 1, experiments = true, directories = true } = req.query;
+const get: TypedApiHandlerWithAuth = async (req, res) => {
+  const { id, depth = "1", experiments = true, directories = true } = req.query;
 };
 
 export default initHandler({

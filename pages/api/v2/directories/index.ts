@@ -1,8 +1,7 @@
 import { getIdFromPath } from "../../../../lib/apiUtils";
 import initHandler, {
   MissingArgsError,
-  ModelNotFoundError,
-  NextApiHandlerWithAuth,
+  TypedApiHandlerWithAuth,
 } from "../../../../lib/initHandler";
 import Directory from "../../../../models/Directory";
 
@@ -13,12 +12,12 @@ import Directory from "../../../../models/Directory";
  */
 export const ENDPOINT = "/api/v2/directories";
 
-const get: NextApiHandlerWithAuth = async (req, res) => {
+const get: TypedApiHandlerWithAuth = async (req, res) => {
   const dirs = await Directory.find().lean();
   res.json(dirs);
 };
 
-const post: NextApiHandlerWithAuth = async (req, res) => {
+const post: TypedApiHandlerWithAuth = async (req, res) => {
   const { name, prefixPath } = req.body;
   const user = req.auth._id;
 

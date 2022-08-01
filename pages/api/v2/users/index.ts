@@ -2,16 +2,16 @@ import { NextApiResponse } from "next";
 import initHandler, {
   UserPermissionError,
   MissingArgsError,
-  NextApiHandlerWithAuth,
+  TypedApiHandlerWithAuth,
 } from "../../../../lib/initHandler";
 import User from "../../../../models/User";
 
-const get: NextApiHandlerWithAuth = async (req, res) => {
+const get: TypedApiHandlerWithAuth = async (req, res) => {
   const users = await User.find().lean();
   return res.json(users);
 };
 
-const post: NextApiHandlerWithAuth = async (req, res) => {
+const post: TypedApiHandlerWithAuth = async (req, res) => {
   if (!req.auth.superuser) {
     throw new UserPermissionError();
   }

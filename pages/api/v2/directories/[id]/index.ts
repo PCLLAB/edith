@@ -1,11 +1,17 @@
 import { moveDirectory } from "../../../../../lib/apiUtils";
 import initHandler, {
-  ModelNotFoundError,
-  NextApiHandlerWithAuth,
+  TypedApiHandlerWithAuth,
 } from "../../../../../lib/initHandler";
 import Directory from "../../../../../models/Directory";
 
-const get: NextApiHandlerWithAuth = async (req, res) => {
+type QueryProps = {
+  id: string;
+};
+
+const get: TypedApiHandlerWithAuth<{ query: QueryProps }> = async (
+  req,
+  res
+) => {
   const id = req.query.id;
 
   const dir = await Directory.findById(id).lean();
@@ -13,7 +19,16 @@ const get: NextApiHandlerWithAuth = async (req, res) => {
   res.json(dir);
 };
 
-const put: NextApiHandlerWithAuth = async (req, res) => {
+type PutBody = {
+  name: string;
+  ownerIds: string[];
+  prefixPath: string;
+};
+
+const put: TypedApiHandlerWithAuth<{
+  query: QueryProps;
+  body: PutBody;
+}> = async (req, res) => {
   const id = req.query.id;
 
   const dir = await Directory.findById(id);
@@ -35,7 +50,7 @@ const put: NextApiHandlerWithAuth = async (req, res) => {
   res.json(dir);
 };
 
-const del: NextApiHandlerWithAuth = async (req, res) => {
+const del: TypedApiHandlerWithAuth = async (req, res) => {
   const id = req.query.id;
 };
 
