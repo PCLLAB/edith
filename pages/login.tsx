@@ -28,7 +28,7 @@ const Login: NextPage = () => {
 
   const onSubmit = useCallback(
     async (formData: UsersAuthPostSignature["body"]) => {
-      const data = await fetcher({
+      const data = await fetcher<UsersAuthPostSignature>({
         url: "/api/v2/users/auth",
         method: "POST",
         body: formData,

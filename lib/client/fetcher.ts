@@ -1,23 +1,47 @@
-import { UsersAuthPostSignature } from "../../pages/api/v2/users/auth";
-import { ApiSignature, SignatureTree, Tree, tree2, Users } from "../common/api";
+import { ApiSignature } from "../common/api";
+import { DistributiveOmit } from "../common/tsUtils";
 
-type DistributiveOmit<T, K extends keyof any> = T extends any
-  ? Omit<T, K>
-  : never;
+export type Fetcher<T extends ApiSignature> = (
+  s: DistributiveOmit<T, "data">
+) => Promise<T["data"]>;
 
-// export const fetcher = (
-//   signature: DistributiveOmit<UsersAuthPostSignature, "data">
-// ) => {
-export const fetcher = async (
-  // signature: DistributiveOmit<Users | UsersAuthPostSignature, "data">
-  signature: Users | UsersAuthPostSignature
+export const fetcher = async <T extends ApiSignature>(
+  signature: DistributiveOmit<T, "data">
 ) => {
-  // TODO replace [] with query field
-  // Add remaining queries as actual query props
+  let finalUrl: string = signature.url;
+  let firstQuery = true;
+
   if ("query" in signature) {
+    Object.entries(signature.query).forEach(([param, value]) => {
+      const token = `[${param}]`;
+      if (finalUrl.includes(token)) {
+        finalUrl = finalUrl.replaceAll(token, value.toString());
+      } else {
+        const joiner = firstQuery ? "?" : "&";
+        const expression = value ? `=${value}` : "";
+
+        finalUrl = `${finalUrl}${joiner}${param}${expression}`;
+        firstQuery = false;
+      }
+    });
   }
-  // header type if necessary
-  const res = await fetch(signature);
-  const t = `${signature.url} + ${signature.method}`;
-  return res.json() as Promise<SignatureTree[typeof t]>;
+
+  let headers;
+  let body;
+  if ("body" in signature) {
+    headers = {
+      "Content-Type": "application/json",
+    };
+    body = JSON.stringify(body);
+  }
+
+  const res = await fetch(finalUrl, {
+    method: signature.method,
+    headers,
+    body,
+  });
+
+  // if (!res.ok) return null;
+
+  return res.json() as Promise<T["data"]>;
 };

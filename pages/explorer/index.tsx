@@ -1,8 +1,10 @@
 import type { NextPage } from "next";
-import Head from "next/head";
-import Image from "next/image";
 import dynamic from "next/dynamic";
-import { useEffect } from "react";
+import useSWR from "swr";
+
+import { fetcher } from "../../lib/client/fetcher";
+import { UsersGetSignature } from "../api/v2/users";
+
 // import FileNav from "../components/FileNav";
 
 const FileNav = dynamic(() => import("../../components/FileNav"), {
@@ -10,6 +12,10 @@ const FileNav = dynamic(() => import("../../components/FileNav"), {
 });
 
 const Explorer: NextPage = () => {
+  const { data, error } = useSWR(
+    { url: "/api/v2/users" as const, method: "GET" as const },
+    (data) => fetcher<UsersGetSignature>(data)
+  );
   return (
     <div>
       <FileNav />
