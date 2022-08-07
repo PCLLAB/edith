@@ -18,6 +18,10 @@
   },
   "//": "lodash included because error importing lodash.flow as lodash/flow in react-keyed-file-browser",
   "dependencies": {
+    "@emotion/react": "^11.10.0",
+    "@emotion/styled": "^11.10.0",
+    "@mui/icons-material": "^5.8.4",
+    "@mui/material": "^5.9.3",
     "bcrypt": "^5.0.1",
     "express-jwt": "^7.5.2",
     "jsonwebtoken": "^8.5.1",
@@ -27,6 +31,7 @@
     "next": "12.1.5",
     "react": "18.0.0",
     "react-dom": "18.0.0",
+    "react-hook-form": "^7.34.0",
     "react-keyed-file-browser": "^1.14.0"
   },
   "devDependencies": {

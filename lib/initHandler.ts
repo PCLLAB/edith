@@ -9,7 +9,7 @@ export type TypedApiHandlerWithAuth<
   U = any
 > = (
   req: T extends void ? TypedApiRequestWithAuth : TypedApiRequestWithAuth & T,
-  res: NextApiResponse<U>
+  res: NextApiResponse<FieldsWithAny<U>>
 ) => void | Promise<void>;
 
 export type TypedApiHandler<
@@ -17,8 +17,24 @@ export type TypedApiHandler<
   U = any
 > = (
   req: T extends void ? NextApiRequest : NextApiRequest & T,
-  res: NextApiResponse<U>
+  res: NextApiResponse<FieldsWithAny<U>>
 ) => void | Promise<void>;
+
+/**
+ * We want to type the response data for API calls.
+ * We can't check the type passed into res.json(),
+ * because it will change after getting stringified + parsed
+ *
+ * eg. ObjectId -> after stringified + parsed -> string
+ */
+type FieldsWithAny<T> = {
+  [Property in keyof T]: any;
+};
+
+/** Query fields are converted to string or string[] when parsing */
+export type StringifyFields<T> = {
+  [Property in keyof T]: T[Property] extends any[] ? string[] : string;
+};
 
 /** Includes `auth` field as decoded jwt payload */
 interface TypedApiRequestWithAuth extends NextApiRequest {
@@ -46,23 +62,6 @@ const initHandler = (matcher: MatchAction) => {
 
       // run global middleware here
       await jwtAuth(req, res);
-
-      // const parseString = (s: string) => {
-      //   if (s === "true") return true;
-      //   if (s === "false") return false;
-      //   const intVal = parseInt(s);
-      //   if (intVal !== NaN) return intVal;
-
-      //   return s;
-      // };
-
-      // Object.entries(req.query).forEach(
-      //   ([key, value]) =>
-      //     (req.query[key] =
-      //       typeof value === "string"
-      //         ? parseString(value)
-      //         : value.map((item) => parseString(item)))
-      // );
 
       if (req.method && matcher.hasOwnProperty(req.method)) {
         // @ts-ignore: `req.auth` is added by jwtAuth

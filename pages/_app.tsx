@@ -1,8 +1,28 @@
-// import '../styles/globals.css'
-import type { AppProps } from 'next/app'
+import type { AppProps } from "next/app";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
 
-function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
+const darkTheme = createTheme({
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          // Disable always uppercase
+          textTransform: "none",
+        },
+      },
+    },
+  },
+  palette: {
+    mode: "dark",
+  },
+});
+
+export default function MyApp({ Component, pageProps }: AppProps) {
+  return (
+    <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
+      <Component {...pageProps} />
+    </ThemeProvider>
+  );
 }
-
-export default MyApp

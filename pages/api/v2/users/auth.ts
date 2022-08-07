@@ -4,12 +4,26 @@ import jwt from "jsonwebtoken";
 
 import initHandler, {
   MissingArgsError,
-  ModelNotFoundError,
+  TypedApiHandler,
 } from "../../../../lib/initHandler";
 import config from "../../../../lib/config";
-import User, { RawUnsafeUserDoc } from "../../../../models/User";
+import User, { RawUnsafeUserDoc, UserJson } from "../../../../models/User";
 
-const post: NextApiHandler = async (req, res) => {
+export type PostReqBody = {
+  email: string;
+  password: string;
+};
+
+export type PostResBody = {
+  message: string;
+  token: string;
+  user: UserJson;
+};
+
+const post: TypedApiHandler<{ body: PostReqBody }, PostResBody> = async (
+  req,
+  res
+) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
