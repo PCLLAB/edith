@@ -4,14 +4,29 @@ import initHandler, {
   MissingArgsError,
   TypedApiHandlerWithAuth,
 } from "../../../../lib/initHandler";
-import User from "../../../../models/User";
+import User, { UserJson } from "../../../../models/User";
 
-const get: TypedApiHandlerWithAuth = async (req, res) => {
+export const ENDPOINT = "/api/v2/users";
+
+export type UsersGetSignature = {
+  url: typeof ENDPOINT;
+  method: "GET";
+  data: UserJson[];
+};
+
+const get: TypedApiHandlerWithAuth<UsersGetSignature> = async (req, res) => {
   const users = await User.find().lean();
   return res.json(users);
 };
 
-const post: TypedApiHandlerWithAuth = async (req, res) => {
+export type UsersPostSignature = {
+  url: typeof ENDPOINT;
+  method: "POST";
+  body: { email: string; password: string; name: string; superuser: boolean };
+  data: UserJson;
+};
+
+const post: TypedApiHandlerWithAuth<UsersPostSignature> = async (req, res) => {
   if (!req.auth.superuser) {
     throw new UserPermissionError();
   }

@@ -8,9 +8,7 @@ import {
   ReqResMocker,
 } from "../../../../../lib/testUtils";
 import { CachedDataEntry } from "../../../../../models/DataEntry";
-import handler from "./cache";
-
-const ENDPOINT = "/api/v2/experiments/[id]/cache";
+import handler, { ENDPOINT } from "./cache";
 
 let token: string;
 

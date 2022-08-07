@@ -1,11 +1,27 @@
 import initHandler, {
-  ModelNotFoundError,
   TypedApiHandlerWithAuth,
 } from "../../../../../../lib/initHandler";
 import Experiment from "../../../../../../models/Experiment";
-import { modelForCollection } from "../../../../../../models/DataEntry";
+import {
+  DataEntryJson,
+  modelForCollection,
+} from "../../../../../../models/DataEntry";
 
-const get: TypedApiHandlerWithAuth = async (req, res) => {
+export const ENDPOINT = "/api/v2/experiments/[id]/data";
+
+export type ExperimentsIdDataGetSignature = {
+  url: typeof ENDPOINT;
+  method: "GET";
+  query: {
+    id: string;
+  };
+  data: DataEntryJson[];
+};
+
+const get: TypedApiHandlerWithAuth<ExperimentsIdDataGetSignature> = async (
+  req,
+  res
+) => {
   const id = req.query.id;
 
   const expObj = await Experiment.findById(id).lean();
@@ -16,7 +32,22 @@ const get: TypedApiHandlerWithAuth = async (req, res) => {
   res.json(data);
 };
 
-const post: TypedApiHandlerWithAuth = async (req, res) => {
+export type ExperimentsIdDataPostSignature = {
+  url: typeof ENDPOINT;
+  method: "POST";
+  query: {
+    id: string;
+  };
+  body: any;
+  data: {
+    message: string;
+  };
+};
+
+const post: TypedApiHandlerWithAuth<ExperimentsIdDataPostSignature> = async (
+  req,
+  res
+) => {
   const id = req.query.id;
 
   const expObj = await Experiment.findById(id).lean();

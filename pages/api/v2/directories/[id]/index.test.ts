@@ -13,9 +13,7 @@ import {
 import { ROOT_DIRECTORY } from "../../../../../models/Directory";
 import expHandler, { ENDPOINT as EXP_ENDPOINT } from "../../experiments/index";
 import dirHandler, { ENDPOINT as DIR_ENDPOINT } from "../index";
-import handler from "./index";
-
-const ENDPOINT = "/api/v2/directories/[id]";
+import handler, { ENDPOINT } from "./index";
 
 let token: string;
 

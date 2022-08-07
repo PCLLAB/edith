@@ -8,9 +8,7 @@ import {
 } from "../../../../lib/testUtils";
 import { UserDoc } from "../../../../models/User";
 
-import handler from "./[id]";
-
-const ENDPOINT = "/api/v2/users/[id]";
+import handler, { ENDPOINT } from "./[id]";
 
 let user: UserDoc;
 let token: string;

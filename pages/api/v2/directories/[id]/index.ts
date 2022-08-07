@@ -2,13 +2,20 @@ import { moveDirectory } from "../../../../../lib/apiUtils";
 import initHandler, {
   TypedApiHandlerWithAuth,
 } from "../../../../../lib/initHandler";
-import Directory from "../../../../../models/Directory";
+import Directory, { DirectoryJson } from "../../../../../models/Directory";
 
-type QueryProps = {
-  id: string;
+export const ENDPOINT = "/api/v2/directories/[id]";
+
+export type DirectoriesIdGetSignature = {
+  url: typeof ENDPOINT;
+  method: "GET";
+  query: {
+    id: string;
+  };
+  data: DirectoryJson;
 };
 
-const get: TypedApiHandlerWithAuth<{ query: QueryProps }> = async (
+const get: TypedApiHandlerWithAuth<DirectoriesIdGetSignature> = async (
   req,
   res
 ) => {
@@ -25,10 +32,24 @@ type PutBody = {
   prefixPath: string;
 };
 
-const put: TypedApiHandlerWithAuth<{
-  query: QueryProps;
-  body: PutBody;
-}> = async (req, res) => {
+export type DirectoriesIdPutSignature = {
+  url: typeof ENDPOINT;
+  method: "PUT";
+  query: {
+    id: string;
+  };
+  body: {
+    name?: string;
+    ownerIds?: string[];
+    prefixPath?: string;
+  };
+  data: DirectoryJson;
+};
+
+const put: TypedApiHandlerWithAuth<DirectoriesIdPutSignature> = async (
+  req,
+  res
+) => {
   const id = req.query.id;
 
   const dir = await Directory.findById(id);
@@ -50,7 +71,21 @@ const put: TypedApiHandlerWithAuth<{
   res.json(dir);
 };
 
-const del: TypedApiHandlerWithAuth = async (req, res) => {
+export type DirectoriesIdDeleteSignature = {
+  url: typeof ENDPOINT;
+  method: "DELETE";
+  query: {
+    id: string;
+  };
+  data: {
+    message: string;
+  };
+};
+
+const del: TypedApiHandlerWithAuth<DirectoriesIdDeleteSignature> = async (
+  req,
+  res
+) => {
   const id = req.query.id;
 };
 

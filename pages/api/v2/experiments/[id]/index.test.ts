@@ -13,9 +13,7 @@ import Experiment, {
   ArchivedExperiment,
 } from "../../../../../models/Experiment";
 import { UserDoc } from "../../../../../models/User";
-import handler from "./index";
-
-const ENDPOINT = "/api/v2/experiments/[id]";
+import handler, { ENDPOINT } from "./index";
 
 let user: UserDoc;
 let token: string;

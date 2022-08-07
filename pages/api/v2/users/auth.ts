@@ -9,21 +9,24 @@ import initHandler, {
 import config from "../../../../lib/config";
 import User, { RawUnsafeUserDoc, UserJson } from "../../../../models/User";
 
-export type PostReqBody = {
-  email: string;
-  password: string;
+export const ENDPOINT = "/api/v2/users/auth";
+
+export type UsersAuthPostSignature = {
+  url: typeof ENDPOINT;
+  method: "POST";
+  body: {
+    email: string;
+    password: string;
+  };
+  data: {
+    message: string;
+    token: string;
+    user: UserJson;
+  };
 };
 
-export type PostResBody = {
-  message: string;
-  token: string;
-  user: UserJson;
-};
-
-const post: TypedApiHandler<{ body: PostReqBody }, PostResBody> = async (
-  req,
-  res
-) => {
+const post: TypedApiHandler<UsersAuthPostSignature> = async (req, res) => {
+  req.query;
   const { email, password } = req.body;
 
   if (!email || !password) {

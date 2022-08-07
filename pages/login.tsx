@@ -9,11 +9,11 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 
-import { UserService } from "../services/users";
-import { PostReqBody } from "./api/v2/users/auth";
 import Image from "next/image";
 import betty from "../public/betty.png";
 import Alert from "@mui/material/Alert";
+import { UsersAuthPostSignature } from "./api/v2/users/auth";
+import { fetcher } from "../lib/client/fetcher";
 
 const Login: NextPage = () => {
   const router = useRouter();
@@ -24,17 +24,25 @@ const Login: NextPage = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<PostReqBody>();
+  } = useForm<UsersAuthPostSignature["body"]>();
 
-  const onSubmit = useCallback(async (formData: PostReqBody) => {
-    const data = await UserService.login(formData);
-    // Do a fast client-side transition to the already prefetched page
-    if (data) {
-      router.push("/explorer");
-    } else {
-      setShowAlert(true);
-    }
-  }, []);
+  const onSubmit = useCallback(
+    async (formData: UsersAuthPostSignature["body"]) => {
+      const data = await fetcher({
+        url: "/api/v2/users/auth",
+        method: "POST",
+        body: formData,
+      });
+
+      // Do a fast client-side transition to the already prefetched page
+      if (data) {
+        router.push("/explorer");
+      } else {
+        setShowAlert(true);
+      }
+    },
+    []
+  );
 
   const onRequestAccess = useCallback(() => {
     // TODO

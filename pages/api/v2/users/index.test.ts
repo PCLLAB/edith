@@ -6,9 +6,7 @@ import {
   getReqResMocker,
 } from "../../../../lib/testUtils";
 import { UserDoc } from "../../../../models/User";
-import handler from "./index";
-
-const ENDPOINT = "/api/v2/users";
+import handler, { ENDPOINT } from "./index";
 
 let user: UserDoc;
 let token: string;

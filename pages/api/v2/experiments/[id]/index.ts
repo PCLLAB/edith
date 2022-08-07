@@ -4,13 +4,34 @@ import initHandler, {
 } from "../../../../../lib/initHandler";
 import Experiment, {
   ArchivedExperiment,
+  ExperimentJson,
 } from "../../../../../models/Experiment";
+import { UserJson } from "../../../../../models/User";
 
+export const ENDPOINT = "/api/v2/experiments/[id]";
 // These endpoints allow any user to update any experiment
 // This reflects the collaborative way this is used
 // Maybe do a share, private, public thing?
 
-const put: TypedApiHandlerWithAuth = async (req, res) => {
+export type ExperimentsIdPutSignature = {
+  url: typeof ENDPOINT;
+  method: "PUT";
+  query: {
+    id: string;
+  };
+  body: {
+    name?: string;
+    enabled?: boolean;
+    user?: UserJson;
+    prefixPath?: string;
+  };
+  data: ExperimentJson;
+};
+
+const put: TypedApiHandlerWithAuth<ExperimentsIdPutSignature> = async (
+  req,
+  res
+) => {
   const id = req.query.id;
 
   const { name, enabled, user, prefixPath } = req.body;
@@ -28,7 +49,21 @@ const put: TypedApiHandlerWithAuth = async (req, res) => {
   res.json(experiment);
 };
 
-const del: TypedApiHandlerWithAuth = async (req, res) => {
+export type ExperimentsIdDeleteSignature = {
+  url: typeof ENDPOINT;
+  method: "DELETE";
+  query: {
+    id: string;
+  };
+  data: {
+    message: string;
+  };
+};
+
+const del: TypedApiHandlerWithAuth<ExperimentsIdDeleteSignature> = async (
+  req,
+  res
+) => {
   const id = req.query.id;
 
   const experiment = await Experiment.findById(id);
@@ -47,7 +82,21 @@ const del: TypedApiHandlerWithAuth = async (req, res) => {
   });
 };
 
-const post: TypedApiHandlerWithAuth = async (req, res) => {
+export type ExperimentsIdPostSignature = {
+  url: typeof ENDPOINT;
+  method: "POST";
+  query: {
+    id: string;
+  };
+  data: {
+    message: string;
+  };
+};
+
+const post: TypedApiHandlerWithAuth<ExperimentsIdPostSignature> = async (
+  req,
+  res
+) => {
   const id = req.query.id;
 
   const archivedExp = await ArchivedExperiment.findById(id);

@@ -1,23 +1,21 @@
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 
 import { UserJson } from "../models/User";
+import { HTTP_METHOD } from "./common";
+import { ApiSignature } from "./common/api";
 import dbConnect from "./dbConnect";
 import jwtAuth from "./jwtAuth";
 
-export type TypedApiHandlerWithAuth<
-  T extends RequestOverride | void = void,
-  U = any
-> = (
-  req: T extends void ? TypedApiRequestWithAuth : TypedApiRequestWithAuth & T,
-  res: NextApiResponse<FieldsWithAny<U>>
+export type TypedApiHandlerWithAuth<T extends ApiSignature> = (
+  /** Includes `auth` field as decoded jwt payload */
+  req: Omit<NextApiRequest, "body"> &
+    Pick<T, ("query" | "body") & keyof T> & { auth: UserJson },
+  res: NextApiResponse<FieldsWithAny<T["data"]>>
 ) => void | Promise<void>;
 
-export type TypedApiHandler<
-  T extends RequestOverride | void = void,
-  U = any
-> = (
-  req: T extends void ? NextApiRequest : NextApiRequest & T,
-  res: NextApiResponse<FieldsWithAny<U>>
+export type TypedApiHandler<T extends ApiSignature> = (
+  req: Omit<NextApiRequest, "body"> & Pick<T, ("query" | "body") & keyof T>,
+  res: NextApiResponse<FieldsWithAny<T["data"]>>
 ) => void | Promise<void>;
 
 /**
@@ -36,18 +34,8 @@ export type StringifyFields<T> = {
   [Property in keyof T]: T[Property] extends any[] ? string[] : string;
 };
 
-/** Includes `auth` field as decoded jwt payload */
-interface TypedApiRequestWithAuth extends NextApiRequest {
-  auth: UserJson;
-}
-
-interface RequestOverride {
-  query?: NextApiRequest["query"];
-  body?: NextApiRequest["body"];
-}
-
 export type MatchAction = Partial<
-  Record<HTTP_METHOD, TypedApiHandlerWithAuth<any> | TypedApiHandler>
+  Record<HTTP_METHOD, TypedApiHandlerWithAuth<any> | TypedApiHandler<any>>
 >;
 
 /**
@@ -78,8 +66,6 @@ const initHandler = (matcher: MatchAction) => {
     }
   };
 };
-
-type HTTP_METHOD = "GET" | "POST" | "PUT" | "DELETE";
 
 export class NotAllowedMethodError extends Error {
   methods: HTTP_METHOD[];

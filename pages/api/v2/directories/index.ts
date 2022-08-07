@@ -3,21 +3,38 @@ import initHandler, {
   MissingArgsError,
   TypedApiHandlerWithAuth,
 } from "../../../../lib/initHandler";
-import Directory from "../../../../models/Directory";
+import Directory, { DirectoryJson } from "../../../../models/Directory";
 
-/**
- * Get All Directories
- *
- * GET - /api/v2/directories (Get array of directories)
- */
 export const ENDPOINT = "/api/v2/directories";
 
-const get: TypedApiHandlerWithAuth = async (req, res) => {
+export type DirectoriesGetSignature = {
+  url: typeof ENDPOINT;
+  method: "GET";
+  data: DirectoryJson[];
+};
+
+const get: TypedApiHandlerWithAuth<DirectoriesGetSignature> = async (
+  req,
+  res
+) => {
   const dirs = await Directory.find().lean();
   res.json(dirs);
 };
 
-const post: TypedApiHandlerWithAuth = async (req, res) => {
+export type DirectoriesPostSignature = {
+  url: typeof ENDPOINT;
+  method: "POST";
+  body: {
+    name: string;
+    prefixPath?: string;
+  };
+  data: DirectoryJson;
+};
+
+const post: TypedApiHandlerWithAuth<DirectoriesPostSignature> = async (
+  req,
+  res
+) => {
   const { name, prefixPath } = req.body;
   const user = req.auth._id;
 

@@ -2,16 +2,48 @@ import initHandler, {
   ModelNotFoundError,
   TypedApiHandlerWithAuth,
 } from "../../../../../lib/initHandler";
-import { CachedDataEntry } from "../../../../../models/DataEntry";
+import {
+  CachedDataEntry,
+  CachedDataEntryJson,
+} from "../../../../../models/DataEntry";
 
-const get: TypedApiHandlerWithAuth = async (req, res) => {
+export const ENDPOINT = "/api/v2/experiments/[id]/cache";
+
+export type ExperimentsIdCacheGetSignature = {
+  url: typeof ENDPOINT;
+  method: "GET";
+  query: {
+    id: string;
+  };
+  data: CachedDataEntryJson;
+};
+
+const get: TypedApiHandlerWithAuth<ExperimentsIdCacheGetSignature> = async (
+  req,
+  res
+) => {
   const id = req.query.id;
-  const data = await CachedDataEntry.find({ experiment: id });
+  const data = await CachedDataEntry.findOne({ experiment: id });
 
   res.json(data);
 };
 
-const del: TypedApiHandlerWithAuth = async (req, res) => {
+export type ExperimentsIdCacheDeleteSignature = {
+  url: typeof ENDPOINT;
+  method: "DELETE";
+  query: {
+    id: string;
+  };
+  data: {
+    message: string;
+    deleted: number;
+  };
+};
+
+const del: TypedApiHandlerWithAuth<ExperimentsIdCacheDeleteSignature> = async (
+  req,
+  res
+) => {
   const id = req.query.id;
   const deleteResult = await CachedDataEntry.deleteMany({ experiment: id });
 

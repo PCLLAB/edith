@@ -2,22 +2,39 @@ import initHandler, {
   MissingArgsError,
   TypedApiHandlerWithAuth,
 } from "../../../../lib/initHandler";
-import Experiment from "../../../../models/Experiment";
-
-/**
- * Get All Experiments
- *
- * GET - /api/v2/experiments (Get array of experiments)
- */
+import Experiment, { ExperimentJson } from "../../../../models/Experiment";
 
 export const ENDPOINT = "/api/v2/experiments";
 
-const get: TypedApiHandlerWithAuth = async (req, res) => {
+export type ExperimentsGetSignature = {
+  url: typeof ENDPOINT;
+  method: "GET";
+  data: ExperimentJson[];
+};
+
+const get: TypedApiHandlerWithAuth<ExperimentsGetSignature> = async (
+  req,
+  res
+) => {
   const experiments = await Experiment.find().lean();
   res.json(experiments);
 };
 
-const post: TypedApiHandlerWithAuth = async (req, res) => {
+export type ExperimentsPostSignature = {
+  url: typeof ENDPOINT;
+  method: "POST";
+  body: {
+    name: string;
+    prefixPath: string;
+    enabled: boolean;
+  };
+  data: ExperimentJson;
+};
+
+const post: TypedApiHandlerWithAuth<ExperimentsPostSignature> = async (
+  req,
+  res
+) => {
   const { name, prefixPath, enabled } = req.body;
   const user = req.auth._id;
 

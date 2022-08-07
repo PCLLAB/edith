@@ -2,9 +2,7 @@ jest.mock("../../../../lib/dbConnect");
 import dbConnect from "../../../../lib/dbConnect";
 import { getReqResMocker } from "../../../../lib/testUtils";
 import User from "../../../../models/User";
-import handler from "./auth";
-
-const ENDPOINT = "/api/v2/users/auth";
+import handler, { ENDPOINT } from "./auth";
 
 describe(`POST ${ENDPOINT}`, () => {
   const name = "Benjamin Dover";
