@@ -1,7 +1,7 @@
-import CustomHeader from "./react-keyed-file-browser/MyTableHeader";
+import { TableHeader } from "./react-keyed-file-browser/TableHeader";
 import FileBrowser from "react-keyed-file-browser";
-import "react-keyed-file-browser/dist/react-keyed-file-browser.css";
-
+import { Filter } from "./react-keyed-file-browser/Filter";
+// import "react-keyed-file-browser/dist/react-keyed-file-browser.css";
 const testfiles = [
   {
     key: "photos/animals/cat in a hat.png",
@@ -40,8 +40,10 @@ const testfiles = [
 const FileNav = () => {
   return (
     <FileBrowser
+      asdfasf
       files={testfiles}
-      headerRenderer={CustomHeader}
+      filterRenderer={Filter}
+      headerRenderer={TableHeader}
       onCreateFolder={() => console.log("create")}
       onCreateFiles={() => console.log("createfiles")}
       onMoveFolder={() => console.log("move folder")}

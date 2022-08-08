@@ -27,10 +27,10 @@ interface MyRawTableHeaderProps {
 /**
  * This is a slightly refactored version of the RawTableHeader
  * from "react-keyed-file-browser"
- * 
+ *
  * It allows for custom header columns as child elements, i.e list of <th>
  */
-const MyRawTableHeader = (
+const RawTableHeader = (
   props: React.PropsWithChildren<MyRawTableHeaderProps>
 ) => {
   const header = (
@@ -52,11 +52,8 @@ const MyRawTableHeader = (
   return isDropTarget ? props.connectDropTarget(header) : header;
 };
 
-const MyTableHeader = DropTarget(
+export const TableHeader = DropTarget(
   ["file", "folder", NativeTypes.FILE],
   BaseFileConnectors.targetSource,
   BaseFileConnectors.targetCollect
-)(MyRawTableHeader);
-
-export default MyTableHeader;
-export { MyRawTableHeader };
+)(RawTableHeader);
