@@ -1,7 +1,23 @@
 import { TableHeader } from "./react-keyed-file-browser/TableHeader";
 import FileBrowser from "react-keyed-file-browser";
 import { Filter } from "./react-keyed-file-browser/Filter";
+import { DirectoryJson } from "../models/Directory";
+import { ExperimentJson } from "../models/Experiment";
+import { Common } from "../lib/common/tsUtils";
 // import "react-keyed-file-browser/dist/react-keyed-file-browser.css";
+
+declare module "react-keyed-file-browser" {
+  export interface FileBrowserFile
+    extends Common<DirectoryJson, ExperimentJson> {
+    // _id: string;
+    // prefixPath:
+    // name: string;
+    // modified: number;
+    // size: number;
+    // url?: string;
+  }
+}
+
 const testfiles = [
   {
     key: "photos/animals/cat in a hat.png",
