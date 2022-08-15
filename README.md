@@ -6,6 +6,12 @@ better experiment data interface
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+### Progress
+
+Login Page
+:------------------------------------:
+![Login page](./readme/bedi_login.png)
+
 ## Motivation
 
 The goal is to create a type-safe, maintainable, and easily deployable application to manage experiments data.
