@@ -1,9 +1,10 @@
 jest.mock("./dbConnect");
 
-import dbConnect from "./dbConnect";
-import { getCreatedUserAndToken, getReqResMocker } from "./testUtils";
-import initHandler from "./initHandler";
 import { NextApiRequest, NextApiResponse } from "next";
+
+import dbConnect from "./dbConnect";
+import initHandler from "./initHandler";
+import { getCreatedUserAndToken, getReqResMocker } from "../testUtils";
 
 const PRIVATE_ENDPOINT = "/api/v2";
 const PUBLIC_ENDPOINT = "/api/v2/users/auth";

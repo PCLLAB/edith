@@ -1,7 +1,8 @@
 import { expressjwt } from "express-jwt";
 import { JwtPayload } from "jsonwebtoken";
-import User from "../models/User";
-import config from "./config";
+
+import User from "../../models/User";
+import config from "../config";
 import initMiddleware from "./initMiddleware";
 
 const jwtMiddleware = expressjwt({

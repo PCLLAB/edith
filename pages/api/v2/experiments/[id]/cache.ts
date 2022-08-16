@@ -1,7 +1,7 @@
 import initHandler, {
   ModelNotFoundError,
   TypedApiHandlerWithAuth,
-} from "../../../../../lib/initHandler";
+} from "../../../../../lib/server/initHandler";
 import {
   CachedDataEntry,
   CachedDataEntryJson,

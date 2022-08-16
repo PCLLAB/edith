@@ -1,7 +1,7 @@
-import { moveDirectory } from "../../../../../lib/apiUtils";
+import { moveDirectory } from "../../../../../lib/server/apiUtils";
 import initHandler, {
   TypedApiHandlerWithAuth,
-} from "../../../../../lib/initHandler";
+} from "../../../../../lib/server/initHandler";
 import Directory, { DirectoryJson } from "../../../../../models/Directory";
 
 export const ENDPOINT = "/api/v2/directories/[id]";

@@ -1,7 +1,7 @@
 import initHandler, {
   MissingArgsError,
   TypedApiHandlerWithAuth,
-} from "../../../../lib/initHandler";
+} from "../../../../lib/server/initHandler";
 import Experiment, { ExperimentJson } from "../../../../models/Experiment";
 
 export const ENDPOINT = "/api/v2/experiments";

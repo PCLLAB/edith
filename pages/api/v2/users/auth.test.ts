@@ -1,5 +1,5 @@
-jest.mock("../../../../lib/dbConnect");
-import dbConnect from "../../../../lib/dbConnect";
+jest.mock("../../../../lib/server/dbConnect");
+import dbConnect from "../../../../lib/server/dbConnect";
 import { getReqResMocker } from "../../../../lib/testUtils";
 import User from "../../../../models/User";
 import handler, { ENDPOINT } from "./auth";

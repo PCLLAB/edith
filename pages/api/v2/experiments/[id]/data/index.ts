@@ -1,6 +1,6 @@
 import initHandler, {
   TypedApiHandlerWithAuth,
-} from "../../../../../../lib/initHandler";
+} from "../../../../../../lib/server/initHandler";
 import Experiment from "../../../../../../models/Experiment";
 import {
   DataEntryJson,

@@ -1,7 +1,6 @@
 import mongoose, { Types } from "mongoose";
 import bcrypt from "bcrypt";
-import { throwIfNull } from "../lib/throwIfNull";
-import { ModelNotFoundError } from "../lib/initHandler";
+import { ModelNotFoundError } from "../lib/server/initHandler";
 
 export interface UserDoc<IdType = Types.ObjectId, DateType = Date> {
   _id: IdType;

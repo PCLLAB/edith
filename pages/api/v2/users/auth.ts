@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 import initHandler, {
   MissingArgsError,
   TypedApiHandler,
-} from "../../../../lib/initHandler";
+} from "../../../../lib/server/initHandler";
 import config from "../../../../lib/config";
 import User, { RawUnsafeUserDoc, UserJson } from "../../../../models/User";
 

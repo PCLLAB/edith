@@ -1,13 +1,13 @@
+import { Types } from "mongoose";
+
 import Directory, {
   DirectoryDoc,
   DirectoryJson,
   ROOT_DIRECTORY,
-} from "../models/Directory";
-import Experiment from "../models/Experiment";
+} from "../../models/Directory";
+import Experiment from "../../models/Experiment";
 import dbConnect from "./dbConnect";
 import { InvalidArgsError } from "./initHandler";
-
-import mongoose, { Types } from "mongoose";
 
 export const getIdFromPath = (path: string) => path.split(",").pop() as string;
 

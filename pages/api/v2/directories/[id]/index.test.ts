@@ -1,7 +1,7 @@
-jest.mock("../../../../../lib/dbConnect");
+jest.mock("../../../../../lib/server/dbConnect");
 
-import { getNamedPath, getPath } from "../../../../../lib/apiUtils";
-import dbConnect from "../../../../../lib/dbConnect";
+import { getNamedPath, getPath } from "../../../../../lib/server/apiUtils";
+import dbConnect from "../../../../../lib/server/dbConnect";
 import {
   ApiCallMocker,
   getApiCallMocker,

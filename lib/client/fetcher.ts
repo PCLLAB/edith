@@ -1,5 +1,5 @@
-import { ApiSignature } from "../common/api";
 import { DistributiveOmit } from "../common/tsUtils";
+import { ApiSignature } from "../common/types";
 
 export type Fetcher<T extends ApiSignature> = (
   s: DistributiveOmit<T, "data">

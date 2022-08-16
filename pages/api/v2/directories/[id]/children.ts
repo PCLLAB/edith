@@ -1,7 +1,7 @@
-import { getPath } from "../../../../../lib/apiUtils";
+import { getPath } from "../../../../../lib/server/apiUtils";
 import initHandler, {
   TypedApiHandlerWithAuth,
-} from "../../../../../lib/initHandler";
+} from "../../../../../lib/server/initHandler";
 import Directory, { DirectoryJson } from "../../../../../models/Directory";
 import Experiment, { ExperimentJson } from "../../../../../models/Experiment";
 

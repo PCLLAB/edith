@@ -73,3 +73,5 @@ type DirectoriesId =
   | DirectoriesIdGetSignature
   | DirectoriesIdDeleteSignature;
 type DirectoriesIdChildren = DirectoriesIdChildrenGetSignature;
+
+export type HTTP_METHOD = "GET" | "POST" | "PUT" | "DELETE";

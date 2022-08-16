@@ -1,6 +1,5 @@
 import mongoose, { Types } from "mongoose";
-import { ModelNotFoundError } from "../lib/initHandler";
-import { throwIfNull } from "../lib/throwIfNull";
+import { throwIfNull } from "../lib/server/throwIfNull";
 
 export interface DirectoryDoc<IdType = Types.ObjectId, DateType = Date> {
   _id: IdType;

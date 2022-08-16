@@ -2,7 +2,7 @@ import initHandler, {
   ModelNotFoundError,
   TypedApiHandlerWithAuth,
   UserPermissionError,
-} from "../../../../lib/initHandler";
+} from "../../../../lib/server/initHandler";
 import User, { UserJson } from "../../../../models/User";
 
 export const ENDPOINT = "/api/v2/users/[id]";

@@ -1,5 +1,5 @@
 import mongoose, { Types } from "mongoose";
-import { throwIfNull } from "../lib/throwIfNull";
+import { throwIfNull } from "../lib/server/throwIfNull";
 
 /** CHANGELOG
  * Removed fields:

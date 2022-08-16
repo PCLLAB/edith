@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+
 import { ModelNotFoundError, ModelType } from "./initHandler";
 
 export const throwIfNull = (model: ModelType) => (schema: mongoose.Schema) => {

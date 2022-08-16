@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-import config from "./config";
+
+import config from "../config";
 
 // https://github.com/vercel/next.js/blob/canary/examples/with-mongodb-mongoose/lib/dbConnect.js
 
