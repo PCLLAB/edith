@@ -1,5 +1,4 @@
 import initHandler, {
-  ModelNotFoundError,
   TypedApiHandlerWithAuth,
 } from "../../../../../lib/server/initHandler";
 import Experiment, {

@@ -1,5 +1,5 @@
+import { MissingArgsError } from "../../../../lib/server/errors";
 import initHandler, {
-  MissingArgsError,
   TypedApiHandlerWithAuth,
 } from "../../../../lib/server/initHandler";
 import Experiment, { ExperimentJson } from "../../../../models/Experiment";

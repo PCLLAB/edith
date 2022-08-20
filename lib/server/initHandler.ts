@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { UserJson } from "../../models/User";
 import { ApiSignature, HTTP_METHOD } from "../common/types";
 import dbConnect from "./dbConnect";
+import { NotAllowedMethodError } from "./errors";
 import jwtAuth from "./jwtAuth";
 
 export type TypedApiHandlerWithAuth<T extends ApiSignature> = (
@@ -18,8 +19,8 @@ export type TypedApiHandler<T extends ApiSignature> = (
 ) => void | Promise<void>;
 
 /**
- * We want to type the response data for API calls.
- * We can't check the type passed into res.json(),
+ * We want to type the response data shape for API calls.
+ * We can't check the field types passed into res.json(),
  * because it will change after getting stringified + parsed
  *
  * eg. ObjectId -> after stringified + parsed -> string
@@ -65,55 +66,6 @@ const initHandler = (matcher: MatchAction) => {
     }
   };
 };
-
-export class NotAllowedMethodError extends Error {
-  methods: HTTP_METHOD[];
-
-  // Method from NextApiRequest is optional string
-  constructor(method: string | undefined, methods: HTTP_METHOD[]) {
-    super(`${method} method not allowed`);
-    this.name = "NotAllowedMethodError";
-    this.methods = methods;
-  }
-}
-
-export class MissingArgsError extends Error {
-  constructor(args: string[]) {
-    super(`Missing args: ${args}`);
-    this.name = "MissingArgsError";
-  }
-}
-
-export class InvalidArgsError extends Error {
-  constructor(args: string[]) {
-    super(`Invalid args: ${args}`);
-    this.name = "InvalidArgsError";
-  }
-}
-
-export type ModelType =
-  | "Directory"
-  | "Experiment"
-  | "User"
-  | "Script"
-  | "DataEntry"
-  | "CachedDataEntry"
-  | "ArchivedExperiment"
-  | "Counterbalance";
-
-export class ModelNotFoundError extends Error {
-  constructor(model: ModelType) {
-    super(`Model not found: ${model}`);
-    this.name = "ModelNotFoundError";
-  }
-}
-
-export class UserPermissionError extends Error {
-  constructor() {
-    super("User does not have permission");
-    this.name = "UserPermissionError";
-  }
-}
 
 const errorHandler = (err: any, res: NextApiResponse) => {
   // console.log(err)

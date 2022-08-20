@@ -1,14 +1,7 @@
-import mongoose, { Types } from "mongoose";
-import { throwIfNull } from "../lib/throwIfNull";
+import mongoose from "mongoose";
 
-export interface ScriptDoc<IdType = Types.ObjectId> {
-  _id: IdType;
-  name: string;
-  author: IdType;
-  contents: string;
-}
-
-export interface ScriptJson extends ScriptDoc<string> {}
+import { ScriptDoc } from "../lib/common/models/types";
+import { throwIfNull } from "../lib/server/throwIfNull";
 
 const ScriptSchema = new mongoose.Schema<ScriptDoc>({
   name: { type: String, required: true, trim: true },

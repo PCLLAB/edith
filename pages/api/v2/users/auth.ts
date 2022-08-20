@@ -1,12 +1,11 @@
-import { NextApiHandler } from "next";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+import config from "../../../../lib/config";
+import { MissingArgsError } from "../../../../lib/server/errors";
 import initHandler, {
-  MissingArgsError,
   TypedApiHandler,
 } from "../../../../lib/server/initHandler";
-import config from "../../../../lib/config";
 import User, { RawUnsafeUserDoc, UserJson } from "../../../../models/User";
 
 export const ENDPOINT = "/api/v2/users/auth";

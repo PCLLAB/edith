@@ -1,10 +1,9 @@
+import type { DirectoryJson } from "../../../../../lib/common/models/types";
 import initHandler, {
   TypedApiHandlerWithAuth,
 } from "../../../../../lib/server/initHandler";
-import Directory, {
-  DirectoryJson,
-  moveDirectory,
-} from "../../../../../models/Directory";
+import { moveDirectory } from "../../../../../lib/server/moveDirectory";
+import Directory from "../../../../../models/Directory";
 
 export const ENDPOINT = "/api/v2/directories/[id]";
 

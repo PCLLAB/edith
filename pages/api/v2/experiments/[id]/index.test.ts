@@ -1,7 +1,7 @@
 jest.mock("../../../../../lib/server/dbConnect");
 
 import dbConnect from "../../../../../lib/server/dbConnect";
-import { ModelNotFoundError } from "../../../../../lib/server/initHandler";
+import { ModelNotFoundError } from "../../../../../lib/server/errors";
 import {
   getCreatedUserAndToken,
   getReqResMocker,

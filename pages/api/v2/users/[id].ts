@@ -1,7 +1,9 @@
-import initHandler, {
+import {
   ModelNotFoundError,
-  TypedApiHandlerWithAuth,
   UserPermissionError,
+} from "../../../../lib/server/errors";
+import initHandler, {
+  TypedApiHandlerWithAuth,
 } from "../../../../lib/server/initHandler";
 import User, { UserJson } from "../../../../models/User";
 

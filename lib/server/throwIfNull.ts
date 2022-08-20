@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-import { ModelNotFoundError, ModelType } from "./initHandler";
+import { ModelNotFoundError, ModelType } from "./errors";
 
 export const throwIfNull = (model: ModelType) => (schema: mongoose.Schema) => {
   // https://mongoosejs.com/docs/api.html#model_Model-findById

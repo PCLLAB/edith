@@ -1,5 +1,5 @@
+import { ModelNotFoundError } from "../../../../../lib/server/errors";
 import initHandler, {
-  ModelNotFoundError,
   TypedApiHandlerWithAuth,
 } from "../../../../../lib/server/initHandler";
 import {

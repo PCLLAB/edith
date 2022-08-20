@@ -1,7 +1,8 @@
-import { NextApiResponse } from "next";
-import initHandler, {
-  UserPermissionError,
+import {
   MissingArgsError,
+  UserPermissionError,
+} from "../../../../lib/server/errors";
+import initHandler, {
   TypedApiHandlerWithAuth,
 } from "../../../../lib/server/initHandler";
 import User, { UserJson } from "../../../../models/User";

@@ -1,13 +1,17 @@
-import initHandler, {
-  TypedApiHandlerWithAuth,
-} from "../../../../../lib/server/initHandler";
-import Directory, {
+import {
   DirectoryJson,
+  ExperimentJson,
+} from "../../../../../lib/common/models/types";
+import {
   getPath,
   isRootId,
   ROOT_DIRECTORY,
-} from "../../../../../models/Directory";
-import Experiment, { ExperimentJson } from "../../../../../models/Experiment";
+} from "../../../../../lib/common/models/utils";
+import initHandler, {
+  TypedApiHandlerWithAuth,
+} from "../../../../../lib/server/initHandler";
+import Directory from "../../../../../models/Directory";
+import Experiment from "../../../../../models/Experiment";
 
 export const ENDPOINT = "/api/v2/directories/[id]/children";
 

@@ -1,12 +1,12 @@
-import { TableHeader } from "./react-keyed-file-browser/TableHeader";
-import FileBrowser from "react-keyed-file-browser";
-import { Filter } from "./react-keyed-file-browser/Filter";
-import { DirectoryJson, ROOT_DIRECTORY } from "../models/Directory";
-import { ExperimentJson } from "../models/Experiment";
+import { useState } from "react";
+import FileBrowser, { FileBrowserFile } from "react-keyed-file-browser";
+
+import { ROOT_DIRECTORY } from "../lib/common/models/utils";
 import { Common } from "../lib/common/tsUtils";
-import { useDirectoryContent } from "../pages/hooks/api/directories";
-import { useEffect, useState } from "react";
-import { FileBrowserFile } from "react-keyed-file-browser";
+import { Filter } from "./react-keyed-file-browser/Filter";
+import { TableHeader } from "./react-keyed-file-browser/TableHeader";
+
+import type { DirectoryJson, ExperimentJson } from "../lib/common/models/types";
 // import "react-keyed-file-browser/dist/react-keyed-file-browser.css";
 
 declare module "react-keyed-file-browser" {
@@ -16,47 +16,71 @@ declare module "react-keyed-file-browser" {
   }
 }
 
+type FileNavProps = {
+  // onSelectFile: (file: DirectoryJson | ExperimentJson) => void;
+};
+
+const testFiles = [
+  { key: "test/whatevs" },
+  { key: "test/whatevs2" },
+  { key: "test/whatevs3" },
+  { key: "test/whatevs4" },
+  { key: "test/whatevs folder/" },
+  { key: "test/whatevs folder/inside" },
+  { key: "test/whatevs folder/another one/" },
+];
+
 const FileNav = () => {
   const [files, setFiles] = useState<FileBrowserFile[]>([]);
 
   const [directoryId, setDirectoryId] = useState(ROOT_DIRECTORY._id);
 
-  const {
-    content: retrievedContent,
-    error,
-    loading,
-  } = useDirectoryContent(directoryId);
+  // const {
+  //   content: retrievedContent,
+  //   error,
+  //   loading,
+  // } = useDirectoryContent(directoryId);
 
-  useEffect(() => {
-    if (retrievedContent == null) return;
+  // useEffect(() => {
+  //   if (retrievedContent == null) return;
 
-    const newFiles = files;
+  //   const newFiles = files;
 
-    const upsertFile = (file: DirectoryJson | ExperimentJson) => {
-      const key = `${file.prefixPath},${file._id}`.replaceAll(",", "/");
-      const index = newFiles.findIndex((file) => file.key === key);
+  //   const upsertFile =
+  //     (folder: boolean = false) =>
+  //     (file: DirectoryJson | ExperimentJson) => {
+  //       // rkfb uses a terminating "/" to describe folders
+  //       const fileId = folder ? `${file._id},` : file._id;
 
-      const keyedFile = { ...file, key };
-      if (index === -1) {
-        newFiles.push(keyedFile);
-      } else {
-        newFiles[index] = keyedFile;
-      }
-    };
+  //       // Remove "r," and convert "," to "/"
+  //       const key = `${file.prefixPath},${fileId}`
+  //         .slice(2)
+  //         .replaceAll(",", "/");
+  //       const index = newFiles.findIndex((file) => file.key === key);
 
-    retrievedContent.directories.forEach(upsertFile);
-    retrievedContent.experiments.forEach(upsertFile);
+  //       const keyedFile = { ...file, key };
+  //       if (index === -1) {
+  //         newFiles.push(keyedFile);
+  //       } else {
+  //         newFiles[index] = keyedFile;
+  //       }
+  //     };
 
-    setFiles(newFiles);
+  //   retrievedContent.directories.forEach(upsertFile(true));
+  //   retrievedContent.experiments.forEach(upsertFile());
 
-    // This is run whenever retrievedContent changes. `files` should only change as a result
-    // of this useEffect, so it shouldn't be a dependency
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [retrievedContent]);
+  //   setFiles(newFiles);
+
+  //   // This is run whenever retrievedContent changes.
+  //   // `files` should only change as a result of
+  //   // this useEffect, so it shouldn't be a dependency
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [retrievedContent]);
 
   return (
     <FileBrowser
-      files={files}
+      files={testFiles}
+      // files={files}
       filterRenderer={Filter}
       headerRenderer={TableHeader}
       onCreateFolder={() => console.log("create")}
