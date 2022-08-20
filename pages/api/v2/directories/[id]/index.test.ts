@@ -1,6 +1,5 @@
 jest.mock("../../../../../lib/server/dbConnect");
 
-import { getNamedPath, getPath } from "../../../../../lib/server/apiUtils";
 import dbConnect from "../../../../../lib/server/dbConnect";
 import {
   ApiCallMocker,
@@ -10,7 +9,11 @@ import {
   getValidObjectId,
   ReqResMocker,
 } from "../../../../../lib/testUtils";
-import { ROOT_DIRECTORY } from "../../../../../models/Directory";
+import {
+  getNamedPath,
+  getPath,
+  ROOT_DIRECTORY,
+} from "../../../../../models/Directory";
 import expHandler, { ENDPOINT as EXP_ENDPOINT } from "../../experiments/index";
 import dirHandler, { ENDPOINT as DIR_ENDPOINT } from "../index";
 import handler, { ENDPOINT } from "./index";

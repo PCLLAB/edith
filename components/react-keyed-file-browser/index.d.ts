@@ -16,14 +16,11 @@ declare module "react-keyed-file-browser" {
     targetSource: DropTargetSpec<{}>;
     targetCollect: DropTargetCollector<{}>;
   };
-  // End personal updates
 
   export interface FileBrowserFile {
     key: string;
-    modified: number;
-    size: number;
-    url?: string;
   }
+  // End personal updates
 
   export type FileBrowserFolder = FileBrowserFile;
 

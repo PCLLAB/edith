@@ -1,8 +1,12 @@
-import { getPath } from "../../../../../lib/server/apiUtils";
 import initHandler, {
   TypedApiHandlerWithAuth,
 } from "../../../../../lib/server/initHandler";
-import Directory, { DirectoryJson } from "../../../../../models/Directory";
+import Directory, {
+  DirectoryJson,
+  getPath,
+  isRootId,
+  ROOT_DIRECTORY,
+} from "../../../../../models/Directory";
 import Experiment, { ExperimentJson } from "../../../../../models/Experiment";
 
 export const ENDPOINT = "/api/v2/directories/[id]/children";
@@ -13,12 +17,10 @@ export type DirectoriesIdChildrenGetSignature = {
   query: {
     id: string;
     depth?: number;
-    experiments?: "";
-    directories?: "";
   };
   data: {
-    experiments?: ExperimentJson[];
-    directories?: DirectoryJson[];
+    experiments: ExperimentJson[];
+    directories: DirectoryJson[];
   };
 };
 
@@ -26,27 +28,19 @@ const get: TypedApiHandlerWithAuth<DirectoriesIdChildrenGetSignature> = async (
   req,
   res
 ) => {
-  const { id, depth, experiments, directories } = req.query;
+  const { id, depth } = req.query;
 
-  const parent = await Directory.findById(id);
+  const parent = isRootId(id) ? ROOT_DIRECTORY : await Directory.findById(id);
   const path = getPath(parent);
 
-  const data: {
-    experiments?: ExperimentJson[];
-    directories?: DirectoryJson[];
-  } = {};
-
-  if (experiments != null) {
-    data.experiments = await Experiment.find({
+  const data = {
+    experiments: await Experiment.find({
       prefixPath: new RegExp(`^${path}`),
-    }).lean();
-  }
-
-  if (directories != null) {
-    data.directories = await Directory.find({
+    }).lean(),
+    directories: await Directory.find({
       prefixPath: new RegExp(`^${path}`),
-    }).lean();
-  }
+    }).lean(),
+  };
 
   res.status(200).send(data);
 };

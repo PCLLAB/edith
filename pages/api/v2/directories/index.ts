@@ -1,9 +1,11 @@
-import { getIdFromPath } from "../../../../lib/server/apiUtils";
 import initHandler, {
   MissingArgsError,
   TypedApiHandlerWithAuth,
 } from "../../../../lib/server/initHandler";
-import Directory, { DirectoryJson } from "../../../../models/Directory";
+import Directory, {
+  DirectoryJson,
+  getIdFromPath,
+} from "../../../../models/Directory";
 
 export const ENDPOINT = "/api/v2/directories";
 
