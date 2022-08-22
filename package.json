@@ -16,7 +16,6 @@
       "prettier --write --ignore-unknown"
     ]
   },
-  "//": "lodash included because error importing lodash.flow as lodash/flow in react-keyed-file-browser",
   "dependencies": {
     "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.0",
@@ -25,14 +24,11 @@
     "bcrypt": "^5.0.1",
     "express-jwt": "^7.5.2",
     "jsonwebtoken": "^8.5.1",
-    "lodash": "^4.17.21",
-    "lodash.flow": "^3.5.0",
     "mongoose": "^6.3.0",
     "next": "12.1.5",
     "react": "18.0.0",
     "react-dom": "18.0.0",
     "react-hook-form": "^7.34.0",
-    "react-keyed-file-browser": "^1.14.0",
     "swr": "^1.3.0"
   },
   "devDependencies": {

@@ -1,19 +1,12 @@
 import { useState } from "react";
-import FileBrowser, { FileBrowserFile } from "react-keyed-file-browser";
 
 import { ROOT_DIRECTORY } from "../lib/common/models/utils";
 import { Common } from "../lib/common/tsUtils";
-import { Filter } from "./react-keyed-file-browser/Filter";
-import { TableHeader } from "./react-keyed-file-browser/TableHeader";
 
 import type { DirectoryJson, ExperimentJson } from "../lib/common/models/types";
-// import "react-keyed-file-browser/dist/react-keyed-file-browser.css";
 
-declare module "react-keyed-file-browser" {
-  export interface FileBrowserFile
-    extends Common<DirectoryJson, ExperimentJson> {
-    key: string;
-  }
+export interface FileBrowserFile extends Common<DirectoryJson, ExperimentJson> {
+  key: string;
 }
 
 type FileNavProps = {
@@ -78,16 +71,18 @@ const FileNav = () => {
   // }, [retrievedContent]);
 
   return (
-    <FileBrowser
-      files={testFiles}
-      // files={files}
-      filterRenderer={Filter}
-      headerRenderer={TableHeader}
-      onCreateFolder={() => console.log("create")}
-      onCreateFiles={() => console.log("createfiles")}
-      onMoveFolder={() => console.log("move folder")}
-      onMoveFile={() => console.log("move file")}
-    />
+    <></>
+    // <FileBrowser
+    //   files={testFiles}
+    //   // files={files}
+    //   detailRenderer={(() => <></>) as DetailRenderer}
+    //   filterRenderer={Filter}
+    //   headerRenderer={TableHeader}
+    //   onCreateFolder={() => console.log("create")}
+    //   onCreateFiles={() => console.log("createfiles")}
+    //   onMoveFolder={() => console.log("move folder")}
+    //   onMoveFile={() => console.log("move file")}
+    // />
   );
 };
 
