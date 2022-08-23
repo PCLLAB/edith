@@ -1,9 +1,12 @@
 import { useState } from "react";
 
-import { ROOT_DIRECTORY } from "../lib/common/models/utils";
-import { Common } from "../lib/common/tsUtils";
+import { ROOT_DIRECTORY } from "../../lib/common/models/utils";
+import { Common } from "../../lib/common/tsUtils";
 
-import type { DirectoryJson, ExperimentJson } from "../lib/common/models/types";
+import type {
+  DirectoryJson,
+  ExperimentJson,
+} from "../../lib/common/models/types";
 
 export interface FileBrowserFile extends Common<DirectoryJson, ExperimentJson> {
   key: string;
