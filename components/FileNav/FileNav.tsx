@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { getPath, ROOT_DIRECTORY } from "../../lib/common/models/utils";
 import { Common } from "../../lib/common/tsUtils";
@@ -8,8 +8,12 @@ import {
   DirectoryJson,
   ExperimentJson,
 } from "../../lib/common/models/types";
+import { ExperimentFile } from "./File/ExperimentFile";
+import { DirectoryFile } from "./File/DirectoryFile";
 
-export type FileBrowserFile = Common<DirectoryJson, ExperimentJson>;
+export type FileBrowserFile = (DirectoryJson | ExperimentJson) & {
+  open: boolean;
+};
 
 type FileNavProps = {
   // onSelectFile: (file: DirectoryJson | ExperimentJson) => void;
@@ -82,8 +86,6 @@ const testExps: ExperimentJson[] = [
 const FileNav = () => {
   const [files, setFiles] = useState<FileBrowserFile[]>([]);
 
-  // const [directoryId, setDirectoryId] = useState(ROOT_DIRECTORY._id);
-
   const [currentDir, setCurrentDir] = useState<AnyDirectory>(ROOT_DIRECTORY);
   // const {
   //   content: retrievedContent,
@@ -91,45 +93,57 @@ const FileNav = () => {
   //   loading,
   // } = useDirectoryContent(directoryId);
 
-  const retrievedContent = {
-    experiments: testExps,
-    directories: testDirs,
-  };
+  const retrievedContent = useMemo(
+    () => ({
+      experiments: testExps,
+      directories: testDirs,
+    }),
+    []
+  );
 
   useEffect(() => {
     if (retrievedContent == null) return;
 
-    const affectedPath = getPath(currentDir);
-    const unAffectedFiles = files.filter(
-      (file) => file.prefixPath !== affectedPath
-    );
+    const updatedPath = getPath(currentDir);
 
-    const newFiles = unAffectedFiles.concat(
-      retrievedContent.experiments,
-      retrievedContent.directories
-    );
+    const openIds: string[] = [];
+
+    const unAffectedFiles = files.filter((file) => {
+      if (file.prefixPath === updatedPath) {
+        if (file.open) openIds.push(file._id);
+        return false;
+      }
+
+      return true;
+    });
+
+    const updatedExps = retrievedContent.experiments.map((exp) => ({
+      ...exp,
+      open: openIds.includes(exp._id),
+    }));
+    const updatedDirs = retrievedContent.directories.map((dir) => ({
+      ...dir,
+      open: openIds.includes(dir._id),
+    }));
+
+    const newFiles = unAffectedFiles.concat(updatedExps, updatedDirs);
 
     setFiles(newFiles);
-
-    // This is run whenever retrievedContent changes.
     // `files` should only change as a result of
     // this useEffect, so it shouldn't be a dependency
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [retrievedContent]);
 
   return (
-    <></>
-    // <FileBrowser
-    //   files={testFiles}
-    //   // files={files}
-    //   detailRenderer={(() => <></>) as DetailRenderer}
-    //   filterRenderer={Filter}
-    //   headerRenderer={TableHeader}
-    //   onCreateFolder={() => console.log("create")}
-    //   onCreateFiles={() => console.log("createfiles")}
-    //   onMoveFolder={() => console.log("move folder")}
-    //   onMoveFile={() => console.log("move file")}
-    // />
+    <>
+      {files.map((file) =>
+        "namedPrefixPath" in file ? (
+          <DirectoryFile directory={file} />
+        ) : (
+          <ExperimentFile experiment={file} />
+        )
+      )}
+    </>
   );
 };
 

@@ -8,7 +8,11 @@ import ListItemText from "@mui/material/ListItemText";
 import { ExperimentJson } from "../../../lib/common/models/types";
 import { FileTypes } from "./BaseFile";
 
-export const ExperimentFile = (experiment: ExperimentJson) => {
+type Props = {
+  experiment: ExperimentJson;
+};
+
+export const ExperimentFile = ({ experiment }: Props) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: FileTypes.EXPERIMENT,
     collect: (monitor) => ({
@@ -17,7 +21,7 @@ export const ExperimentFile = (experiment: ExperimentJson) => {
   }));
 
   return (
-    <ListItem>
+    <ListItem ref={drag}>
       <ListItemIcon>
         <FolderIcon />
       </ListItemIcon>

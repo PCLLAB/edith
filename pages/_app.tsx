@@ -1,31 +1,18 @@
 import type { AppProps } from "next/app";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { ThemeProvider as StyledThemeProvider } from "@emotion/react";
 import CssBaseline from "@mui/material/CssBaseline";
+import { ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
 
-const darkTheme = createTheme({
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          // Disable always uppercase
-          textTransform: "none",
-        },
-      },
-    },
-  },
-  palette: {
-    mode: "dark",
-    background: {
-      paper: "#161616",
-    },
-  },
-});
+import { muiDarkTheme, styledDarkTheme } from "../lib/client/theme";
 
-export default function MyApp({ Component, pageProps }: AppProps) {
+export default function App({ Component, pageProps }: AppProps) {
   return (
-    <ThemeProvider theme={darkTheme}>
-      <CssBaseline />
-      <Component {...pageProps} />
-    </ThemeProvider>
+    // Switching the provider order can break things for some reason
+    <MuiThemeProvider theme={muiDarkTheme}>
+      <StyledThemeProvider theme={styledDarkTheme}>
+        <CssBaseline />
+        <Component {...pageProps} />
+      </StyledThemeProvider>
+    </MuiThemeProvider>
   );
 }
