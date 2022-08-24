@@ -8,7 +8,7 @@ import ListItemText from "@mui/material/ListItemText";
 import { DirectoryJson } from "../../../lib/common/models/types";
 import { FileTypes } from "./BaseFile";
 
-const Directory = (directory: DirectoryJson) => {
+export const DirectoryFile = (directory: DirectoryJson) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: FileTypes.DIRECTORY,
     collect: (monitor) => ({

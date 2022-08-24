@@ -1,77 +1,121 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import { ROOT_DIRECTORY } from "../../lib/common/models/utils";
+import { getPath, ROOT_DIRECTORY } from "../../lib/common/models/utils";
 import { Common } from "../../lib/common/tsUtils";
 
-import type {
+import {
+  AnyDirectory,
   DirectoryJson,
   ExperimentJson,
 } from "../../lib/common/models/types";
 
-export interface FileBrowserFile extends Common<DirectoryJson, ExperimentJson> {
-  key: string;
-}
+export type FileBrowserFile = Common<DirectoryJson, ExperimentJson>;
 
 type FileNavProps = {
   // onSelectFile: (file: DirectoryJson | ExperimentJson) => void;
 };
 
-const testFiles = [
-  { key: "test/whatevs" },
-  { key: "test/whatevs2" },
-  { key: "test/whatevs3" },
-  { key: "test/whatevs4" },
-  { key: "test/whatevs folder/" },
-  { key: "test/whatevs folder/inside" },
-  { key: "test/whatevs folder/another one/" },
+const testDirs: DirectoryJson[] = [
+  {
+    _id: "dirid",
+    name: "level 1",
+    ownerIds: [],
+    namedPrefixPath: "Root",
+    prefixPath: "r",
+    createdAt: "fake date",
+    updatedAt: "fake date2",
+  },
+  {
+    _id: "dirid2",
+    name: "level 2",
+    ownerIds: [],
+    namedPrefixPath: "Root,level1",
+    prefixPath: "r,dirid",
+    createdAt: "fake date",
+    updatedAt: "fake date2",
+  },
+];
+
+const testExps: ExperimentJson[] = [
+  {
+    _id: "o2wd8",
+    name: "First Exp",
+    enabled: true,
+    dataCollection: "dasf",
+    user: "asadfasdf2",
+    prefixPath: "r",
+    createdAt: "fake date",
+    updatedAt: "fake date2",
+  },
+  {
+    _id: "asf8io",
+    name: "second Exp",
+    enabled: true,
+    dataCollection: "dasf",
+    user: "asadfasdf2",
+    prefixPath: "r,dirid",
+    createdAt: "fake date",
+    updatedAt: "fake date2",
+  },
+  {
+    _id: "a08i3k",
+    name: "third Exp",
+    enabled: true,
+    dataCollection: "dasf",
+    user: "asadfasdf2",
+    prefixPath: "r,dirid,dirid2",
+    createdAt: "fake date",
+    updatedAt: "fake date2",
+  },
+  {
+    _id: "o2wd8sdf",
+    name: "fourth Exp",
+    enabled: true,
+    dataCollection: "dasf",
+    user: "asadfasdf2",
+    prefixPath: "r,dirid,dirid2",
+    createdAt: "fake date",
+    updatedAt: "fake date2",
+  },
 ];
 
 const FileNav = () => {
   const [files, setFiles] = useState<FileBrowserFile[]>([]);
 
-  const [directoryId, setDirectoryId] = useState(ROOT_DIRECTORY._id);
+  // const [directoryId, setDirectoryId] = useState(ROOT_DIRECTORY._id);
 
+  const [currentDir, setCurrentDir] = useState<AnyDirectory>(ROOT_DIRECTORY);
   // const {
   //   content: retrievedContent,
   //   error,
   //   loading,
   // } = useDirectoryContent(directoryId);
 
-  // useEffect(() => {
-  //   if (retrievedContent == null) return;
+  const retrievedContent = {
+    experiments: testExps,
+    directories: testDirs,
+  };
 
-  //   const newFiles = files;
+  useEffect(() => {
+    if (retrievedContent == null) return;
 
-  //   const upsertFile =
-  //     (folder: boolean = false) =>
-  //     (file: DirectoryJson | ExperimentJson) => {
-  //       // rkfb uses a terminating "/" to describe folders
-  //       const fileId = folder ? `${file._id},` : file._id;
+    const affectedPath = getPath(currentDir);
+    const unAffectedFiles = files.filter(
+      (file) => file.prefixPath !== affectedPath
+    );
 
-  //       // Remove "r," and convert "," to "/"
-  //       const key = `${file.prefixPath},${fileId}`
-  //         .slice(2)
-  //         .replaceAll(",", "/");
-  //       const index = newFiles.findIndex((file) => file.key === key);
+    const newFiles = unAffectedFiles.concat(
+      retrievedContent.experiments,
+      retrievedContent.directories
+    );
 
-  //       const keyedFile = { ...file, key };
-  //       if (index === -1) {
-  //         newFiles.push(keyedFile);
-  //       } else {
-  //         newFiles[index] = keyedFile;
-  //       }
-  //     };
+    setFiles(newFiles);
 
-  //   retrievedContent.directories.forEach(upsertFile(true));
-  //   retrievedContent.experiments.forEach(upsertFile());
-
-  //   setFiles(newFiles);
-
-  //   // This is run whenever retrievedContent changes.
-  //   // `files` should only change as a result of
-  //   // this useEffect, so it shouldn't be a dependency
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [retrievedContent]);
+    // This is run whenever retrievedContent changes.
+    // `files` should only change as a result of
+    // this useEffect, so it shouldn't be a dependency
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [retrievedContent]);
 
   return (
     <></>
