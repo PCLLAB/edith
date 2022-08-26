@@ -10,6 +10,7 @@ import {
 } from "../../lib/common/models/types";
 import { ExperimentFile } from "./File/ExperimentFile";
 import { DirectoryFile } from "./File/DirectoryFile";
+import { DragPreviewLayer } from "./File/DragPreviewLayer";
 
 export type FileBrowserFile = (DirectoryJson | ExperimentJson) & {
   open: boolean;
@@ -136,6 +137,7 @@ const FileNav = () => {
 
   return (
     <>
+      <DragPreviewLayer />
       {files.map((file) =>
         "namedPrefixPath" in file ? (
           <DirectoryFile directory={file} />

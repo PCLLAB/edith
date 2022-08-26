@@ -1,5 +1,4 @@
 import type { AppProps } from "next/app";
-import { ThemeProvider as StyledThemeProvider } from "@emotion/react";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
 
@@ -9,10 +8,10 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     // Switching the provider order can break things for some reason
     <MuiThemeProvider theme={muiDarkTheme}>
-      <StyledThemeProvider theme={styledDarkTheme}>
-        <CssBaseline />
-        <Component {...pageProps} />
-      </StyledThemeProvider>
+      {/* <StyledThemeProvider theme={styledDarkTheme}> */}
+      <CssBaseline />
+      <Component {...pageProps} />
+      {/* </StyledThemeProvider> */}
     </MuiThemeProvider>
   );
 }

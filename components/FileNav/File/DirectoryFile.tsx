@@ -1,9 +1,9 @@
+import { useEffect } from "react";
 import { useDrag, useDrop } from "react-dnd";
-import styled from "@emotion/styled";
+import { getEmptyImage } from "react-dnd-html5-backend";
+
 import FolderIcon from "@mui/icons-material/Folder";
-import ListItem from "@mui/material/ListItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
+import { ListItem, ListItemIcon, ListItemText, styled } from "@mui/material";
 
 import { DirectoryJson } from "../../../lib/common/models/types";
 import { FileTypes } from "./BaseFile";
@@ -12,13 +12,14 @@ type Props = {
   directory: DirectoryJson;
 };
 
-const StyledListItem = styled(ListItem)<{ isOver: boolean }>`
-  background-color: ${(props) =>
-    props.isOver ? props.theme.colors.highlight : undefined};
-`;
+const StyledListItem = styled(ListItem, {
+  shouldForwardProp: (prop) => prop !== "isOver",
+})<{ isOver: boolean }>(({ theme, isOver }) => ({
+  backgroundColor: isOver ? theme.styled.colors.highlight : "black",
+}));
 
 export const DirectoryFile = ({ directory }: Props) => {
-  const [{ isDragging }, drag] = useDrag(() => ({
+  const [{ isDragging }, drag, preview] = useDrag(() => ({
     type: FileTypes.DIRECTORY,
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging,
@@ -33,11 +34,16 @@ export const DirectoryFile = ({ directory }: Props) => {
     }),
   }));
 
+  useEffect(() => {
+    preview(getEmptyImage(), { captureDraggingState: true });
+  }, []);
+
   return (
     <StyledListItem
       ref={(el) => {
         drag(el);
         drop(el);
+        // preview(el);
       }}
       isOver={isOver}
     >

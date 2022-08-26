@@ -28,10 +28,6 @@ export const muiDarkTheme = createTheme({
 
 type StyledTheme = typeof styledDarkTheme;
 
-declare module "@emotion/react" {
-  export interface Theme extends StyledTheme {}
-}
-
 declare module "@mui/material/styles" {
   export interface Theme {
     styled: StyledTheme;
