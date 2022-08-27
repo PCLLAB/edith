@@ -15,37 +15,37 @@ type Props = {
 const StyledListItem = styled(ListItem, {
   shouldForwardProp: (prop) => prop !== "isOver",
 })<{ isOver: boolean }>(({ theme, isOver }) => ({
-  backgroundColor: isOver ? theme.styled.colors.highlight : "black",
+  backgroundColor: isOver ? theme.styled.colors.highlight : undefined,
 }));
 
 export const DirectoryFile = ({ directory }: Props) => {
-  const [{ isDragging }, drag, preview] = useDrag(() => ({
-    type: FileTypes.DIRECTORY,
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging,
-    }),
-  }));
+  // const [{ isDragging }, drag, preview] = useDrag(() => ({
+  //   type: FileTypes.DIRECTORY,
+  //   collect: (monitor) => ({
+  //     isDragging: !!monitor.isDragging,
+  //   }),
+  //   item: directory,
+  // }));
 
-  const [{ isOver }, drop] = useDrop(() => ({
-    accept: [FileTypes.DIRECTORY, FileTypes.EXPERIMENT],
-    drop: () => {},
-    collect: (monitor) => ({
-      isOver: monitor.isOver(),
-    }),
-  }));
+  // const [{ isOver }, drop] = useDrop(() => ({
+  //   accept: [FileTypes.DIRECTORY, FileTypes.EXPERIMENT],
+  //   drop: () => {},
+  //   collect: (monitor) => ({
+  //     isOver: monitor.isOver(),
+  //   }),
+  // }));
 
-  useEffect(() => {
-    preview(getEmptyImage(), { captureDraggingState: true });
-  }, []);
+  // useEffect(() => {
+  //   preview(getEmptyImage(), { captureDraggingState: true });
+  // }, []);
 
   return (
     <StyledListItem
-      ref={(el) => {
-        drag(el);
-        drop(el);
-        // preview(el);
-      }}
-      isOver={isOver}
+    // ref={(el) => {
+    //   drag(el);
+    //   drop(el);
+    // }}
+    // isOver={isOver}
     >
       <ListItemIcon>
         <FolderIcon />

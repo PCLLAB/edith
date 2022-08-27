@@ -13,24 +13,21 @@ type Props = {
 };
 
 export const ExperimentFile = ({ experiment }: Props) => {
-  const [{ isDragging }, drag, preview] = useDrag(() => ({
-    type: FileTypes.EXPERIMENT,
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  }));
+  // const [{ isDragging }, drag, preview] = useDrag(() => ({
+  //   type: FileTypes.EXPERIMENT,
+  //   collect: (monitor) => ({
+  //     isDragging: monitor.isDragging(),
+  //   }),
+  //   item: experiment,
+  // }));
 
-  useEffect(() => {
-    preview(getEmptyImage(), { captureDraggingState: true });
-  }, []);
+  // useEffect(() => {
+  //   preview(getEmptyImage(), { captureDraggingState: true });
+  // }, []);
 
   return (
-    <ListItem
-      ref={(el) => {
-        drag(el);
-        // preview(el);
-      }}
-    >
+    // <ListItem ref={drag}>
+    <ListItem>
       <ListItemIcon>
         <FolderIcon />
       </ListItemIcon>

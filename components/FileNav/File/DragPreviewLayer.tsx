@@ -6,34 +6,7 @@ import { DragLayerMonitor, useDragLayer } from "react-dnd";
 import FolderIcon from "@mui/icons-material/Folder";
 import { ListItem, ListItemIcon, ListItemText } from "@mui/material";
 import ReactDOM from "react-dom";
-import { useRef, useCallback } from "react";
-
-// export const DragPreviewLayer = () => {
-//   const { itemType, isDragging, item, initialOffset, currentOffset } =
-//     useDragLayer((monitor) => ({
-//       item: monitor.getItem(),
-//       itemType: monitor.getItemType(),
-//       initialOffset: monitor.getInitialSourceClientOffset(),
-//       currentOffset: monitor.getSourceClientOffset(),
-//       isDragging: monitor.isDragging(),
-//     }));
-
-//   if (!isDragging) return null;
-
-//   // @ts-ignore: guaranteed to exist when isDragging
-//   const x = initialOffset.x + currentOffset.x;
-//   // @ts-ignore: guaranteed to exist when isDragging
-//   const y = initialOffset.y + currentOffset.y;
-
-//   return (
-//     <ListItem sx={{ transform: `translate(${x}px, ${y}px)` }}>
-//       <ListItemIcon>
-//         <FolderIcon />
-//       </ListItemIcon>
-//       <ListItemText primary={item.name} />
-//     </ListItem>
-//   );
-// };
+import { useRef, useCallback, useState } from "react";
 
 export const DragPreviewLayer = () => {
   const previewRef = useRef<HTMLDivElement>(null);
@@ -66,13 +39,13 @@ export const DragPreviewLayer = () => {
       const { x, y } = currentOffset;
 
       const newTransform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
-      // const newTransform = `translate(${x}px, ${y}px)`;
       if (newTransform !== lastTransform.current) {
         isBusy.current = true;
         lastTransform.current = newTransform;
         requestAnimationFrame(() => {
           if (previewRef.current) {
             previewRef.current.style.transform = newTransform;
+            console.log("raf");
             requestAnimationFrame(() => (isBusy.current = false));
           }
         });
@@ -92,6 +65,7 @@ export const DragPreviewLayer = () => {
   }
 
   // const width = sourceRef.current?.offsetWidth;
+  console.log("GOT", item);
 
   return ReactDOM.createPortal(
     <div
