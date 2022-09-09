@@ -5,6 +5,7 @@ import Tree, {
   TreeData,
   TreeItem,
 } from "@atlaskit/tree";
+import { List } from "@mui/material";
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import {
   DirectoryJson,
@@ -16,8 +17,7 @@ import {
   getPath,
   getIdFromPath,
 } from "../../lib/common/models/utils";
-import { DirectoryFile } from "./File/DirectoryFile";
-import { ExperimentFile } from "./File/ExperimentFile";
+import { BaseFile } from "./File";
 
 const testDirs: DirectoryJson[] = [
   {
@@ -38,12 +38,21 @@ const testDirs: DirectoryJson[] = [
     createdAt: "fake date",
     updatedAt: "fake date2",
   },
+  {
+    _id: "dirid3",
+    name: "level 1.2",
+    ownerIds: [],
+    namedPrefixPath: "Root,level 1",
+    prefixPath: "r,dirid",
+    createdAt: "fake date",
+    updatedAt: "fake date2",
+  },
 ];
 
 const testExps2: ExperimentJson[] = [
   {
-    _id: "asf8io",
-    name: "second Exp",
+    _id: "second",
+    name: "zsecond Exp",
     enabled: true,
     dataCollection: "dasf",
     user: "asadfasdf2",
@@ -52,7 +61,7 @@ const testExps2: ExperimentJson[] = [
     updatedAt: "fake date2",
   },
   {
-    _id: "a08i3k",
+    _id: "third",
     name: "third Exp",
     enabled: true,
     dataCollection: "dasf",
@@ -62,7 +71,7 @@ const testExps2: ExperimentJson[] = [
     updatedAt: "fake date2",
   },
   {
-    _id: "o2wd8sdf",
+    _id: "fourth",
     name: "fourth Exp",
     enabled: true,
     dataCollection: "dasf",
@@ -86,21 +95,14 @@ const testExps: ExperimentJson[] = [
   },
 ];
 
-declare module "@atlaskit/tree" {
-  export type TreeItemData = DirectoryJson | ExperimentJson;
-  export type ItemId = string;
-  // export interface TreeItem {
-  //   data: TreeItemData;
-  // }
-}
 const FileTree = () => {
-  const [tree, setTree] = useState<TreeData>({
+  const [tree, setTree] = useState<TreeData<DirectoryJson | ExperimentJson>>({
     rootId: ROOT_DIRECTORY._id,
     items: {
       [ROOT_DIRECTORY._id]: {
         id: ROOT_DIRECTORY._id,
         children: [],
-        data: ROOT_DIRECTORY,
+        data: null,
       },
     },
   });
@@ -112,14 +114,14 @@ const FileTree = () => {
   //   loading,
   // } = useDirectoryContent(directoryId);
 
-  const [bool, setBool] = useState(true);
-
   const retrievedContent = useMemo(() => {
     return {
-      experiments: bool ? testExps : [], //testExps2,
-      directories: bool ? testDirs : [],
+      experiments: testExps2,
+      directories: testDirs,
+      // experiments: !bool ? testExps2 : [], //testExps2,
+      // directories: !bool ? testDirs : [],
     };
-  }, [bool]);
+  }, []);
 
   useEffect(() => {
     if (retrievedContent == null) return;
@@ -154,68 +156,88 @@ const FileTree = () => {
       },
     ]);
 
-    const newItems: Record<string, TreeItem> = Object.fromEntries([
+    const newItems: Record<
+      string,
+      TreeItem<DirectoryJson | ExperimentJson>
+    > = Object.fromEntries([
       ...keepEntries,
-      ...newExpEntries,
       ...newDirExtries,
+      ...newExpEntries,
     ]);
 
-    retrievedContent.experiments.forEach((exp) => {
-      const parentId = getIdFromPath(exp.prefixPath);
-      if (!newItems[parentId].children.includes(exp._id)) {
-        newItems[parentId].children.push(exp._id);
+    // Display order is stored in children array order
+
+    const compareFile = (itemA: string, itemB: string) => {
+      const fileA = newItems[itemA];
+      const fileB = newItems[itemB];
+      const aFolder = "namedPrefixPath" in fileA;
+      const bFolder = "namedPrefixPath" in fileB;
+
+      if (aFolder !== bFolder) {
+        return aFolder ? 1 : -1;
       }
-    });
-    retrievedContent.directories.forEach((dir) => {
-      const parentId = getIdFromPath(dir.prefixPath);
-      if (!newItems[parentId].children.includes(dir._id)) {
-        newItems[parentId].children.push(dir._id);
+
+      return fileA.data.name.localeCompare(fileB.data.name);
+    };
+
+    [...retrievedContent.directories, ...retrievedContent.experiments].forEach(
+      (file) => {
+        const parentId = getIdFromPath(file.prefixPath);
+        if (!newItems[parentId].children.includes(file._id)) {
+          newItems[parentId].children.push(file._id);
+          newItems[parentId].children.sort(compareFile);
+        }
       }
-    });
+    );
 
     setTree({ rootId: ROOT_DIRECTORY._id, items: newItems });
-    setBool(false);
     // `treeItems` should only change as a result of
     // this useEffect, so it shouldn't be a dependency
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [retrievedContent]);
 
   // mutateTree();
-  // console.log(treeItems);
 
   const onExpand = useCallback((fileId: ItemId) => {
+    console.debug("expand", fileId);
     setTree((tree) => mutateTree(tree, fileId, { isExpanded: true }));
   }, []);
 
   const onCollapse = useCallback((fileId: ItemId) => {
+    console.debug("collapse", fileId);
     setTree((tree) => mutateTree(tree, fileId, { isExpanded: false }));
   }, []);
 
   return (
-    <Tree
-      tree={tree}
-      onExpand={onExpand}
-      onCollapse={onCollapse}
-      renderItem={({ item, onExpand, onCollapse, provided, snapshot }) => {
-        console.log("renderItem", item);
-        return (
-          <div
-            ref={provided.innerRef}
-            {...provided.draggableProps}
-            {...provided.dragHandleProps}
-          >
-            {"namedPrefixPath" in item.data ? (
-              <DirectoryFile directory={item.data} />
-            ) : (
-              <ExperimentFile experiment={item.data} />
-            )}
-          </div>
-        );
-      }}
-      // offsetPerLevel
-      isDragEnabled={true}
-      isNestingEnabled={true}
-    />
+    <List dense>
+      <Tree
+        tree={tree}
+        onExpand={onExpand}
+        onCollapse={onCollapse}
+        renderItem={({ item, onExpand, onCollapse, provided, snapshot }) => {
+          const onClick = item.isExpanded
+            ? () => onCollapse(item.id)
+            : () => onExpand(item.id);
+
+          return (
+            <div
+              ref={provided.innerRef}
+              {...provided.draggableProps}
+              {...provided.dragHandleProps}
+            >
+              <BaseFile
+                file={item.data}
+                onClick={onClick}
+                isExpanded={!!item.isExpanded}
+              />
+            </div>
+          );
+        }}
+        offsetPerLevel={20}
+        isDragEnabled={true}
+        isNestingEnabled={true}
+      />
+    </List>
   );
 };
 
