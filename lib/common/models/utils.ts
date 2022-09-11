@@ -1,4 +1,10 @@
-import type { AnyDirectory, RootDirectory } from "./types";
+import type {
+  AnyDirectory,
+  DirectoryFile,
+  DirectoryJson,
+  ExperimentJson,
+  RootDirectory,
+} from "./types";
 
 import type { Types } from "mongoose";
 
@@ -23,4 +29,12 @@ export const getNamedPath = (dir: AnyDirectory) => {
   return isRoot(dir)
     ? ROOT_DIRECTORY.name
     : `${dir.namedPrefixPath},${dir.name}`;
+};
+
+export const isDirectory = (file: DirectoryFile): file is DirectoryJson => {
+  return "namedPrefixPath" in file;
+};
+
+export const isExperiment = (file: DirectoryFile): file is ExperimentJson => {
+  return !isDirectory(file);
 };

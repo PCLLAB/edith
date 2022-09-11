@@ -1,9 +1,10 @@
+import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import FolderIcon from "@mui/icons-material/Folder";
 import ScienceIcon from "@mui/icons-material/Science";
-import { ListItem, ListItemIcon, ListItemText, styled } from "@mui/material";
+import { ListItem, ListItemText, styled } from "@mui/material";
 
 import { DirectoryJson, ExperimentJson } from "../../lib/common/models/types";
-import ArrowRightIcon from "@mui/icons-material/ArrowRight";
+import { isDirectory } from "../../lib/common/models/utils";
 
 type Props = {
   file: ExperimentJson | DirectoryJson;
@@ -30,7 +31,7 @@ const PaddedListItem = styled(ListItem)({
 });
 
 export const BaseFile = ({ file, onClick, isExpanded }: Props) => {
-  const isFolder = "namedPrefixPath" in file;
+  const isFolder = isDirectory(file);
 
   return (
     <PaddedListItem onClick={onClick}>

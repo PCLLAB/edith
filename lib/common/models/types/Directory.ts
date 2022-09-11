@@ -1,4 +1,5 @@
 import type { Types } from "mongoose";
+import { ExperimentJson } from "./Experiment";
 
 export interface DirectoryDoc<IdType = Types.ObjectId, DateType = Date> {
   _id: IdType;
@@ -25,3 +26,5 @@ export type RootDirectory = {
 };
 
 export type AnyDirectory = DirectoryDoc | DirectoryJson | RootDirectory;
+
+export type DirectoryFile = DirectoryJson | ExperimentJson;

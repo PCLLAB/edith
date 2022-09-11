@@ -1,21 +1,19 @@
-import Tree, {
-  ItemId,
-  mutateTree,
-  Path,
-  TreeData,
-  TreeItem,
-} from "@atlaskit/tree";
+import { useCallback, useEffect, useMemo, useState } from "react";
+
+import Tree, { ItemId, mutateTree, TreeData, TreeItem } from "@atlaskit/tree";
 import { List } from "@mui/material";
-import { useState, useMemo, useEffect, useCallback, useRef } from "react";
+
 import {
+  AnyDirectory,
+  DirectoryFile,
   DirectoryJson,
   ExperimentJson,
-  AnyDirectory,
 } from "../../lib/common/models/types";
 import {
-  ROOT_DIRECTORY,
-  getPath,
   getIdFromPath,
+  getPath,
+  isDirectory,
+  ROOT_DIRECTORY,
 } from "../../lib/common/models/utils";
 import { BaseFile } from "./File";
 
@@ -95,14 +93,18 @@ const testExps: ExperimentJson[] = [
   },
 ];
 
-const FileTree = () => {
-  const [tree, setTree] = useState<TreeData<DirectoryJson | ExperimentJson>>({
+type Props = {
+  selectFile: (fileId: string) => void;
+};
+
+const FileTree = ({ selectFile }: Props) => {
+  const [tree, setTree] = useState<TreeData<DirectoryFile>>({
     rootId: ROOT_DIRECTORY._id,
     items: {
       [ROOT_DIRECTORY._id]: {
         id: ROOT_DIRECTORY._id,
         children: [],
-        data: null,
+        data: ROOT_DIRECTORY as DirectoryFile,
       },
     },
   });
@@ -158,7 +160,7 @@ const FileTree = () => {
 
     const newItems: Record<
       string,
-      TreeItem<DirectoryJson | ExperimentJson>
+      TreeItem<DirectoryFile>
     > = Object.fromEntries([
       ...keepEntries,
       ...newDirExtries,
@@ -196,15 +198,11 @@ const FileTree = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [retrievedContent]);
 
-  // mutateTree();
-
   const onExpand = useCallback((fileId: ItemId) => {
-    console.debug("expand", fileId);
     setTree((tree) => mutateTree(tree, fileId, { isExpanded: true }));
   }, []);
 
   const onCollapse = useCallback((fileId: ItemId) => {
-    console.debug("collapse", fileId);
     setTree((tree) => mutateTree(tree, fileId, { isExpanded: false }));
   }, []);
 
@@ -215,9 +213,11 @@ const FileTree = () => {
         onExpand={onExpand}
         onCollapse={onCollapse}
         renderItem={({ item, onExpand, onCollapse, provided, snapshot }) => {
-          const onClick = item.isExpanded
-            ? () => onCollapse(item.id)
-            : () => onExpand(item.id);
+          const onClick = isDirectory(item.data)
+            ? item.isExpanded
+              ? () => onCollapse(item.id)
+              : () => onExpand(item.id)
+            : () => selectFile(item.id);
 
           return (
             <div
