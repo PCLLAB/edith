@@ -207,7 +207,7 @@ const FileTree = ({ selectFile }: Props) => {
   }, []);
 
   return (
-    <List dense>
+    <List dense sx={{ bgcolor: "#222" }}>
       <Tree
         tree={tree}
         onExpand={onExpand}
