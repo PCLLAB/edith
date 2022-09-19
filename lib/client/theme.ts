@@ -1,13 +1,20 @@
 import { createTheme } from "@mui/material/styles";
 
-export const styledDarkTheme = {
-  colors: {
-    highlight: "#878164",
-  },
-};
-
 export const muiDarkTheme = createTheme({
   components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        html: {
+          height: "100%",
+        },
+        body: {
+          height: "100%",
+        },
+        "#__next": {
+          height: "100%",
+        },
+      },
+    },
     MuiButton: {
       styleOverrides: {
         root: {
@@ -22,18 +29,28 @@ export const muiDarkTheme = createTheme({
     background: {
       paper: "#161616",
     },
+    brandBlue: {
+      light: "#839df5",
+      main: "#4f6fc2",
+      dark: "#0b4491",
+      contrastText: "rgba(255, 255, 255)",
+    },
+    brandYellow: {
+      light: "#dfdfdf",
+      main: "#adadad",
+      dark: "#7e7e7e",
+      contrastText: "rgba(0, 0, 0, 0.87)",
+    },
   },
-  styled: styledDarkTheme,
 });
 
-type StyledTheme = typeof styledDarkTheme;
-
 declare module "@mui/material/styles" {
-  export interface Theme {
-    styled: StyledTheme;
+  interface Palette {
+    brandYellow: Palette["primary"];
+    brandBlue: Palette["primary"];
   }
-  // allow configuration using `createTheme`
-  export interface ThemeOptions {
-    styled?: StyledTheme;
+  interface PaletteOptions {
+    brandYellow: PaletteOptions["primary"];
+    brandBlue: PaletteOptions["primary"];
   }
 }

@@ -8,9 +8,13 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ### Progress
 
-Login Page
-:------------------------------------:
-![Login page](./readme/bedi_login.png)
+| Progress        |                                          |
+| --------------- | ---------------------------------------- |
+| Login Page      | ![Login page](./readme/login.png)        |
+| File Tree       | ![File Tree page](./readme/fileTree.png) |
+| Experiment View | wip                                      |
+| Folder View     | wip                                      |
+| Admin Page      | wip                                      |
 
 ## Motivation
 
@@ -40,17 +44,13 @@ https://www.paigeniedringhaus.com/blog/how-to-unit-test-next-js-api-routes-with-
 
 I'm using MongoMemoryServer, and creating a new one in each test file to avoid race conditions.
 
-## File Browser UI
-
-https://github.com/uptick/react-keyed-file-browser
-
-An interesting alternative is https://github.com/TimboKZ/Chonky, but it doesn't support filetree view
-
 ## Mongoose
 
-### Interfaces
+### Types
 
-Right now, I'm defining the types twice, as an interface and mongoose schema. Two sources of truth isn't great, but this is the "official" method from the mongoose docs.
+For each model, there is a mongoose schema, a "rich" mongoose document type, and a "dumb" JSONified and parsed document type. The mongoose types are used serverside, while the JSON type represents what the client receives from the server.
+
+Right now, I'm defining the mongoose type twice, as an interface and mongoose schema. Two sources of truth isn't great, but this is the "official" method from the mongoose docs.
 
 There are some libaries that may address this, but nothing stands out as the de-facto way.
 
@@ -73,9 +73,3 @@ https://mongoosejs.com/docs/queries.html#queries-are-not-promises
 https://stackoverflow.com/questions/31549857/mongoose-what-does-the-exec-function-do
 
 `Model.find().lean()` gives an normal object instead of mongoose object
-
-# Misc.
-
-## Primsa
-
-I originally wanted to try Prisma, but it doesn't work for us, since each experiment has a unique collection containing all its data. This doesn't allow for a static schema that Prisma needs. There are potential workarounds including running `prisma migrate` everytime an experiment is created, but that is hacky and cumbersome.

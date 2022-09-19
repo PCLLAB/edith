@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import Tree, { ItemId, mutateTree, TreeData, TreeItem } from "@atlaskit/tree";
-import { List } from "@mui/material";
+import { Box, List, Paper, styled } from "@mui/material";
 
 import {
   AnyDirectory,
@@ -16,6 +16,7 @@ import {
   ROOT_DIRECTORY,
 } from "../../lib/common/models/utils";
 import { BaseFile } from "./File";
+import { FileActionBar } from "./FileActionBar";
 
 const testDirs: DirectoryJson[] = [
   {
@@ -48,6 +49,16 @@ const testDirs: DirectoryJson[] = [
 ];
 
 const testExps2: ExperimentJson[] = [
+  {
+    _id: "nested guy",
+    name: "nested nested Exp",
+    enabled: true,
+    dataCollection: "dasf",
+    user: "asadfasdf2",
+    prefixPath: "r,dirid,dirid3",
+    createdAt: "fake date",
+    updatedAt: "fake date2",
+  },
   {
     _id: "second",
     name: "zsecond Exp",
@@ -93,11 +104,24 @@ const testExps: ExperimentJson[] = [
   },
 ];
 
+const TreeBase = styled(Paper)({
+  height: "100%",
+});
+
+const TreeItem = styled(Box)((props) => ({
+  "&:hover": {
+    backgroundColor: props.theme.palette.action.hover,
+  },
+  "& > *": {
+    borderLeft: `1px solid ${props.theme.palette.action.hover}`,
+  },
+}));
+
 type Props = {
   selectFile: (fileId: string) => void;
 };
 
-const FileTree = ({ selectFile }: Props) => {
+export const FileTree = ({ selectFile }: Props) => {
   const [tree, setTree] = useState<TreeData<DirectoryFile>>({
     rootId: ROOT_DIRECTORY._id,
     items: {
@@ -207,38 +231,39 @@ const FileTree = ({ selectFile }: Props) => {
   }, []);
 
   return (
-    <List dense sx={{ bgcolor: "#222" }}>
-      <Tree
-        tree={tree}
-        onExpand={onExpand}
-        onCollapse={onCollapse}
-        renderItem={({ item, onExpand, onCollapse, provided, snapshot }) => {
-          const onClick = isDirectory(item.data)
-            ? item.isExpanded
-              ? () => onCollapse(item.id)
-              : () => onExpand(item.id)
-            : () => selectFile(item.id);
+    <TreeBase elevation={0}>
+      <FileActionBar />
+      <List dense disablePadding>
+        <Tree
+          tree={tree}
+          onExpand={onExpand}
+          onCollapse={onCollapse}
+          renderItem={({ item, onExpand, onCollapse, provided, snapshot }) => {
+            const onClick = isDirectory(item.data)
+              ? item.isExpanded
+                ? () => onCollapse(item.id)
+                : () => onExpand(item.id)
+              : () => selectFile(item.id);
 
-          return (
-            <div
-              ref={provided.innerRef}
-              {...provided.draggableProps}
-              {...provided.dragHandleProps}
-            >
-              <BaseFile
-                file={item.data}
-                onClick={onClick}
-                isExpanded={!!item.isExpanded}
-              />
-            </div>
-          );
-        }}
-        offsetPerLevel={20}
-        isDragEnabled={true}
-        isNestingEnabled={true}
-      />
-    </List>
+            return (
+              <TreeItem
+                ref={provided.innerRef}
+                {...provided.draggableProps}
+                {...provided.dragHandleProps}
+              >
+                <BaseFile
+                  file={item.data}
+                  onClick={onClick}
+                  isExpanded={!!item.isExpanded}
+                />
+              </TreeItem>
+            );
+          }}
+          offsetPerLevel={17} // Line up files' left border line with center of dropdown arrow
+          isDragEnabled={true}
+          isNestingEnabled={true}
+        />
+      </List>
+    </TreeBase>
   );
 };
-
-export default FileTree;

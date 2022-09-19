@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import { useState } from "react";
 import { FileViewer } from "../../components/FileViewer/FileViewer";
 
-const FileTree = dynamic(() => import("../../components/FileNav/FileTree"), {
+const FileTree = dynamic(() => import("../../components/FileTree"), {
   ssr: false,
 });
 

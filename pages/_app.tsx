@@ -2,7 +2,7 @@ import type { AppProps } from "next/app";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
 
-import { muiDarkTheme, styledDarkTheme } from "../lib/client/theme";
+import { muiDarkTheme } from "../lib/client/theme";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
