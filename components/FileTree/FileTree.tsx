@@ -1,13 +1,25 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import Tree, { ItemId, mutateTree, TreeData, TreeItem } from "@atlaskit/tree";
-import { Box, List, Paper, styled } from "@mui/material";
+import NewDirectoryIcon from "@mui/icons-material/CreateNewFolder";
+import RenameIcon from "@mui/icons-material/DriveFileRenameOutline";
+import NewExperimentIcon from "@mui/icons-material/NoteAdd";
+import {
+  Box,
+  Divider,
+  List,
+  ListItemIcon,
+  ListItemText,
+  MenuItem,
+  Paper,
+  styled,
+} from "@mui/material";
 
 import {
-  AnyDirectory,
   DirectoryFile,
   DirectoryJson,
   ExperimentJson,
+  RootDirectory,
 } from "../../lib/common/models/types";
 import {
   getIdFromPath,
@@ -15,6 +27,7 @@ import {
   isDirectory,
   ROOT_DIRECTORY,
 } from "../../lib/common/models/utils";
+import { ContextMenu } from "../ContextMenu/ContextMenu";
 import { BaseFile } from "./File";
 import { FileActionBar } from "./FileActionBar";
 
@@ -117,11 +130,16 @@ const TreeItem = styled(Box)((props) => ({
   },
 }));
 
+const ExpandContextMenu = styled(ContextMenu)({
+  height: "100%",
+});
+
 type Props = {
   selectFile: (fileId: string) => void;
+  selectedFile: string | null;
 };
 
-export const FileTree = ({ selectFile }: Props) => {
+export const FileTree = ({ selectFile, selectedFile }: Props) => {
   const [tree, setTree] = useState<TreeData<DirectoryFile>>({
     rootId: ROOT_DIRECTORY._id,
     items: {
@@ -133,12 +151,14 @@ export const FileTree = ({ selectFile }: Props) => {
     },
   });
 
-  const [currentDir, setCurrentDir] = useState<AnyDirectory>(ROOT_DIRECTORY);
+  const [currentDir, setCurrentDir] = useState<RootDirectory | DirectoryJson>(
+    ROOT_DIRECTORY
+  );
   // const {
   //   content: retrievedContent,
   //   error,
   //   loading,
-  // } = useDirectoryContent(directoryId);
+  // } = useDirectoryContent(currentDir._id);
 
   const retrievedContent = useMemo(() => {
     return {
@@ -230,40 +250,104 @@ export const FileTree = ({ selectFile }: Props) => {
     setTree((tree) => mutateTree(tree, fileId, { isExpanded: false }));
   }, []);
 
+  const onNewDirectory = () => {};
+  const onNewExperiment = () => {};
+  const onRefresh = () => {};
+
   return (
     <TreeBase elevation={0}>
-      <FileActionBar />
-      <List dense disablePadding>
-        <Tree
-          tree={tree}
-          onExpand={onExpand}
-          onCollapse={onCollapse}
-          renderItem={({ item, onExpand, onCollapse, provided, snapshot }) => {
-            const onClick = isDirectory(item.data)
-              ? item.isExpanded
-                ? () => onCollapse(item.id)
-                : () => onExpand(item.id)
-              : () => selectFile(item.id);
+      <FileActionBar
+        onNewDirectory={onNewDirectory}
+        onNewExperiment={onNewExperiment}
+        onRefresh={onRefresh}
+      />
+      <ContextMenu
+        renderItems={({ onClose }) => (
+          <>
+            {selectedFile && (
+              <MenuItem onClick={onClose}>
+                <ListItemIcon>
+                  <RenameIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Rename</ListItemText>
+              </MenuItem>
+            )}
+            {selectedFile && <Divider />}
+            <MenuItem onClick={onClose}>
+              <ListItemIcon>
+                <NewDirectoryIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText>New Folder</ListItemText>
+            </MenuItem>
+            <MenuItem onClick={onClose}>
+              <ListItemIcon>
+                <NewExperimentIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText>New Experiment</ListItemText>
+            </MenuItem>
+          </>
+        )}
+      >
+        <List dense disablePadding>
+          <Tree
+            tree={tree}
+            onExpand={onExpand}
+            onCollapse={onCollapse}
+            renderItem={({
+              item,
+              onExpand,
+              onCollapse,
+              provided,
+              snapshot,
+            }) => {
+              const onClick = () => {
+                isDirectory(item.data) && item.isExpanded
+                  ? () => onCollapse(item.id)
+                  : () => onExpand(item.id);
 
-            return (
-              <TreeItem
-                ref={provided.innerRef}
-                {...provided.draggableProps}
-                {...provided.dragHandleProps}
-              >
-                <BaseFile
-                  file={item.data}
-                  onClick={onClick}
-                  isExpanded={!!item.isExpanded}
-                />
-              </TreeItem>
-            );
-          }}
-          offsetPerLevel={17} // Line up files' left border line with center of dropdown arrow
-          isDragEnabled={true}
-          isNestingEnabled={true}
-        />
-      </List>
+                selectFile(item.id);
+              };
+              const onContextMenu = () => selectFile(item.id);
+
+              return (
+                <TreeItem
+                  ref={provided.innerRef}
+                  {...provided.draggableProps}
+                  {...provided.dragHandleProps}
+                >
+                  <BaseFile
+                    file={item.data}
+                    onClick={onClick}
+                    onContextMenu={onContextMenu}
+                    isExpanded={!!item.isExpanded}
+                  />
+                </TreeItem>
+              );
+            }}
+            offsetPerLevel={17} // Line up files' left border line with center of dropdown arrow
+            isDragEnabled={true}
+            isNestingEnabled={true}
+          />
+        </List>
+      </ContextMenu>
+      <ExpandContextMenu
+        renderItems={({ onClose }) => (
+          <>
+            <MenuItem onClick={onClose}>
+              <ListItemIcon>
+                <NewDirectoryIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText>New Folder</ListItemText>
+            </MenuItem>
+            <MenuItem onClick={onClose}>
+              <ListItemIcon>
+                <NewExperimentIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText>New Experiment</ListItemText>
+            </MenuItem>
+          </>
+        )}
+      />
     </TreeBase>
   );
 };

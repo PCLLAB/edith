@@ -9,21 +9,31 @@ const ActionBar = styled(Paper)({
   borderRadius: 0,
 });
 
-export const FileActionBar = () => {
+type Props = {
+  onNewExperiment: () => void;
+  onNewDirectory: () => void;
+  onRefresh: () => void;
+};
+
+export const FileActionBar = ({
+  onNewDirectory,
+  onNewExperiment,
+  onRefresh,
+}: Props) => {
   return (
     <ActionBar elevation={1}>
       <Tooltip title="New Experiment">
-        <IconButton size="small">
+        <IconButton size="small" onClick={onNewExperiment}>
           <NewExperimentIcon fontSize="inherit" />
         </IconButton>
       </Tooltip>
       <Tooltip title="New Folder">
-        <IconButton size="small">
+        <IconButton size="small" onClick={onNewDirectory}>
           <NewDirectoryIcon fontSize="inherit" />
         </IconButton>
       </Tooltip>
       <Tooltip title="Refresh Files">
-        <IconButton size="small">
+        <IconButton size="small" onClick={onRefresh}>
           <RefreshIcon fontSize="inherit" />
         </IconButton>
       </Tooltip>

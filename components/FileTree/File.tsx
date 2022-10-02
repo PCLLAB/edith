@@ -9,6 +9,7 @@ import { isDirectory } from "../../lib/common/models/utils";
 type Props = {
   file: ExperimentJson | DirectoryJson;
   onClick: () => void;
+  onContextMenu: () => void;
   isExpanded: boolean;
 };
 
@@ -30,11 +31,16 @@ const PaddedListItem = styled(ListItem)({
   paddingLeft: 32,
 });
 
-export const BaseFile = ({ file, onClick, isExpanded }: Props) => {
+export const BaseFile = ({
+  file,
+  onClick,
+  isExpanded,
+  onContextMenu,
+}: Props) => {
   const isFolder = isDirectory(file);
 
   return (
-    <PaddedListItem onClick={onClick}>
+    <PaddedListItem onClick={onClick} onContextMenu={onContextMenu}>
       {isFolder && <DropdownArrow isExpanded={isExpanded} />}
       <IconHolder>
         {isFolder ? (
