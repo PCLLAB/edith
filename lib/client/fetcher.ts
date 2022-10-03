@@ -5,6 +5,13 @@ export type Fetcher<T extends ApiSignature> = (
   s: DistributiveOmit<T, "data">
 ) => Promise<T["data"]>;
 
+/**
+ * This takes an object defining the desired request and builds the actual URL,
+ * query parameters, and request body if specified
+ *
+ * @param signature ApiSignature used as a unique key by useSWR
+ * @returns Result of fetch()
+ */
 export const fetcher = async <T extends ApiSignature>(
   signature: DistributiveOmit<T, "data">
 ) => {

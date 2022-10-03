@@ -1,16 +1,38 @@
+import {
+  ExperimentJson,
+  UserJson,
+} from "../../../../../lib/common/models/types";
 import initHandler, {
   TypedApiHandlerWithAuth,
 } from "../../../../../lib/server/initHandler";
 import Experiment, {
   ArchivedExperiment,
-  ExperimentJson,
 } from "../../../../../models/Experiment";
-import { UserJson } from "../../../../../models/User";
 
 export const ENDPOINT = "/api/v2/experiments/[id]";
 // These endpoints allow any user to update any experiment
 // This reflects the collaborative way this is used
 // Maybe do a share, private, public thing?
+
+export type ExperimentsIdGetSignature = {
+  url: typeof ENDPOINT;
+  method: "GET";
+  query: {
+    id: string;
+  };
+  data: ExperimentJson;
+};
+
+const get: TypedApiHandlerWithAuth<ExperimentsIdGetSignature> = async (
+  req,
+  res
+) => {
+  const id = req.query.id;
+
+  const experiment = await Experiment.findById(id).lean();
+
+  res.json(experiment);
+};
 
 export type ExperimentsIdPutSignature = {
   url: typeof ENDPOINT;
@@ -115,6 +137,7 @@ const post: TypedApiHandlerWithAuth<ExperimentsIdPostSignature> = async (
 };
 
 export default initHandler({
+  GET: get,
   POST: post,
   PUT: put,
   DELETE: del,

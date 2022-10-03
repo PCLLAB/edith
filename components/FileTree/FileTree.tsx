@@ -1,6 +1,7 @@
+import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import Tree, { ItemId, mutateTree, TreeData, TreeItem } from "@atlaskit/tree";
+import { ItemId, mutateTree, TreeData, TreeItem } from "@atlaskit/tree";
 import NewDirectoryIcon from "@mui/icons-material/CreateNewFolder";
 import RenameIcon from "@mui/icons-material/DriveFileRenameOutline";
 import NewExperimentIcon from "@mui/icons-material/NoteAdd";
@@ -30,6 +31,8 @@ import {
 import { ContextMenu } from "../ContextMenu/ContextMenu";
 import { BaseFile } from "./File";
 import { FileActionBar } from "./FileActionBar";
+
+const Tree = dynamic(() => import("@atlaskit/tree"), { ssr: false });
 
 const testDirs: DirectoryJson[] = [
   {
@@ -135,11 +138,17 @@ const ExpandContextMenu = styled(ContextMenu)({
 });
 
 type Props = {
-  selectFile: (fileId: string) => void;
-  selectedFile: string | null;
+  selectDirectory: (fileId: string) => void;
+  selectExperiment: (fileId: string) => void;
+  // selectedFile: DirectoryFile | null;
+  className?: string;
 };
 
-export const FileTree = ({ selectFile, selectedFile }: Props) => {
+export const FileTree = ({
+  selectDirectory,
+  selectExperiment,
+  className,
+}: Props) => {
   const [tree, setTree] = useState<TreeData<DirectoryFile>>({
     rootId: ROOT_DIRECTORY._id,
     items: {
@@ -255,7 +264,7 @@ export const FileTree = ({ selectFile, selectedFile }: Props) => {
   const onRefresh = () => {};
 
   return (
-    <TreeBase elevation={0}>
+    <TreeBase elevation={0} className={className}>
       <FileActionBar
         onNewDirectory={onNewDirectory}
         onNewExperiment={onNewExperiment}
@@ -264,15 +273,13 @@ export const FileTree = ({ selectFile, selectedFile }: Props) => {
       <ContextMenu
         renderItems={({ onClose }) => (
           <>
-            {selectedFile && (
-              <MenuItem onClick={onClose}>
-                <ListItemIcon>
-                  <RenameIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>Rename</ListItemText>
-              </MenuItem>
-            )}
-            {selectedFile && <Divider />}
+            <MenuItem onClick={onClose}>
+              <ListItemIcon>
+                <RenameIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText>Rename</ListItemText>
+            </MenuItem>
+            <Divider />
             <MenuItem onClick={onClose}>
               <ListItemIcon>
                 <NewDirectoryIcon fontSize="small" />
@@ -301,13 +308,17 @@ export const FileTree = ({ selectFile, selectedFile }: Props) => {
               snapshot,
             }) => {
               const onClick = () => {
-                isDirectory(item.data) && item.isExpanded
-                  ? () => onCollapse(item.id)
-                  : () => onExpand(item.id);
-
-                selectFile(item.id);
+                if (isDirectory(item.data)) {
+                  selectDirectory(item.id);
+                  item.isExpanded ? onCollapse(item.id) : onExpand(item.id);
+                } else {
+                  selectExperiment(item.id);
+                }
               };
-              const onContextMenu = () => selectFile(item.id);
+              const onContextMenu = () =>
+                isDirectory(item.data)
+                  ? selectDirectory(item.id)
+                  : selectExperiment(item.id);
 
               return (
                 <TreeItem

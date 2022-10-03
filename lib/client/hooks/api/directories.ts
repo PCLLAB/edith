@@ -1,9 +1,9 @@
 import useSWR from "swr";
 
-import { fetcher } from "../../../lib/client/fetcher";
-import { DirectoriesGetSignature } from "../../api/v2/directories";
-import { DirectoriesIdGetSignature } from "../../api/v2/directories/[id]";
-import { DirectoriesIdChildrenGetSignature } from "../../api/v2/directories/[id]/children";
+import { DirectoriesGetSignature } from "../../../../pages/api/v2/directories";
+import { DirectoriesIdGetSignature } from "../../../../pages/api/v2/directories/[id]";
+import { DirectoriesIdChildrenGetSignature } from "../../../../pages/api/v2/directories/[id]/children";
+import { fetcher } from "../../fetcher";
 
 export const useDirectories = () => {
   const { data, error } = useSWR(
@@ -33,12 +33,12 @@ export const useDirectoryById = (id: string) => {
   };
 };
 
-export const useDirectoryContent = (id: string, depth?: number) => {
+export const useDirectoryContent = (id: string) => {
   const { data, error } = useSWR(
     {
       url: "/api/v2/directories/[id]/children" as const,
       method: "GET" as const,
-      query: { id, depth },
+      query: { id },
     },
     (v) => fetcher<DirectoriesIdChildrenGetSignature>(v)
   );

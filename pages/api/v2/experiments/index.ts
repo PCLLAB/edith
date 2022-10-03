@@ -1,8 +1,9 @@
+import { ExperimentJson } from "../../../../lib/common/models/types";
 import { MissingArgsError } from "../../../../lib/server/errors";
 import initHandler, {
   TypedApiHandlerWithAuth,
 } from "../../../../lib/server/initHandler";
-import Experiment, { ExperimentJson } from "../../../../models/Experiment";
+import Experiment from "../../../../models/Experiment";
 
 export const ENDPOINT = "/api/v2/experiments";
 

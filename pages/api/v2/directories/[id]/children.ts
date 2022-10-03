@@ -20,7 +20,6 @@ export type DirectoriesIdChildrenGetSignature = {
   method: "GET";
   query: {
     id: string;
-    depth?: number;
   };
   data: {
     experiments: ExperimentJson[];
@@ -32,7 +31,7 @@ const get: TypedApiHandlerWithAuth<DirectoriesIdChildrenGetSignature> = async (
   req,
   res
 ) => {
-  const { id, depth } = req.query;
+  const { id } = req.query;
 
   const parent = isRootId(id) ? ROOT_DIRECTORY : await Directory.findById(id);
   const path = getPath(parent);

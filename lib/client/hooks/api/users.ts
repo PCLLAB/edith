@@ -1,8 +1,8 @@
 import useSWR from "swr";
 
-import { fetcher } from "../../../lib/client/fetcher";
-import { UsersGetSignature } from "../../api/v2/users";
-import { UsersIdGetSignature } from "../../api/v2/users/[id]";
+import { UsersGetSignature } from "../../../../pages/api/v2/users";
+import { UsersIdGetSignature } from "../../../../pages/api/v2/users/[id]";
+import { fetcher } from "../../fetcher";
 
 export const useUsers = () => {
   const { data, error } = useSWR(

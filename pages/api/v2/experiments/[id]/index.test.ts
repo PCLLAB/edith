@@ -1,5 +1,4 @@
-jest.mock("../../../../../lib/server/dbConnect");
-
+import { UserDoc } from "../../../../../lib/common/models/types";
 import dbConnect from "../../../../../lib/server/dbConnect";
 import { ModelNotFoundError } from "../../../../../lib/server/errors";
 import {
@@ -12,8 +11,9 @@ import {
 import Experiment, {
   ArchivedExperiment,
 } from "../../../../../models/Experiment";
-import { UserDoc } from "../../../../../models/User";
 import handler, { ENDPOINT } from "./index";
+
+jest.mock("../../../../../lib/server/dbConnect");
 
 let user: UserDoc;
 let token: string;
@@ -21,6 +21,7 @@ let token: string;
 let connection: any;
 
 let mockPutReqRes: ReqResMocker;
+let mockGetReqRes: ReqResMocker;
 let mockDelReqRes: ReqResMocker;
 let mockPostReqRes: ReqResMocker;
 
@@ -28,12 +29,59 @@ beforeAll(async () => {
   connection = await dbConnect();
   ({ user, token } = await getCreatedUserAndToken());
   mockPutReqRes = getReqResMocker("PUT", ENDPOINT, token);
+  mockGetReqRes = getReqResMocker("GET", ENDPOINT, token);
   mockDelReqRes = getReqResMocker("DELETE", ENDPOINT, token);
   mockPostReqRes = getReqResMocker("POST", ENDPOINT, token);
 });
 
 afterAll(async () => {
   await connection.disconnect();
+});
+
+describe(`GET ${ENDPOINT}`, () => {
+  it("returns 400 if invalid id", async () => {
+    const { req, res } = mockGetReqRes({
+      query: {
+        id: "abds",
+      },
+    });
+
+    await handler(req, res);
+
+    expect(res.statusCode).toBe(400);
+  });
+
+  it("returns 404 if bad valid id", async () => {
+    const { req, res } = mockGetReqRes({
+      query: {
+        id: getValidObjectId(),
+      },
+    });
+
+    await handler(req, res);
+
+    expect(res.statusCode).toBe(404);
+  });
+
+  it("returns 200 and experiment", async () => {
+    const expInfo = {
+      name: "exp1",
+      user: user._id.toString(),
+      dataCollection: "placeholder",
+    };
+    const exp = await Experiment.create(expInfo);
+
+    const { req, res } = mockGetReqRes({
+      query: {
+        id: exp._id,
+      },
+    });
+
+    await handler(req, res);
+
+    expect(res.statusCode).toBe(200);
+    expect(res._getJSONData()).toMatchObject(expInfo);
+  });
 });
 
 describe(`PUT ${ENDPOINT}`, () => {

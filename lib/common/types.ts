@@ -14,6 +14,7 @@ import {
 } from "../../pages/api/v2/experiments";
 import {
   ExperimentsIdDeleteSignature,
+  ExperimentsIdGetSignature,
   ExperimentsIdPostSignature,
   ExperimentsIdPutSignature,
 } from "../../pages/api/v2/experiments/[id]";
@@ -57,6 +58,7 @@ type UsersId =
 
 type Experiments = ExperimentsGetSignature | ExperimentsPostSignature;
 type ExperimentsId =
+  | ExperimentsIdGetSignature
   | ExperimentsIdPostSignature
   | ExperimentsIdPutSignature
   | ExperimentsIdDeleteSignature;
