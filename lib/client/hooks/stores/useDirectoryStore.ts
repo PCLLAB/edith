@@ -5,59 +5,58 @@ import { getPath } from "../../../common/models/utils";
 
 interface DirectoryState {
   directories: Record<string, DirectoryJson>;
-  updateDirectory: (id: string, update: DirectoryJson) => void;
-  deleteDirectory: (id: string) => void;
+  updateDirectories: (updates: DirectoryJson[]) => void;
+  deleteDirectories: (ids: string[]) => void;
 }
+
+// Look, it's not beautiful, but it works and it's easy to understand
+// I did try to write it more "functionally", but it got too complicated
 
 export const useDirectoryStore = create<DirectoryState>((set) => ({
   directories: {},
-  updateDirectory: (id, update) =>
+  updateDirectories: (updates) =>
     set((state) => {
-      // If create or simple update
-      if (
-        !(id in state.directories) ||
-        update.prefixPath === state.directories[id].prefixPath
-      ) {
-        return { directories: { ...state.directories, [id]: update } };
-      }
+      const currentDirList = Object.values(state.directories);
+      const mutableDirMap = state.directories;
 
-      const oldSubtreePrefix = getPath(state.directories[id]);
-      const newSubtreePrefix = getPath(update);
-      const updatedTree = Object.fromEntries(
-        Object.entries(state.directories).map(([id, dir]) => {
+      updates.forEach((update) => {
+        const existingEntry = state.directories[update._id];
+        if (!existingEntry || update.prefixPath === existingEntry.prefixPath) {
+          mutableDirMap[update._id] = update;
+          return;
+        }
+
+        const oldSubtreePrefix = getPath(existingEntry);
+        const newSubtreePrefix = getPath(update);
+        currentDirList.forEach((dir) => {
           if (!dir.prefixPath.startsWith(oldSubtreePrefix)) {
-            return [id, dir];
+            return;
           }
-          const prefixPath = dir.prefixPath.replace(
+          mutableDirMap[update._id].prefixPath = dir.prefixPath.replace(
             oldSubtreePrefix,
             newSubtreePrefix
           );
+        });
+      });
 
-          return [
-            id,
-            {
-              ...dir,
-              prefixPath,
-            },
-          ];
-        })
-      );
-
-      return {
-        directories: { ...updatedTree, [id]: update },
-      };
+      return { directories: mutableDirMap };
     }),
-  deleteDirectory: (id) =>
+  deleteDirectories: (ids) =>
     set((state) => {
-      const subtreePrefix = getPath(state.directories[id]);
+      const currentDirList = Object.values(state.directories);
+      const mutableDirMap = state.directories;
+      ids.forEach((id) => {
+        delete mutableDirMap[id];
 
-      const { [id]: _, ...others } = state.directories;
+        const subtreePrefix = getPath(state.directories[id]);
 
-      const keep = Object.fromEntries(
-        Object.entries(others).filter(
-          ([_id, dir]) => !dir.prefixPath.startsWith(subtreePrefix)
-        )
-      );
-      return { directories: keep };
+        currentDirList.forEach((dir) => {
+          if (!dir.prefixPath.startsWith(subtreePrefix)) {
+            return;
+          }
+          delete mutableDirMap[dir._id];
+        });
+      });
+      return { directories: mutableDirMap };
     }),
 }));

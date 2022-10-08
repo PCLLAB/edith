@@ -31,7 +31,11 @@ import {
 import { ContextMenu } from "../ContextMenu/ContextMenu";
 import { BaseFile } from "./File";
 import { FileActionBar } from "./FileActionBar";
+import { getDirectoryContent } from "../../lib/client/api/directories";
+import { useDirectoryStore } from "../../lib/client/hooks/stores/useDirectoryStore";
+import { useExperimentStore } from "../../lib/client/hooks/stores/useExperimentStore";
 
+// @ts-ignore: this doesn't actually cause any errors
 const Tree = dynamic(() => import("@atlaskit/tree"), { ssr: false });
 
 const testDirs: DirectoryJson[] = [
@@ -107,19 +111,6 @@ const testExps2: ExperimentJson[] = [
   },
 ];
 
-const testExps: ExperimentJson[] = [
-  {
-    _id: "o2wd8",
-    name: "First Exp",
-    enabled: true,
-    dataCollection: "dasf",
-    user: "asadfasdf2",
-    prefixPath: "r",
-    createdAt: "fake date",
-    updatedAt: "fake date2",
-  },
-];
-
 const TreeBase = styled(Paper)({
   height: "100%",
 });
@@ -160,36 +151,45 @@ export const FileTree = ({
     },
   });
 
-  const [currentDir, setCurrentDir] = useState<RootDirectory | DirectoryJson>(
-    ROOT_DIRECTORY
+  const directories = useDirectoryStore((state) => state.directories);
+  const updateDirectories = useDirectoryStore(
+    (state) => state.updateDirectories
   );
-  // const {
-  //   content: retrievedContent,
-  //   error,
-  //   loading,
-  // } = useDirectoryContent(currentDir._id);
+  const experiments = useExperimentStore((state) => state.experiments);
+  const updateExperiments = useExperimentStore(
+    (state) => state.updateExperiments
+  );
 
-  const retrievedContent = useMemo(() => {
-    return {
-      experiments: testExps2,
-      directories: testDirs,
-      // experiments: !bool ? testExps2 : [], //testExps2,
-      // directories: !bool ? testDirs : [],
-    };
+  useEffect(() => {
+    updateDirectories(testDirs);
+    updateExperiments(testExps2);
   }, []);
 
   useEffect(() => {
-    if (retrievedContent == null) return;
-
-    const updatedPath = getPath(currentDir);
-
     const treeItems = tree.items;
 
-    const keepEntries = Object.entries(treeItems).filter(
-      ([fileId, treeItem]) => treeItem.data?.prefixPath !== updatedPath
-    );
+    const keepEntries: [string, TreeItem][] = [
+      [ROOT_DIRECTORY._id, treeItems[ROOT_DIRECTORY._id]],
+    ];
 
-    const newExpEntries = retrievedContent.experiments.map((exp) => [
+    const filterFiles = (files: DirectoryFile[]) =>
+      files.filter((file) => {
+        if (file._id in treeItems) {
+          if (
+            treeItems[file._id].data.prefixPath === file.prefixPath &&
+            treeItems[file._id].data.name === file.name
+          ) {
+            keepEntries.push([file._id, treeItems[file._id]]);
+            return false;
+          }
+        }
+        return true;
+      });
+
+    const newExps = filterFiles(Object.values(experiments));
+    const newDirs = filterFiles(Object.values(directories));
+
+    const newExpEntries = newExps.map((exp) => [
       exp._id,
       {
         id: exp._id,
@@ -200,7 +200,7 @@ export const FileTree = ({
       },
     ]);
 
-    const newDirExtries = retrievedContent.directories.map((dir) => [
+    const newDirExtries = newDirs.map((dir) => [
       dir._id,
       {
         id: dir._id,
@@ -235,24 +235,26 @@ export const FileTree = ({
       return fileA.data.name.localeCompare(fileB.data.name);
     };
 
-    [...retrievedContent.directories, ...retrievedContent.experiments].forEach(
-      (file) => {
-        const parentId = getIdFromPath(file.prefixPath);
-        if (!newItems[parentId].children.includes(file._id)) {
-          newItems[parentId].children.push(file._id);
-          newItems[parentId].children.sort(compareFile);
-        }
+    [...newExps, ...newDirs].forEach((file) => {
+      const parentId = getIdFromPath(file.prefixPath);
+      if (!newItems[parentId].children.includes(file._id)) {
+        newItems[parentId].children.push(file._id);
       }
-    );
+    });
+
+    Object.values(directories).forEach((dir) => {
+      newItems[dir._id].children.sort(compareFile);
+    });
 
     setTree({ rootId: ROOT_DIRECTORY._id, items: newItems });
     // `treeItems` should only change as a result of
     // this useEffect, so it shouldn't be a dependency
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [retrievedContent]);
+  }, [directories, experiments]);
 
   const onExpand = useCallback((fileId: ItemId) => {
     setTree((tree) => mutateTree(tree, fileId, { isExpanded: true }));
+    getDirectoryContent(fileId);
   }, []);
 
   const onCollapse = useCallback((fileId: ItemId) => {

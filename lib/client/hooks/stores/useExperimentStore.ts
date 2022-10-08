@@ -4,17 +4,23 @@ import { ExperimentJson } from "../../../common/models/types";
 
 interface ExperimentState {
   experiments: Record<string, ExperimentJson>;
-  updateExperiment: (id: string, dir: ExperimentJson) => void;
-  deleteExperiment: (id: string) => void;
+  updateExperiments: (updates: ExperimentJson[]) => void;
+  deleteExperiments: (ids: string[]) => void;
 }
 
 export const useExperimentStore = create<ExperimentState>((set) => ({
   experiments: {},
-  updateExperiment: (id, dir) =>
-    set((state) => ({ experiments: { ...state.experiments, [id]: dir } })),
-  deleteExperiment: (id) =>
+  updateExperiments: (updates) =>
+    set((state) => ({
+      experiments: {
+        ...state.experiments,
+        ...Object.fromEntries(updates.map((update) => [update._id, update])),
+      },
+    })),
+  deleteExperiments: (ids) =>
     set((state) => {
-      const { [id]: _, ...keep } = state.experiments;
-      return { experiments: keep };
+      const mutableExpMap = state.experiments;
+      ids.forEach((id) => delete mutableExpMap[id]);
+      return { experiments: mutableExpMap };
     }),
 }));
