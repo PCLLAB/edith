@@ -1,4 +1,7 @@
-import { DirectoriesGetSignature } from "../../../pages/api/v2/directories";
+import {
+  DirectoriesGetSignature,
+  DirectoriesPostSignature,
+} from "../../../pages/api/v2/directories";
 import { DirectoriesIdGetSignature } from "../../../pages/api/v2/directories/[id]";
 import { DirectoriesIdChildrenGetSignature } from "../../../pages/api/v2/directories/[id]/children";
 import { fetcher } from "../fetcher";
@@ -18,6 +21,15 @@ export const getDirectoryById = (id: string) =>
     url: "/api/v2/directories/[id]" as const,
     method: "GET" as const,
     query: { id },
+  }).then((dir) => {
+    useDirectoryStore.getState().updateDirectories([dir]);
+  });
+
+export const createDirectory = (body: DirectoriesPostSignature["body"]) =>
+  fetcher<DirectoriesPostSignature>({
+    url: "/api/v2/directories" as const,
+    method: "POST" as const,
+    body,
   }).then((dir) => {
     useDirectoryStore.getState().updateDirectories([dir]);
   });

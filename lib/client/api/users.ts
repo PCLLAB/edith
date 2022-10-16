@@ -1,6 +1,6 @@
-import { UsersGetSignature } from "../../../../pages/api/v2/users";
-import { UsersIdGetSignature } from "../../../../pages/api/v2/users/[id]";
-import { fetcher } from "../../fetcher";
+import { UsersGetSignature } from "../../../pages/api/v2/users";
+import { UsersIdGetSignature } from "../../../pages/api/v2/users/[id]";
+import { fetcher } from "../fetcher";
 
 export const getUsers = () =>
   fetcher<UsersGetSignature>({

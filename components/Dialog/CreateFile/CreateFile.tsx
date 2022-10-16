@@ -1,5 +1,3 @@
-import { useSWRConfig } from "swr";
-
 import {
   Button,
   Dialog,
@@ -7,6 +5,9 @@ import {
   DialogTitle,
   TextField,
 } from "@mui/material";
+import { useState } from "react";
+import { createDirectory } from "../../../lib/client/api/directories";
+import { createExperiment } from "../../../lib/client/api/experiments";
 
 type Props = {
   open: boolean;
@@ -15,21 +16,25 @@ type Props = {
 
 const CreateFileDialog = ({
   open,
-  onClose,
   type,
-}: Props & { type: "Directory" | "Experiment" }) => {
-  const { mutate } = useSWRConfig();
+  onClose,
+  onCreate,
+}: Props & {
+  onCreate: (name: string) => void;
+  type: "Experiment" | "Directory";
+}) => {
+  const [fileName, setFileName] = useState("");
 
-  // {
-  //   url: "/api/v2/directories/[id]/children" as const,
-  //   method: "GET" as const,
-  //   query: { id },
-  // }
-
+  const handleCreate = () => {
+    onCreate(fileName);
+    onClose();
+  };
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Create new {type}</DialogTitle>
       <TextField
+        value={fileName}
+        onChange={(e) => setFileName(e.target.value)}
         autoFocus
         margin="dense"
         id="name"
@@ -39,11 +44,44 @@ const CreateFileDialog = ({
         variant="outlined"
       />
       <DialogActions>
-        <Button onClick={handleClose}>Cancel</Button>
-        <Button onClick={handleClose}>Create</Button>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleCreate}>Create</Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export const CreateExperimentDialog = () => {};
+export const CreateExperimentDialog = ({
+  open,
+  onClose,
+  prefixPath,
+}: Props & { prefixPath: string }) => {
+  const handleCreate = (name: string) => {
+    createExperiment({ name, prefixPath, enabled: false });
+  };
+  return (
+    <CreateFileDialog
+      open={open}
+      onClose={onClose}
+      type="Experiment"
+      onCreate={handleCreate}
+    />
+  );
+};
+export const CreateDirectoryDialog = ({
+  open,
+  onClose,
+  prefixPath,
+}: Props & { prefixPath: string }) => {
+  const handleCreate = (name: string) => {
+    createDirectory({ name, prefixPath });
+  };
+  return (
+    <CreateFileDialog
+      open={open}
+      onClose={onClose}
+      type="Directory"
+      onCreate={handleCreate}
+    />
+  );
+};
