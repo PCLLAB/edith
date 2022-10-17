@@ -2,7 +2,10 @@ import {
   DirectoriesGetSignature,
   DirectoriesPostSignature,
 } from "../../../pages/api/v2/directories";
-import { DirectoriesIdGetSignature } from "../../../pages/api/v2/directories/[id]";
+import {
+  DirectoriesIdGetSignature,
+  DirectoriesIdPutSignature,
+} from "../../../pages/api/v2/directories/[id]";
 import { DirectoriesIdChildrenGetSignature } from "../../../pages/api/v2/directories/[id]/children";
 import { fetcher } from "../fetcher";
 import { useDirectoryStore } from "../hooks/stores/useDirectoryStore";
@@ -16,11 +19,24 @@ export const getDirectories = () =>
     useDirectoryStore.getState().updateDirectories(dirs);
   });
 
-export const getDirectoryById = (id: string) =>
+export const getDirectory = (id: string) =>
   fetcher<DirectoriesIdGetSignature>({
     url: "/api/v2/directories/[id]" as const,
     method: "GET" as const,
     query: { id },
+  }).then((dir) => {
+    useDirectoryStore.getState().updateDirectories([dir]);
+  });
+
+export const updateDirectory = (
+  id: string,
+  update: DirectoriesIdPutSignature["body"]
+) =>
+  fetcher<DirectoriesIdPutSignature>({
+    url: "/api/v2/directories/[id]" as const,
+    method: "PUT" as const,
+    query: { id },
+    body: update,
   }).then((dir) => {
     useDirectoryStore.getState().updateDirectories([dir]);
   });

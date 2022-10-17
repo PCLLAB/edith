@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { createContext, useState } from "react";
 
 import { styled } from "@mui/material";
 
@@ -7,6 +7,7 @@ import { DirectoryViewer } from "../../components/FileViewer/DirectoryViewer";
 import { ExperimentViewer } from "../../components/FileViewer/ExperimentViewer";
 
 import type { NextPage } from "next";
+import { FileSelectionProvider } from "../../components/FileTree/FileSelectionProvider";
 const ExplorerBox = styled("div")({
   display: "flex",
   flexDirection: "row",
@@ -36,18 +37,22 @@ const Explorer: NextPage = () => {
   };
 
   return (
-    <ExplorerBox>
-      <FileNavSideBar
-        selectDirectory={selectDirectory}
-        selectExperiment={selectExperiment}
-      />
-      <FileViewer>
-        {fileId && fileId === expId && (
-          <ExperimentViewer experimentId={expId} />
-        )}
-        {fileId && fileId === dirId && <DirectoryViewer directoryId={dirId} />}
-      </FileViewer>
-    </ExplorerBox>
+    <FileSelectionProvider>
+      <ExplorerBox>
+        <FileNavSideBar
+          selectDirectory={selectDirectory}
+          selectExperiment={selectExperiment}
+        />
+        <FileViewer>
+          {fileId && fileId === expId && (
+            <ExperimentViewer experimentId={expId} />
+          )}
+          {fileId && fileId === dirId && (
+            <DirectoryViewer directoryId={dirId} />
+          )}
+        </FileViewer>
+      </ExplorerBox>
+    </FileSelectionProvider>
   );
 };
 

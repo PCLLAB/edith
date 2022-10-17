@@ -1,5 +1,5 @@
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 
 import { ItemId, mutateTree, TreeData, TreeItem } from "@atlaskit/tree";
 import NewDirectoryIcon from "@mui/icons-material/CreateNewFolder";
@@ -25,10 +25,15 @@ import { ContextMenu } from "../ContextMenu/ContextMenu";
 import {
   CreateDirectoryDialog,
   CreateExperimentDialog,
-} from "../Dialog/CreateFile/CreateFile";
+} from "../Dialog/CreateFile";
 import { BaseFile } from "./File";
 import { FileActionBar } from "./FileActionBar";
 import { INITIAL_TREE_DATA, updatedTreeItems } from "./utils";
+import {
+  DirectoryFileType,
+  FileSelectionContext,
+} from "./FileSelectionProvider";
+import { RenameDirectoryDialog } from "../Dialog/RenameFile";
 
 // @ts-ignore: this doesn't actually cause any errors
 const Tree = dynamic(() => import("@atlaskit/tree"), { ssr: false });
@@ -51,18 +56,17 @@ const FillSpaceContextMenu = styled(ContextMenu)({
 });
 
 type Props = {
-  selectDirectory: (fileId: string) => void;
-  selectExperiment: (fileId: string) => void;
   // selectedFile: DirectoryFile | null;
   className?: string;
 };
 
-export const FileTree = ({
-  selectDirectory,
-  selectExperiment,
-  className,
-}: Props) => {
-  const [tree, setTree] = useState<TreeData<DirectoryFile>>(INITIAL_TREE_DATA);
+export type TreeItemData = {
+  fileType: DirectoryFileType;
+  name: string;
+};
+
+export const FileTree = ({ className }: Props) => {
+  const [tree, setTree] = useState<TreeData<TreeItemData>>(INITIAL_TREE_DATA);
 
   const directories = useDirectoryStore((state) => state.directories);
   const updateDirectories = useDirectoryStore(
@@ -101,35 +105,64 @@ export const FileTree = ({
     setTree((tree) => mutateTree(tree, fileId, { isExpanded: false }));
   }, []);
 
-  const onNewDirectory = () => {};
-  const onNewExperiment = () => {};
-  const onRefresh = () => {};
+  // const onNewDirectory = () => {};
+  // const onNewExperiment = () => {};
+  const onRefresh = () => {
+    getDirectoryContent(ROOT_DIRECTORY._id);
+    // TODO update for all expanded directories?
+  };
+
+  enum Dialogs {
+    CREATE_EXP,
+    CREATE_DIR,
+    RENAME_EXP,
+    RENAME_DIR,
+  }
+  const [dialog, setDialog] = useState<Dialogs | null>(null);
+  const onCloseDialog = () => setDialog(null);
+
+  const { fileSelection, setFileSelection } = useContext(FileSelectionContext);
 
   return (
     <>
       <TreeBase elevation={0} className={className}>
         <FileActionBar
-          onNewDirectory={onNewDirectory}
-          onNewExperiment={onNewExperiment}
+          onNewDirectory={() => setDialog(Dialogs.CREATE_DIR)}
+          onNewExperiment={() => setDialog(Dialogs.CREATE_EXP)}
           onRefresh={onRefresh}
         />
         <ContextMenu
           renderItems={({ onClose }) => (
             <>
-              <MenuItem onClick={onClose}>
+              <MenuItem
+                onClick={() => {
+                  setDialog(Dialogs.RENAME_DIR);
+                  onClose();
+                }}
+              >
                 <ListItemIcon>
                   <RenameIcon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText>Rename</ListItemText>
               </MenuItem>
               <Divider />
-              <MenuItem onClick={onClose}>
+              <MenuItem
+                onClick={() => {
+                  () => setDialog(Dialogs.CREATE_DIR);
+                  onClose();
+                }}
+              >
                 <ListItemIcon>
                   <NewDirectoryIcon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText>New Folder</ListItemText>
               </MenuItem>
-              <MenuItem onClick={onClose}>
+              <MenuItem
+                onClick={() => {
+                  () => setDialog(Dialogs.CREATE_EXP);
+                  onClose();
+                }}
+              >
                 <ListItemIcon>
                   <NewExperimentIcon fontSize="small" />
                 </ListItemIcon>
@@ -151,17 +184,13 @@ export const FileTree = ({
                 snapshot,
               }) => {
                 const onClick = () => {
-                  if (isDirectory(item.data)) {
-                    selectDirectory(item.id);
+                  if (item.data.fileType === DirectoryFileType.DIR) {
                     item.isExpanded ? onCollapse(item.id) : onExpand(item.id);
-                  } else {
-                    selectExperiment(item.id);
                   }
+                  setFileSelection({ id: item.id, type: item.data.fileType });
                 };
                 const onContextMenu = () =>
-                  isDirectory(item.data)
-                    ? selectDirectory(item.id)
-                    : selectExperiment(item.id);
+                  setFileSelection({ id: item.id, type: item.data.fileType });
 
                 return (
                   <TreeItem
@@ -187,13 +216,23 @@ export const FileTree = ({
         <FillSpaceContextMenu
           renderItems={({ onClose }) => (
             <>
-              <MenuItem onClick={onClose}>
+              <MenuItem
+                onClick={() => {
+                  () => setDialog(Dialogs.CREATE_DIR);
+                  onClose();
+                }}
+              >
                 <ListItemIcon>
                   <NewDirectoryIcon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText>New Folder</ListItemText>
               </MenuItem>
-              <MenuItem onClick={onClose}>
+              <MenuItem
+                onClick={() => {
+                  () => setDialog(Dialogs.CREATE_EXP);
+                  onClose();
+                }}
+              >
                 <ListItemIcon>
                   <NewExperimentIcon fontSize="small" />
                 </ListItemIcon>
@@ -203,8 +242,20 @@ export const FileTree = ({
           )}
         />
       </TreeBase>
-      <CreateDirectoryDialog open={} onClose={} prefixPath={} />
-      <CreateExperimentDialog open={} onClose={} prefixPath={} />
+      <CreateDirectoryDialog
+        open={dialog === Dialogs.CREATE_DIR}
+        onClose={onCloseDialog}
+        prefixPath={
+          experiments[fileSelection?.id ?? ROOT_DIRECTORY._id].prefixPath
+        }
+      />
+      <CreateExperimentDialog
+        open={dialog === Dialogs.CREATE_EXP}
+        onClose={onCloseDialog}
+        prefixPath={
+          directories[fileSelection?.id ?? ROOT_DIRECTORY._id].prefixPath
+        }
+      />
     </>
   );
 };

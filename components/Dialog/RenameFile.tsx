@@ -1,34 +1,35 @@
 import {
-  Button,
   Dialog,
-  DialogActions,
   DialogTitle,
   TextField,
+  DialogActions,
+  Button,
 } from "@mui/material";
 import { useState } from "react";
-import { createDirectory } from "../../../lib/client/api/directories";
-import { createExperiment } from "../../../lib/client/api/experiments";
+import { updateDirectory } from "../../lib/client/api/directories";
+import { updateExperiment } from "../../lib/client/api/experiments";
 
 type Props = {
   open: boolean;
   onClose: () => void;
 };
 
-const CreateFileDialog = ({
+const RenameFileDialog = ({
   open,
   type,
   onClose,
-  onCreate,
+  onRename,
 }: Props & {
-  onCreate: (name: string) => void;
+  onRename: (name: string) => void;
   type: "Experiment" | "Directory";
 }) => {
   const [fileName, setFileName] = useState("");
 
-  const handleCreate = () => {
-    onCreate(fileName);
+  const handleRename = () => {
+    onRename(fileName);
     onClose();
   };
+
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Create new {type}</DialogTitle>
@@ -45,43 +46,43 @@ const CreateFileDialog = ({
       />
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleCreate}>Create</Button>
+        <Button onClick={handleRename}>Create</Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export const CreateExperimentDialog = ({
+export const RenameExperimentDialog = ({
   open,
   onClose,
-  prefixPath,
-}: Props & { prefixPath: string }) => {
-  const handleCreate = (name: string) => {
-    createExperiment({ name, prefixPath, enabled: false });
+  id,
+}: Props & { id: string }) => {
+  const handleRename = (name: string) => {
+    updateExperiment(id, { name, prefixPath, enabled: false });
   };
   return (
-    <CreateFileDialog
+    <RenameFileDialog
       open={open}
       onClose={onClose}
       type="Experiment"
-      onCreate={handleCreate}
+      onRename={handleRename}
     />
   );
 };
-export const CreateDirectoryDialog = ({
+export const RenameDirectoryDialog = ({
   open,
   onClose,
-  prefixPath,
-}: Props & { prefixPath: string }) => {
-  const handleCreate = (name: string) => {
-    createDirectory({ name, prefixPath });
+  id,
+}: Props & { id: string }) => {
+  const handleRename = (name: string) => {
+    updateDirectory(id, { name });
   };
   return (
-    <CreateFileDialog
+    <RenameFileDialog
       open={open}
       onClose={onClose}
       type="Directory"
-      onCreate={handleCreate}
+      onRename={handleRename}
     />
   );
 };

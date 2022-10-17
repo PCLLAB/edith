@@ -6,6 +6,8 @@ import {
   ExperimentJson,
 } from "../../lib/common/models/types";
 import { getIdFromPath, ROOT_DIRECTORY } from "../../lib/common/models/utils";
+import { DirectoryFileType } from "./FileSelectionProvider";
+import { TreeItemData } from "./FileTree";
 
 export const INITIAL_TREE_DATA = {
   rootId: ROOT_DIRECTORY._id,
@@ -13,7 +15,10 @@ export const INITIAL_TREE_DATA = {
     [ROOT_DIRECTORY._id]: {
       id: ROOT_DIRECTORY._id,
       children: [],
-      data: ROOT_DIRECTORY as DirectoryFile,
+      data: {
+        fileType: DirectoryFileType.DIR,
+        name: ROOT_DIRECTORY.name,
+      },
     },
   },
 };
@@ -48,7 +53,7 @@ export const updatedTreeItems = (
     exp._id,
     {
       id: exp._id,
-      data: exp,
+      data: { fileType: DirectoryFileType.EXP },
       isExpanded: false,
       hasChildren: false,
       children: [],
@@ -59,14 +64,14 @@ export const updatedTreeItems = (
     dir._id,
     {
       id: dir._id,
-      data: dir,
+      data: { fileType: DirectoryFileType.DIR },
       isExpanded: false,
       hasChildren: true,
       children: treeItems[dir._id]?.children ?? [],
     },
   ]);
 
-  const newItems: Record<string, TreeItem<DirectoryFile>> = Object.fromEntries([
+  const newItems: Record<string, TreeItem<TreeItemData>> = Object.fromEntries([
     ...keepEntries,
     ...newDirExtries,
     ...newExpEntries,
