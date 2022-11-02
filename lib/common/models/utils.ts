@@ -25,16 +25,10 @@ export const getPath = (dir: AnyDirectory) => {
   return isRoot(dir) ? ROOT_DIRECTORY._id : `${dir.prefixPath},${dir._id}`;
 };
 
-export const getNamedPath = (dir: AnyDirectory) => {
-  return isRoot(dir)
-    ? ROOT_DIRECTORY.name
-    : `${dir.namedPrefixPath},${dir.name}`;
-};
-
 export const isDirectory = (file: DirectoryFile): file is DirectoryJson => {
-  return "namedPrefixPath" in file;
+  return !isExperiment(file);
 };
 
 export const isExperiment = (file: DirectoryFile): file is ExperimentJson => {
-  return !isDirectory(file);
+  return "dataCollection" in file;
 };

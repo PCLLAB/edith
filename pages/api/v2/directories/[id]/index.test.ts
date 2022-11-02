@@ -1,7 +1,7 @@
 jest.mock("../../../../../lib/server/dbConnect");
 
 import { ROOT_DIRECTORY } from "../../../../../lib/common/models/utils";
-import { getNamedPath, getPath } from "../../../../../lib/common/models/utils";
+import { getPath } from "../../../../../lib/common/models/utils";
 import dbConnect from "../../../../../lib/server/dbConnect";
 import {
   ApiCallMocker,
@@ -123,7 +123,7 @@ describe(`PUT ${ENDPOINT}`, () => {
     expect(res._getJSONData()).toMatchObject({ name: newName });
   });
 
-  it("returns 200 and updates prefixPath and namedPrefixPath", async () => {
+  it("returns 200 and updates prefixPath", async () => {
     const dir1 = await mockPostDirectory({
       body: {
         name: "dir1",
@@ -138,7 +138,6 @@ describe(`PUT ${ENDPOINT}`, () => {
     });
 
     expect(dir2.prefixPath).toEqual(getPath(dir1));
-    expect(dir2.namedPrefixPath).toEqual(getNamedPath(dir1));
 
     const newPrefixPath = getPath(ROOT_DIRECTORY);
 
@@ -154,7 +153,6 @@ describe(`PUT ${ENDPOINT}`, () => {
     expect(res.statusCode).toBe(200);
     expect(res._getJSONData()).toMatchObject({
       prefixPath: newPrefixPath,
-      namedPrefixPath: getNamedPath(ROOT_DIRECTORY),
     });
   });
 
@@ -257,24 +255,17 @@ describe(`PUT ${ENDPOINT}`, () => {
           ...parent,
           updatedAt: expect.not.stringMatching(parent.updatedAt),
           prefixPath: getPath(ROOT_DIRECTORY),
-          namedPrefixPath: `${getNamedPath(ROOT_DIRECTORY)}`,
           name: "updated parent directory",
         }),
         expect.objectContaining({
           ...you,
           updatedAt: expect.not.stringMatching(you.updatedAt),
           prefixPath: `${getPath(ROOT_DIRECTORY)},${parent._id}`,
-          namedPrefixPath: `${getNamedPath(
-            ROOT_DIRECTORY
-          )},updated parent directory`,
         }),
         expect.objectContaining({
           ...child,
           updatedAt: expect.not.stringMatching(child.updatedAt),
           prefixPath: `${getPath(ROOT_DIRECTORY)},${parent._id},${you._id}`,
-          namedPrefixPath: `${getNamedPath(
-            ROOT_DIRECTORY
-          )},updated parent directory,${you.name}`,
         }),
       ])
     );

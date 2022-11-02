@@ -96,7 +96,6 @@ describe(`POST ${ENDPOINT}`, () => {
       expect.objectContaining({
         name,
         prefixPath: "r",
-        namedPrefixPath: "Root",
         ownerIds: expect.arrayContaining([user._id.toString()]),
         createdAt: expect.any(String),
         updatedAt: expect.any(String),
@@ -127,7 +126,6 @@ describe(`POST ${ENDPOINT}`, () => {
       expect.objectContaining({
         name,
         prefixPath: `r,${parent._id.toString()}`,
-        namedPrefixPath: `Root,${parent.name}`,
         ownerIds: expect.arrayContaining([user._id.toString()]),
         createdAt: expect.any(String),
         updatedAt: expect.any(String),

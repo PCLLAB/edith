@@ -21,14 +21,6 @@ const DirectorySchema = new mongoose.Schema<DirectoryDoc>(
       default: "r",
       match: [/^r(,([a-z\d]){24})*$/, "Incorrect prefixpath pattern"],
     },
-    namedPrefixPath: {
-      type: String,
-      default: "Root",
-      match: [
-        /^Root(,[A-Za-z\d\-_\s]+)*$/,
-        "Incorrect namedPrefixPath pattern",
-      ],
-    },
   },
   { timestamps: true }
 );

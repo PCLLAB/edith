@@ -82,8 +82,8 @@ export const updatedTreeItems = (
   const compareFile = (itemA: string, itemB: string) => {
     const fileA = newItems[itemA];
     const fileB = newItems[itemB];
-    const aFolder = "namedPrefixPath" in fileA;
-    const bFolder = "namedPrefixPath" in fileB;
+    const aFolder = fileA.data.fileType === DirectoryFileType.DIR;
+    const bFolder = fileB.data.fileType === DirectoryFileType.EXP;
 
     if (aFolder !== bFolder) {
       return aFolder ? 1 : -1;

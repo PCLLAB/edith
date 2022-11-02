@@ -53,14 +53,10 @@ const post: TypedApiHandlerWithAuth<DirectoriesPostSignature> = async (
   }
 
   const parentId = getIdFromPath(prefixPath);
-  const parentDir = await Directory.findById(parentId).lean();
-
-  const namedPrefixPath = `${parentDir.namedPrefixPath},${parentDir.name}`;
 
   const dir = new Directory({
     name,
     prefixPath,
-    namedPrefixPath,
     ownerIds: [user],
   });
 

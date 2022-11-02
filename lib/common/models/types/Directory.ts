@@ -7,8 +7,6 @@ export interface DirectoryDoc<IdType = Types.ObjectId, DateType = Date> {
   ownerIds: Types.Array<IdType>;
   /** Comma delimited string of ancestor ids ex: "r,ADS93,SD422" */
   prefixPath: string;
-  /** Comma delimited string of ancestor names ex: "Root,Books,Programming" */
-  namedPrefixPath: string;
   /** Managed by mongoose using timestamp option*/
   createdAt: DateType;
   /** Managed by mongoose using timestamp option*/
