@@ -1,7 +1,7 @@
 import dynamic from "next/dynamic";
 import { useCallback, useContext, useEffect, useState } from "react";
 
-import { ItemId, mutateTree, TreeData, TreeItem } from "@atlaskit/tree";
+import { ItemId, mutateTree, TreeData } from "@atlaskit/tree";
 import NewDirectoryIcon from "@mui/icons-material/CreateNewFolder";
 import RenameIcon from "@mui/icons-material/DriveFileRenameOutline";
 import NewExperimentIcon from "@mui/icons-material/NoteAdd";
@@ -19,27 +19,24 @@ import {
 import { getDirectoryContent } from "../../lib/client/api/directories";
 import { useDirectoryStore } from "../../lib/client/hooks/stores/useDirectoryStore";
 import { useExperimentStore } from "../../lib/client/hooks/stores/useExperimentStore";
-import { DirectoryFile } from "../../lib/common/models/types";
-import { isDirectory, ROOT_DIRECTORY } from "../../lib/common/models/utils";
+import { getPath, ROOT_DIRECTORY } from "../../lib/common/models/utils";
 import { ContextMenu } from "../ContextMenu/ContextMenu";
-import {
-  CreateDirectoryDialog,
-  CreateExperimentDialog,
-} from "../Dialog/CreateFile";
+import { CreateFileDialog } from "../Dialog/CreateFile";
 import { BaseFile } from "./File";
 import { FileActionBar } from "./FileActionBar";
-import { INITIAL_TREE_DATA, updatedTreeItems } from "./utils";
 import {
   DirectoryFileType,
   FileSelectionContext,
 } from "./FileSelectionProvider";
-import { RenameDirectoryDialog } from "../Dialog/RenameFile";
+import { INITIAL_TREE_DATA, updatedTreeItems } from "./utils";
 
 // @ts-ignore: this doesn't actually cause any errors
 const Tree = dynamic(() => import("@atlaskit/tree"), { ssr: false });
 
 const TreeBase = styled(Paper)({
   height: "100%",
+  display: "flex",
+  flexDirection: "column",
 });
 
 const TreeItem = styled(Box)((props) => ({
@@ -52,11 +49,10 @@ const TreeItem = styled(Box)((props) => ({
 }));
 
 const FillSpaceContextMenu = styled(ContextMenu)({
-  height: "100%",
+  flex: 1,
 });
 
 type Props = {
-  // selectedFile: DirectoryFile | null;
   className?: string;
 };
 
@@ -76,11 +72,6 @@ export const FileTree = ({ className }: Props) => {
   const updateExperiments = useExperimentStore(
     (state) => state.updateExperiments
   );
-
-  useEffect(() => {
-    // updatedirectories(testdirs);
-    // updateexperiments(testexps2);
-  }, []);
 
   useEffect(() => {
     setTree({
@@ -105,8 +96,6 @@ export const FileTree = ({ className }: Props) => {
     setTree((tree) => mutateTree(tree, fileId, { isExpanded: false }));
   }, []);
 
-  // const onNewDirectory = () => {};
-  // const onNewExperiment = () => {};
   const onRefresh = () => {
     getDirectoryContent(ROOT_DIRECTORY._id);
     // TODO update for all expanded directories?
@@ -122,6 +111,12 @@ export const FileTree = ({ className }: Props) => {
   const onCloseDialog = () => setDialog(null);
 
   const { fileSelection, setFileSelection } = useContext(FileSelectionContext);
+
+  const newFilePrefixPath = fileSelection
+    ? fileSelection.type === DirectoryFileType.DIR
+      ? getPath(directories[fileSelection.id])
+      : experiments[fileSelection.id].prefixPath
+    : ROOT_DIRECTORY._id;
 
   return (
     <>
@@ -218,7 +213,7 @@ export const FileTree = ({ className }: Props) => {
             <>
               <MenuItem
                 onClick={() => {
-                  () => setDialog(Dialogs.CREATE_DIR);
+                  setDialog(Dialogs.CREATE_DIR);
                   onClose();
                 }}
               >
@@ -229,7 +224,7 @@ export const FileTree = ({ className }: Props) => {
               </MenuItem>
               <MenuItem
                 onClick={() => {
-                  () => setDialog(Dialogs.CREATE_EXP);
+                  setDialog(Dialogs.CREATE_EXP);
                   onClose();
                 }}
               >
@@ -242,18 +237,12 @@ export const FileTree = ({ className }: Props) => {
           )}
         />
       </TreeBase>
-      <CreateDirectoryDialog
-        open={dialog === Dialogs.CREATE_DIR}
+      <CreateFileDialog
+        open={dialog === (Dialogs.CREATE_DIR || Dialogs.CREATE_EXP)}
         onClose={onCloseDialog}
-        prefixPath={
-          experiments[fileSelection?.id ?? ROOT_DIRECTORY._id].prefixPath
-        }
-      />
-      <CreateExperimentDialog
-        open={dialog === Dialogs.CREATE_EXP}
-        onClose={onCloseDialog}
-        prefixPath={
-          directories[fileSelection?.id ?? ROOT_DIRECTORY._id].prefixPath
+        prefixPath={newFilePrefixPath}
+        type={
+          Dialogs.CREATE_DIR ? DirectoryFileType.DIR : DirectoryFileType.EXP
         }
       />
     </>

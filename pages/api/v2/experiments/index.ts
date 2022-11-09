@@ -27,7 +27,7 @@ export type ExperimentsPostSignature = {
   body: {
     name: string;
     prefixPath: string;
-    enabled: boolean;
+    enabled?: boolean;
   };
   data: ExperimentJson;
 };
@@ -36,7 +36,7 @@ const post: TypedApiHandlerWithAuth<ExperimentsPostSignature> = async (
   req,
   res
 ) => {
-  const { name, prefixPath, enabled } = req.body;
+  const { name, prefixPath, enabled = true } = req.body;
   const user = req.auth._id;
 
   if (!name) {

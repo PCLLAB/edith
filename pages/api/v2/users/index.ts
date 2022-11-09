@@ -1,3 +1,4 @@
+import { UserJson } from "../../../../lib/common/models/types";
 import {
   MissingArgsError,
   UserPermissionError,
@@ -5,7 +6,7 @@ import {
 import initHandler, {
   TypedApiHandlerWithAuth,
 } from "../../../../lib/server/initHandler";
-import User, { UserJson } from "../../../../models/User";
+import User from "../../../../models/User";
 
 export const ENDPOINT = "/api/v2/users";
 

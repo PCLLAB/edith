@@ -39,7 +39,7 @@ export const fetcher = async <T extends ApiSignature>(
     headers = {
       "Content-Type": "application/json",
     };
-    body = JSON.stringify(body);
+    body = JSON.stringify(signature.body);
   }
 
   const res = await fetch(finalUrl, {
