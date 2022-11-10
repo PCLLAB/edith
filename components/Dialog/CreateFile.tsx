@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import {
   Box,
   Button,
@@ -6,19 +8,23 @@ import {
   DialogTitle,
   TextField,
 } from "@mui/material";
-import { useMemo, useState } from "react";
+
 import { createDirectory } from "../../lib/client/api/directories";
 import { createExperiment } from "../../lib/client/api/experiments";
 import { useDirectoryStore } from "../../lib/client/hooks/stores/useDirectoryStore";
-import { useExperimentStore } from "../../lib/client/hooks/stores/useExperimentStore";
 import { isRootId } from "../../lib/common/models/utils";
-import { DirectoryFileType } from "../FileTree/FileSelectionProvider";
+import { FileType } from "../FileTree/FileSelectionProvider";
+
+const DialogInfo = {
+  [FileType.DIR]: { create: createDirectory, title: "Directory" },
+  [FileType.EXP]: { create: createExperiment, title: "Experiment" },
+};
 
 type Props = {
   open: boolean;
   onClose: () => void;
   prefixPath: string;
-  type: DirectoryFileType;
+  type: FileType;
 };
 
 export const CreateFileDialog = ({
@@ -30,40 +36,22 @@ export const CreateFileDialog = ({
   const [fileName, setFileName] = useState("");
 
   const directories = useDirectoryStore((state) => state.directories);
-  const experiments = useExperimentStore((state) => state.experiments);
-
-  const { create, files, title } = useMemo(() => {
-    switch (type) {
-      case DirectoryFileType.DIR:
-        return {
-          create: createDirectory,
-          files: directories,
-          title: "Create new folder",
-        };
-      case DirectoryFileType.EXP:
-        return {
-          create: createExperiment,
-          files: experiments,
-          title: "Create new experiment",
-        };
-    }
-  }, [directories, experiments, type]);
 
   const handleCreate = () => {
-    create({ name: fileName, prefixPath });
+    DialogInfo[type].create({ name: fileName, prefixPath });
     onClose();
   };
 
   const parentPath = prefixPath
     .split(",")
-    .map((id) => (isRootId(id) ? "" : files[id].name))
+    .map((id) => (isRootId(id) ? "" : directories[id].name))
     .join("/");
 
   const filePath = `${parentPath}/${fileName}`;
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>{title}</DialogTitle>
+      <DialogTitle>Create {DialogInfo[type].title}</DialogTitle>
       <Box sx={{ px: 2 }}>
         <TextField
           value={fileName}

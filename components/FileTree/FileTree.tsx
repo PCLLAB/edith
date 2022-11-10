@@ -24,11 +24,9 @@ import { ContextMenu } from "../ContextMenu/ContextMenu";
 import { CreateFileDialog } from "../Dialog/CreateFile";
 import { BaseFile } from "./File";
 import { FileActionBar } from "./FileActionBar";
-import {
-  DirectoryFileType,
-  FileSelectionContext,
-} from "./FileSelectionProvider";
+import { FileType, FileSelectionContext } from "./FileSelectionProvider";
 import { INITIAL_TREE_DATA, updatedTreeItems } from "./utils";
+import { RenameFileDialog } from "../Dialog/RenameFile";
 
 // @ts-ignore: this doesn't actually cause any errors
 const Tree = dynamic(() => import("@atlaskit/tree"), { ssr: false });
@@ -57,7 +55,7 @@ type Props = {
 };
 
 export type TreeItemData = {
-  fileType: DirectoryFileType;
+  fileType: FileType;
   name: string;
 };
 
@@ -113,7 +111,7 @@ export const FileTree = ({ className }: Props) => {
   const { fileSelection, setFileSelection } = useContext(FileSelectionContext);
 
   const newFilePrefixPath = fileSelection
-    ? fileSelection.type === DirectoryFileType.DIR
+    ? fileSelection.type === FileType.DIR
       ? getPath(directories[fileSelection.id])
       : experiments[fileSelection.id].prefixPath
     : ROOT_DIRECTORY._id;
@@ -179,7 +177,7 @@ export const FileTree = ({ className }: Props) => {
                 snapshot,
               }) => {
                 const onClick = () => {
-                  if (item.data.fileType === DirectoryFileType.DIR) {
+                  if (item.data.fileType === FileType.DIR) {
                     item.isExpanded ? onCollapse(item.id) : onExpand(item.id);
                   }
                   setFileSelection({ id: item.id, type: item.data.fileType });
@@ -241,9 +239,15 @@ export const FileTree = ({ className }: Props) => {
         open={dialog === (Dialogs.CREATE_DIR || Dialogs.CREATE_EXP)}
         onClose={onCloseDialog}
         prefixPath={newFilePrefixPath}
-        type={
-          Dialogs.CREATE_DIR ? DirectoryFileType.DIR : DirectoryFileType.EXP
-        }
+        type={Dialogs.CREATE_DIR ? FileType.DIR : FileType.EXP}
+      />
+      <RenameFileDialog
+        open={dialog === (Dialogs.RENAME_DIR || Dialogs.RENAME_EXP)}
+        onClose={onCloseDialog}
+        // @ts-ignore fileSelection is guaranteed not null if dialog is open
+        id={fileSelection.id}
+        // @ts-ignore fileSelection is guaranteed not null if dialog is open
+        type={fileSelection.type}
       />
     </>
   );

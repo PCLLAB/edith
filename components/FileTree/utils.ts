@@ -6,7 +6,7 @@ import {
   ExperimentJson,
 } from "../../lib/common/models/types";
 import { getIdFromPath, ROOT_DIRECTORY } from "../../lib/common/models/utils";
-import { DirectoryFileType } from "./FileSelectionProvider";
+import { FileType } from "./FileSelectionProvider";
 import { TreeItemData } from "./FileTree";
 
 export const INITIAL_TREE_DATA = {
@@ -16,7 +16,7 @@ export const INITIAL_TREE_DATA = {
       id: ROOT_DIRECTORY._id,
       children: [],
       data: {
-        fileType: DirectoryFileType.DIR,
+        fileType: FileType.DIR,
         name: ROOT_DIRECTORY.name,
       },
     },
@@ -53,7 +53,7 @@ export const updatedTreeItems = (
     exp._id,
     {
       id: exp._id,
-      data: { fileType: DirectoryFileType.EXP },
+      data: { fileType: FileType.EXP },
       isExpanded: false,
       hasChildren: false,
       children: [],
@@ -64,7 +64,7 @@ export const updatedTreeItems = (
     dir._id,
     {
       id: dir._id,
-      data: { fileType: DirectoryFileType.DIR },
+      data: { fileType: FileType.DIR },
       isExpanded: false,
       hasChildren: true,
       children: treeItems[dir._id]?.children ?? [],
@@ -82,8 +82,8 @@ export const updatedTreeItems = (
   const compareFile = (itemA: string, itemB: string) => {
     const fileA = newItems[itemA];
     const fileB = newItems[itemB];
-    const aFolder = fileA.data.fileType === DirectoryFileType.DIR;
-    const bFolder = fileB.data.fileType === DirectoryFileType.EXP;
+    const aFolder = fileA.data.fileType === FileType.DIR;
+    const bFolder = fileB.data.fileType === FileType.EXP;
 
     if (aFolder !== bFolder) {
       return aFolder ? 1 : -1;

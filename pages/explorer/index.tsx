@@ -4,7 +4,7 @@ import { styled } from "@mui/material";
 
 import FileTree from "../../components/FileTree";
 import {
-  DirectoryFileType,
+  FileType,
   FileSelectionContext,
   FileSelectionProvider,
 } from "../../components/FileTree/FileSelectionProvider";
@@ -34,10 +34,10 @@ const Explorer: NextPage = () => {
       <ExplorerBox>
         <FileNavSideBar />
         <FileViewerSection>
-          {fileSelection && fileSelection.type === DirectoryFileType.EXP && (
+          {fileSelection && fileSelection.type === FileType.EXP && (
             <ExperimentViewer experimentId={fileSelection.id} />
           )}
-          {fileSelection && fileSelection.type === DirectoryFileType.DIR && (
+          {fileSelection && fileSelection.type === FileType.DIR && (
             <DirectoryViewer directoryId={fileSelection.id} />
           )}
         </FileViewerSection>

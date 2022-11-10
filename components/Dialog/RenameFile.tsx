@@ -8,31 +8,31 @@ import {
 import { useState } from "react";
 import { updateDirectory } from "../../lib/client/api/directories";
 import { updateExperiment } from "../../lib/client/api/experiments";
+import { FileType } from "../FileTree/FileSelectionProvider";
 
-type Props = {
-  open: boolean;
-  onClose: () => void;
+const DialogInfo = {
+  [FileType.DIR]: { update: updateDirectory, title: "Directory" },
+  [FileType.EXP]: { update: updateExperiment, title: "Experiment" },
 };
 
-const RenameFileDialog = ({
-  open,
-  type,
-  onClose,
-  onRename,
-}: Props & {
-  onRename: (name: string) => void;
-  type: "Experiment" | "Directory";
-}) => {
+type Props = {
+  id: string;
+  open: boolean;
+  onClose: () => void;
+  type: FileType;
+};
+
+export const RenameFileDialog = ({ open, type, onClose, id }: Props) => {
   const [fileName, setFileName] = useState("");
 
   const handleRename = () => {
-    onRename(fileName);
+    DialogInfo[type].update(id, { name: fileName });
     onClose();
   };
 
   return (
-    <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Create new {type}</DialogTitle>
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+      <DialogTitle>Create new {DialogInfo[type].title}</DialogTitle>
       <TextField
         value={fileName}
         onChange={(e) => setFileName(e.target.value)}
@@ -49,40 +49,5 @@ const RenameFileDialog = ({
         <Button onClick={handleRename}>Create</Button>
       </DialogActions>
     </Dialog>
-  );
-};
-
-export const RenameExperimentDialog = ({
-  open,
-  onClose,
-  id,
-}: Props & { id: string }) => {
-  const handleRename = (name: string) => {
-    updateExperiment(id, { name, prefixPath, enabled: false });
-  };
-  return (
-    <RenameFileDialog
-      open={open}
-      onClose={onClose}
-      type="Experiment"
-      onRename={handleRename}
-    />
-  );
-};
-export const RenameDirectoryDialog = ({
-  open,
-  onClose,
-  id,
-}: Props & { id: string }) => {
-  const handleRename = (name: string) => {
-    updateDirectory(id, { name });
-  };
-  return (
-    <RenameFileDialog
-      open={open}
-      onClose={onClose}
-      type="Directory"
-      onRename={handleRename}
-    />
   );
 };

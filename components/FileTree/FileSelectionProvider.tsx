@@ -1,13 +1,13 @@
 import { createContext, ReactNode, useState } from "react";
 
-export enum DirectoryFileType {
+export enum FileType {
   DIR,
   EXP,
 }
 
 type Selection = {
   id: string;
-  type: DirectoryFileType;
+  type: FileType;
 };
 
 interface FileSelection {
