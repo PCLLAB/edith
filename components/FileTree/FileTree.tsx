@@ -24,7 +24,10 @@ import { ContextMenu } from "../ContextMenu/ContextMenu";
 import { CreateFileDialog } from "../Dialog/CreateFile";
 import { BaseFile } from "./File";
 import { FileActionBar } from "./FileActionBar";
-import { FileType, FileSelectionContext } from "./FileSelectionProvider";
+import {
+  FileType,
+  FileSelectionContext,
+} from "../../lib/client/context/FileSelectionProvider";
 import { INITIAL_TREE_DATA, updatedTreeItems } from "./utils";
 import { RenameFileDialog } from "../Dialog/RenameFile";
 
@@ -241,14 +244,14 @@ export const FileTree = ({ className }: Props) => {
         prefixPath={newFilePrefixPath}
         type={Dialogs.CREATE_DIR ? FileType.DIR : FileType.EXP}
       />
-      <RenameFileDialog
-        open={dialog === (Dialogs.RENAME_DIR || Dialogs.RENAME_EXP)}
-        onClose={onCloseDialog}
-        // @ts-ignore fileSelection is guaranteed not null if dialog is open
-        id={fileSelection.id}
-        // @ts-ignore fileSelection is guaranteed not null if dialog is open
-        type={fileSelection.type}
-      />
+      {fileSelection && (
+        <RenameFileDialog
+          open={dialog === (Dialogs.RENAME_DIR || Dialogs.RENAME_EXP)}
+          onClose={onCloseDialog}
+          id={fileSelection.id}
+          type={fileSelection.type}
+        />
+      )}
     </>
   );
 };

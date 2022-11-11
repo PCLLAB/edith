@@ -8,7 +8,7 @@ import {
 import { useState } from "react";
 import { updateDirectory } from "../../lib/client/api/directories";
 import { updateExperiment } from "../../lib/client/api/experiments";
-import { FileType } from "../FileTree/FileSelectionProvider";
+import { FileType } from "../../lib/client/context/FileSelectionProvider";
 
 const DialogInfo = {
   [FileType.DIR]: { update: updateDirectory, title: "Directory" },

@@ -6,7 +6,7 @@ import {
   ExperimentJson,
 } from "../../lib/common/models/types";
 import { getIdFromPath, ROOT_DIRECTORY } from "../../lib/common/models/utils";
-import { FileType } from "./FileSelectionProvider";
+import { FileType } from "../../lib/client/context/FileSelectionProvider";
 import { TreeItemData } from "./FileTree";
 
 export const INITIAL_TREE_DATA = {

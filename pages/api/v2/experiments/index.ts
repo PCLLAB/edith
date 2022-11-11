@@ -36,7 +36,7 @@ const post: TypedApiHandlerWithAuth<ExperimentsPostSignature> = async (
   req,
   res
 ) => {
-  const { name, prefixPath, enabled = true } = req.body;
+  const { name, prefixPath, enabled = false } = req.body;
   const user = req.auth._id;
 
   if (!name) {

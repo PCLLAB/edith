@@ -23,7 +23,6 @@ export type UsersAuthPostSignature = {
   };
   data: {
     message: string;
-    token: string;
     user: UserJson;
   };
 };
@@ -57,9 +56,13 @@ const post: TypedApiHandler<UsersAuthPostSignature> = async (req, res) => {
     expiresIn: "2d",
   });
 
+  res.setHeader(
+    "Set-Cookie",
+    `bedijwt=${token}; Secure; HttpOnly; SameSite=Lax; Path=/api/v2`
+  );
+
   res.json({
     message: "Authentication successful",
-    token,
     user,
   });
 };

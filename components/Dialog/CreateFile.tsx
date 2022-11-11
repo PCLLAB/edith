@@ -13,7 +13,7 @@ import { createDirectory } from "../../lib/client/api/directories";
 import { createExperiment } from "../../lib/client/api/experiments";
 import { useDirectoryStore } from "../../lib/client/hooks/stores/useDirectoryStore";
 import { isRootId } from "../../lib/common/models/utils";
-import { FileType } from "../FileTree/FileSelectionProvider";
+import { FileType } from "../../lib/client/context/FileSelectionProvider";
 
 const DialogInfo = {
   [FileType.DIR]: { create: createDirectory, title: "Directory" },

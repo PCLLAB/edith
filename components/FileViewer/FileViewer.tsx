@@ -1,10 +1,21 @@
-import { Card } from "@mui/material";
-import { DirectoryFile } from "../../lib/common/models/types";
+import { useContext } from "react";
+import {
+  FileSelectionContext,
+  FileType,
+} from "../../lib/client/context/FileSelectionProvider";
+import { DirectoryViewer } from "./DirectoryViewer";
+import { ExperimentViewer } from "./ExperimentViewer";
 
-type Props = {
-  fileId: string;
-};
-
-export const FileViewer = ({ fileId }: Props) => {
-  return <Card></Card>;
+export const FileViewer = () => {
+  const { fileSelection } = useContext(FileSelectionContext);
+  return (
+    <>
+      {fileSelection && fileSelection.type === FileType.EXP && (
+        <ExperimentViewer experimentId={fileSelection.id} />
+      )}
+      {fileSelection && fileSelection.type === FileType.DIR && (
+        <DirectoryViewer directoryId={fileSelection.id} />
+      )}
+    </>
+  );
 };

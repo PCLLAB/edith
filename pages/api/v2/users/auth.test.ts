@@ -94,7 +94,6 @@ describe(`POST ${ENDPOINT}`, () => {
     expect(res._getJSONData()).toEqual(
       expect.objectContaining({
         message: expect.any(String),
-        token: expect.any(String),
         user: expect.any(Object),
       })
     );

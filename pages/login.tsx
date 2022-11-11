@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-
+import LoadingButton from "@mui/lab/LoadingButton";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
@@ -19,6 +19,7 @@ const Login: NextPage = () => {
   const router = useRouter();
 
   const [showAlert, setShowAlert] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const {
     register,
@@ -28,16 +29,18 @@ const Login: NextPage = () => {
 
   const onSubmit = useCallback(
     async (formData: UsersAuthPostSignature["body"]) => {
-      const data = await fetcher<UsersAuthPostSignature>({
-        url: "/api/v2/users/auth",
-        method: "POST",
-        body: formData,
-      });
+      setLoading(true);
 
-      // Do a fast client-side transition to the already prefetched page
-      if (data) {
+      try {
+        const data = await fetcher<UsersAuthPostSignature>({
+          url: "/api/v2/users/auth",
+          method: "POST",
+          body: formData,
+        });
+        console.debug("login data", data);
         router.push("/explorer");
-      } else {
+      } catch {
+        setLoading(false);
         setShowAlert(true);
       }
     },
@@ -106,18 +109,20 @@ const Login: NextPage = () => {
         />
         <TextField
           label="Password"
+          type="password"
           variant="outlined"
           size="small"
           error={!!errors.password}
           {...register("password", { required: true })}
         />
-        <Button
+        <LoadingButton
           variant="contained"
           type="submit"
           sx={{ textTransform: "none" }}
+          loading={loading}
         >
           Login
-        </Button>
+        </LoadingButton>
       </Card>
       <Box>
         <Button variant="text" onClick={onRequestAccess}>
