@@ -2,6 +2,7 @@ import { expressjwt } from "express-jwt";
 import { JwtPayload } from "jsonwebtoken";
 
 import User from "../../models/User";
+import { JWT_COOKIE_KEY } from "../common/constants";
 import config from "../config";
 import initMiddleware from "./initMiddleware";
 
@@ -11,7 +12,7 @@ const jwtMiddleware = expressjwt({
   //  We handle auth ourselves, so no point in being asymmetric
   algorithms: ["HS256"],
   //  Deleted and privilege modified users should have token revoked
-  getToken: (req) => req.cookies["bedijwt"],
+  getToken: (req) => req.cookies[JWT_COOKIE_KEY],
   isRevoked: async (_, token) => {
     const { _id, superuser } = token?.payload as JwtPayload;
 

@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { JWT_COOKIE_KEY } from "../../../../lib/common/constants";
 import {
   RawUnsafeUserDoc,
   UserJson,
@@ -58,7 +59,7 @@ const post: TypedApiHandler<UsersAuthPostSignature> = async (req, res) => {
 
   res.setHeader(
     "Set-Cookie",
-    `bedijwt=${token}; Secure; HttpOnly; SameSite=Lax; Path=/api/v2`
+    `${JWT_COOKIE_KEY}=${token}; Secure; HttpOnly; SameSite=Lax; Path=/api/v2`
   );
 
   res.json({

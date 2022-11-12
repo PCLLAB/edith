@@ -3,6 +3,7 @@ import { createRequest, createResponse, RequestMethod } from "node-mocks-http";
 import jwt from "jsonwebtoken";
 import User from "../models/User";
 import config from "./config";
+import { JWT_COOKIE_KEY } from "./common/constants";
 
 interface MockRequestOptions {
   body?: NextApiRequest["body"];
@@ -38,9 +39,9 @@ export const getReqResMocker =
       url,
       body: opt?.body,
       query: opt?.query,
-      headers: token
+      cookies: token
         ? {
-            authorization: `Bearer ${token}`,
+            [JWT_COOKIE_KEY]: token,
           }
         : undefined,
     });
