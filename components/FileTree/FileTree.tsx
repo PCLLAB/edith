@@ -28,7 +28,7 @@ import {
   FileType,
   FileSelectionContext,
 } from "../../lib/client/context/FileSelectionProvider";
-import { INITIAL_TREE_DATA, updatedTreeItems } from "./utils";
+import { buildTree, INITIAL_TREE_DATA, updatedTreeItems } from "./utils";
 import { RenameFileDialog } from "../Dialog/RenameFile";
 
 // @ts-ignore: this doesn't actually cause any errors
@@ -63,39 +63,62 @@ export type TreeItemData = {
 };
 
 export const FileTree = ({ className }: Props) => {
-  const [tree, setTree] = useState<TreeData<TreeItemData>>(INITIAL_TREE_DATA);
+  console.debug("FileTree render");
+  // const [tree, setTree] = useState<TreeData<TreeItemData>>(INITIAL_TREE_DATA);
 
   const directories = useDirectoryStore((state) => state.directories);
-  const updateDirectories = useDirectoryStore(
-    (state) => state.updateDirectories
-  );
+  // const updateDirectories = useDirectoryStore(
+  //   (state) => state.updateDirectories
+  // );
   const experiments = useExperimentStore((state) => state.experiments);
-  const updateExperiments = useExperimentStore(
-    (state) => state.updateExperiments
+  // const updateExperiments = useExperimentStore(
+  //   (state) => state.updateExperiments
+  // );
+
+  const [isExpanded, setIsExpanded] = useState<Record<string, boolean>>({});
+
+  const baseTree = {
+    rootId: ROOT_DIRECTORY._id,
+    items: buildTree(Object.values(experiments), Object.values(directories)),
+  };
+
+  const expandedDirIds = Object.entries(isExpanded)
+    .filter(([_, expanded]) => expanded)
+    .map(([key, _]) => key);
+
+  const tree = expandedDirIds.reduce(
+    (modifiedTree, dirId) =>
+      mutateTree(modifiedTree, dirId, { isExpanded: true }),
+    baseTree
   );
 
-  useEffect(() => {
-    setTree({
-      rootId: ROOT_DIRECTORY._id,
-      items: updatedTreeItems(
-        tree.items,
-        Object.values(experiments),
-        Object.values(directories)
-      ),
-    });
-    // `treeItems` should only change as a result of
-    // this useEffect, so it shouldn't be a dependency
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [directories, experiments]);
+  // useEffect(() => {
+  //   setTree({
+  //     rootId: ROOT_DIRECTORY._id,
+  //     items: updatedTreeItems(
+  //       tree.items,
+  //       Object.values(experiments),
+  //       Object.values(directories)
+  //     ),
+  //   });
+  //   console.debug("useEffect");
+  //   // `treeItems` should only change as a result of
+  //   // this useEffect, so it shouldn't be a dependency
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [directories, experiments]);
 
-  const onExpand = useCallback((fileId: ItemId) => {
-    setTree((tree) => mutateTree(tree, fileId, { isExpanded: true }));
-    getDirectoryContent(fileId);
-  }, []);
+  const onExpand = (fileId: ItemId) => {
+    console.debug("expant");
+    // setTree((tree) => mutateTree(tree, fileId, { isExpanded: true }));
+    // mutateTree(tree, fileId, { isExpanded: true })
+    // getDirectoryContent(fileId);
+    setIsExpanded({ ...isExpanded, [fileId]: true });
+  };
 
-  const onCollapse = useCallback((fileId: ItemId) => {
-    setTree((tree) => mutateTree(tree, fileId, { isExpanded: false }));
-  }, []);
+  const onCollapse = (fileId: ItemId) => {
+    console.debug("collaps");
+    setIsExpanded({ ...isExpanded, [fileId]: false });
+  };
 
   const onRefresh = () => {
     getDirectoryContent(ROOT_DIRECTORY._id);
@@ -183,10 +206,15 @@ export const FileTree = ({ className }: Props) => {
                   if (item.data.fileType === FileType.DIR) {
                     item.isExpanded ? onCollapse(item.id) : onExpand(item.id);
                   }
-                  setFileSelection({ id: item.id, type: item.data.fileType });
+                  if (fileSelection?.id !== item.id) {
+                    setFileSelection({ id: item.id, type: item.data.fileType });
+                  }
                 };
-                const onContextMenu = () =>
-                  setFileSelection({ id: item.id, type: item.data.fileType });
+                const onContextMenu = () => {
+                  if (fileSelection?.id !== item.id) {
+                    setFileSelection({ id: item.id, type: item.data.fileType });
+                  }
+                };
 
                 return (
                   <TreeItem
@@ -195,7 +223,7 @@ export const FileTree = ({ className }: Props) => {
                     {...provided.dragHandleProps}
                   >
                     <BaseFile
-                      file={item.data}
+                      fileData={item.data}
                       onClick={onClick}
                       onContextMenu={onContextMenu}
                       isExpanded={!!item.isExpanded}
@@ -204,8 +232,8 @@ export const FileTree = ({ className }: Props) => {
                 );
               }}
               offsetPerLevel={17} // Line up files' left border line with center of dropdown arrow
-              isDragEnabled={true}
-              isNestingEnabled={true}
+              isDragEnabled
+              isNestingEnabled
             />
           </List>
         </ContextMenu>
@@ -239,10 +267,10 @@ export const FileTree = ({ className }: Props) => {
         />
       </TreeBase>
       <CreateFileDialog
-        open={dialog === (Dialogs.CREATE_DIR || Dialogs.CREATE_EXP)}
+        open={dialog === Dialogs.CREATE_DIR || dialog === Dialogs.CREATE_EXP}
         onClose={onCloseDialog}
         prefixPath={newFilePrefixPath}
-        type={Dialogs.CREATE_DIR ? FileType.DIR : FileType.EXP}
+        type={dialog === Dialogs.CREATE_DIR ? FileType.DIR : FileType.EXP}
       />
       {fileSelection && (
         <RenameFileDialog

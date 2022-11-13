@@ -56,6 +56,7 @@ export const getDirectoryContent = (id: string) =>
     method: "GET" as const,
     query: { id },
   }).then((content) => {
+    console.debug("fetcher then");
     useDirectoryStore.getState().updateDirectories(content.directories);
     useExperimentStore.getState().updateExperiments(content.experiments);
   });

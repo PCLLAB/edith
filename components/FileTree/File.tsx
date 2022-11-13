@@ -2,12 +2,14 @@ import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import FolderIcon from "@mui/icons-material/Folder";
 import ScienceIcon from "@mui/icons-material/Science";
 import { ListItem, ListItemText, styled } from "@mui/material";
+import { FileType } from "../../lib/client/context/FileSelectionProvider";
 
 import { DirectoryJson, ExperimentJson } from "../../lib/common/models/types";
 import { isDirectory } from "../../lib/common/models/utils";
+import { FileTree } from "./FileTree";
 
 type Props = {
-  file: ExperimentJson | DirectoryJson;
+  fileData: { fileType: FileType; name: string };
   onClick: () => void;
   onContextMenu: () => void;
   isExpanded: boolean;
@@ -32,12 +34,12 @@ const PaddedListItem = styled(ListItem)({
 });
 
 export const BaseFile = ({
-  file,
+  fileData,
   onClick,
   isExpanded,
   onContextMenu,
 }: Props) => {
-  const isFolder = isDirectory(file);
+  const isFolder = fileData.fileType === FileType.DIR;
 
   return (
     <PaddedListItem onClick={onClick} onContextMenu={onContextMenu}>
@@ -49,7 +51,7 @@ export const BaseFile = ({
           <ScienceIcon fontSize="small" color="brandBlue" />
         )}
       </IconHolder>
-      <ListItemText primary={file.name} />
+      <ListItemText primary={fileData.name} />
     </PaddedListItem>
   );
 };

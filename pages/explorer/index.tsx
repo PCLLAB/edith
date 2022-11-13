@@ -21,6 +21,7 @@ const StyledFileViewer = styled(FileViewer)((props) => ({
 }));
 
 const Explorer: NextPage = () => {
+  console.debug("explorer render");
   return (
     <FileSelectionProvider>
       <ExplorerBox>
