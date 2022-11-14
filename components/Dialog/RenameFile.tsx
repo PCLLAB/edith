@@ -25,13 +25,18 @@ type Props = {
 export const RenameFileDialog = ({ open, type, onClose, id }: Props) => {
   const [fileName, setFileName] = useState("");
 
+  const handleClose = () => {
+    setFileName("");
+    onClose();
+  };
+
   const handleRename = () => {
     DialogInfo[type].update(id, { name: fileName });
     onClose();
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
       <DialogTitle>Create new {DialogInfo[type].title}</DialogTitle>
       <TextField
         value={fileName}
@@ -45,7 +50,7 @@ export const RenameFileDialog = ({ open, type, onClose, id }: Props) => {
         variant="outlined"
       />
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleClose}>Cancel</Button>
         <Button onClick={handleRename}>Create</Button>
       </DialogActions>
     </Dialog>

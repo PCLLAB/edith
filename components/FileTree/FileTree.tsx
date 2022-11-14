@@ -1,7 +1,6 @@
 import dynamic from "next/dynamic";
 import { useCallback, useContext, useEffect, useState } from "react";
-
-import { ItemId, mutateTree, TreeData } from "@atlaskit/tree";
+import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import NewDirectoryIcon from "@mui/icons-material/CreateNewFolder";
 import RenameIcon from "@mui/icons-material/DriveFileRenameOutline";
 import NewExperimentIcon from "@mui/icons-material/NoteAdd";
@@ -15,6 +14,8 @@ import {
   Paper,
   styled,
 } from "@mui/material";
+import FolderIcon from "@mui/icons-material/Folder";
+import ScienceIcon from "@mui/icons-material/Science";
 
 import { getDirectoryContent } from "../../lib/client/api/directories";
 import { useDirectoryStore } from "../../lib/client/hooks/stores/useDirectoryStore";
@@ -30,9 +31,7 @@ import {
 } from "../../lib/client/context/FileSelectionProvider";
 import { buildTree, INITIAL_TREE_DATA, updatedTreeItems } from "./utils";
 import { RenameFileDialog } from "../Dialog/RenameFile";
-
-// @ts-ignore: this doesn't actually cause any errors
-const Tree = dynamic(() => import("@atlaskit/tree"), { ssr: false });
+import Tree, { TreeNode } from "rc-tree";
 
 const TreeBase = styled(Paper)({
   height: "100%",
@@ -63,9 +62,6 @@ export type TreeItemData = {
 };
 
 export const FileTree = ({ className }: Props) => {
-  console.debug("FileTree render");
-  // const [tree, setTree] = useState<TreeData<TreeItemData>>(INITIAL_TREE_DATA);
-
   const directories = useDirectoryStore((state) => state.directories);
   // const updateDirectories = useDirectoryStore(
   //   (state) => state.updateDirectories
@@ -74,51 +70,7 @@ export const FileTree = ({ className }: Props) => {
   // const updateExperiments = useExperimentStore(
   //   (state) => state.updateExperiments
   // );
-
-  const [isExpanded, setIsExpanded] = useState<Record<string, boolean>>({});
-
-  const baseTree = {
-    rootId: ROOT_DIRECTORY._id,
-    items: buildTree(Object.values(experiments), Object.values(directories)),
-  };
-
-  const expandedDirIds = Object.entries(isExpanded)
-    .filter(([_, expanded]) => expanded)
-    .map(([key, _]) => key);
-
-  const tree = expandedDirIds.reduce(
-    (modifiedTree, dirId) =>
-      mutateTree(modifiedTree, dirId, { isExpanded: true }),
-    baseTree
-  );
-
-  // useEffect(() => {
-  //   setTree({
-  //     rootId: ROOT_DIRECTORY._id,
-  //     items: updatedTreeItems(
-  //       tree.items,
-  //       Object.values(experiments),
-  //       Object.values(directories)
-  //     ),
-  //   });
-  //   console.debug("useEffect");
-  //   // `treeItems` should only change as a result of
-  //   // this useEffect, so it shouldn't be a dependency
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [directories, experiments]);
-
-  const onExpand = (fileId: ItemId) => {
-    console.debug("expant");
-    // setTree((tree) => mutateTree(tree, fileId, { isExpanded: true }));
-    // mutateTree(tree, fileId, { isExpanded: true })
-    // getDirectoryContent(fileId);
-    setIsExpanded({ ...isExpanded, [fileId]: true });
-  };
-
-  const onCollapse = (fileId: ItemId) => {
-    console.debug("collaps");
-    setIsExpanded({ ...isExpanded, [fileId]: false });
-  };
+  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
 
   const onRefresh = () => {
     getDirectoryContent(ROOT_DIRECTORY._id);
@@ -192,48 +144,49 @@ export const FileTree = ({ className }: Props) => {
         >
           <List dense disablePadding>
             <Tree
-              tree={tree}
-              onExpand={onExpand}
-              onCollapse={onCollapse}
-              renderItem={({
-                item,
-                onExpand,
-                onCollapse,
-                provided,
-                snapshot,
-              }) => {
-                const onClick = () => {
-                  if (item.data.fileType === FileType.DIR) {
-                    item.isExpanded ? onCollapse(item.id) : onExpand(item.id);
-                  }
-                  if (fileSelection?.id !== item.id) {
-                    setFileSelection({ id: item.id, type: item.data.fileType });
-                  }
-                };
-                const onContextMenu = () => {
-                  if (fileSelection?.id !== item.id) {
-                    setFileSelection({ id: item.id, type: item.data.fileType });
-                  }
-                };
-
-                return (
-                  <TreeItem
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                  >
-                    <BaseFile
-                      fileData={item.data}
-                      onClick={onClick}
-                      onContextMenu={onContextMenu}
-                      isExpanded={!!item.isExpanded}
-                    />
-                  </TreeItem>
-                );
+              showLine
+              draggable
+              treeData={buildTree(
+                Object.values(experiments),
+                Object.values(directories)
+              )}
+              /** before data normalized */
+              allowDrop={(s) => !s.dropNode.isLeaf}
+              // Prevent deselecting files by ignoring empty selection
+              onSelect={(s) => {
+                if (!s.length) return;
+                setSelectedKeys(s as string[]);
+                const fileId = s[0] as string;
+                setFileSelection({
+                  id: fileId,
+                  type: fileId in directories ? FileType.DIR : FileType.EXP,
+                });
               }}
-              offsetPerLevel={17} // Line up files' left border line with center of dropdown arrow
-              isDragEnabled
-              isNestingEnabled
+              selectedKeys={selectedKeys}
+              icon={(node) =>
+                /**
+                 * Icons are rendered before the data is normalized,
+                 * so this is used to render the correct icons,
+                 * however, directories will also have isLeaf: true
+                 */
+                node.isLeaf ? (
+                  <ScienceIcon fontSize="small" color="primary" />
+                ) : (
+                  <FolderIcon fontSize="small" color="secondary" />
+                )
+              }
+              /** after data normalized */
+              switcherIcon={(node) =>
+                node.isLeaf ? null : (
+                  <ArrowRightIcon
+                    fontSize="small"
+                    sx={{
+                      rotate: node.expanded ? "90deg" : null,
+                      transition: "100ms",
+                    }}
+                  />
+                )
+              }
             />
           </List>
         </ContextMenu>

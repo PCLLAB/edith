@@ -8,6 +8,7 @@ import {
 import { getIdFromPath, ROOT_DIRECTORY } from "../../lib/common/models/utils";
 import { FileType } from "../../lib/client/context/FileSelectionProvider";
 import { TreeItemData } from "./FileTree";
+import exp from "constants";
 
 export const INITIAL_TREE_DATA = {
   rootId: ROOT_DIRECTORY._id,
@@ -120,75 +121,130 @@ export const updatedTreeItems = (
   return newItems;
 };
 
+type InternalNode = LeafNode & {
+  children: (InternalNode | LeafNode)[];
+};
+
+type LeafNode = {
+  key: string;
+  title: string;
+  isLeaf?: true;
+};
+
 export const buildTree = (
   experiments: ExperimentJson[],
   directories: DirectoryJson[]
 ) => {
-  const keepEntries: [string, TreeItem][] = [
-    [
-      ROOT_DIRECTORY._id,
-      {
-        id: ROOT_DIRECTORY._id,
-        children: [],
-        data: {
-          fileType: FileType.DIR,
-          name: ROOT_DIRECTORY.name,
-        },
-      },
-    ],
-  ];
-
-  const newExpEntries = experiments.map((exp) => [
-    exp._id,
-    {
-      id: exp._id,
-      data: { fileType: FileType.EXP, name: exp.name },
-      isExpanded: false,
-      hasChildren: false,
+  const dirMap: Record<string, InternalNode> = {
+    [ROOT_DIRECTORY._id]: {
       children: [],
+      key: ROOT_DIRECTORY._id,
+      title: ROOT_DIRECTORY.name,
     },
-  ]);
-
-  const newDirExtries = directories.map((dir) => [
-    dir._id,
-    {
-      id: dir._id,
-      data: { fileType: FileType.DIR, name: dir.name },
-      isExpanded: false,
-      hasChildren: true,
-      children: [],
-    },
-  ]);
-
-  const newItems: Record<string, TreeItem<TreeItemData>> = Object.fromEntries([
-    ...keepEntries,
-    ...newDirExtries,
-    ...newExpEntries,
-  ]);
-
-  // Display order is stored in children array order
-
-  const compareFile = (itemA: string, itemB: string) => {
-    const fileA = newItems[itemA];
-    const fileB = newItems[itemB];
-    const aFolder = fileA.data.fileType === FileType.DIR;
-    const bFolder = fileB.data.fileType === FileType.EXP;
-
-    if (aFolder !== bFolder) {
-      return aFolder ? 1 : -1;
-    }
-
-    return fileA.data.name.localeCompare(fileB.data.name);
   };
 
-  [...experiments, ...directories].forEach((file) => {
-    const parentId = getIdFromPath(file.prefixPath);
-    newItems[parentId].children.push(file._id);
+  // Shortest prefixPath first, aka parent nodes first
+  const orderedDirs = directories.sort((dirA, dirB) => {
+    const lengthDiff = dirA.prefixPath.length - dirB.prefixPath.length;
+    if (lengthDiff !== 0) return lengthDiff;
+
+    return dirA.name.localeCompare(dirB.name);
   });
 
-  Object.values(directories).forEach((dir) => {
-    newItems[dir._id].children.sort(compareFile);
+  const orderedExps = experiments.sort((expA, expB) =>
+    expA.name.localeCompare(expB.name)
+  );
+
+  orderedDirs.forEach((dir) => {
+    const node = {
+      children: [],
+      key: dir._id,
+      title: dir.name,
+    };
+
+    dirMap[dir._id] = node;
+
+    const parentId = getIdFromPath(dir.prefixPath);
+    dirMap[parentId].children.push(node);
   });
 
-  return newItems;
+  orderedExps.forEach((exp) => {
+    const node = {
+      key: exp._id,
+      title: exp.name,
+      isLeaf: true as const,
+    };
+
+    const parentId = getIdFromPath(exp.prefixPath);
+    dirMap[parentId].children.push(node);
+  });
+
+  return dirMap[ROOT_DIRECTORY._id].children;
+  // const keepEntries: [string, TreeItem][] = [
+  //   [
+  //     ROOT_DIRECTORY._id,
+  //     {
+  //       id: ROOT_DIRECTORY._id,
+  //       children: [],
+  //       data: {
+  //         fileType: FileType.DIR,
+  //         name: ROOT_DIRECTORY.name,
+  //       },
+  //     },
+  //   ],
+  // ];
+
+  // const newExpEntries = experiments.map((exp) => [
+  //   exp._id,
+  //   {
+  //     id: exp._id,
+  //     data: { fileType: FileType.EXP, name: exp.name },
+  //     isExpanded: false,
+  //     hasChildren: false,
+  //     children: [],
+  //   },
+  // ]);
+
+  // const newDirExtries = directories.map((dir) => [
+  //   dir._id,
+  //   {
+  //     id: dir._id,
+  //     data: { fileType: FileType.DIR, name: dir.name },
+  //     isExpanded: false,
+  //     hasChildren: true,
+  //     children: [],
+  //   },
+  // ]);
+
+  // const newItems: Record<string, TreeItem<TreeItemData>> = Object.fromEntries([
+  //   ...keepEntries,
+  //   ...newDirExtries,
+  //   ...newExpEntries,
+  // ]);
+
+  // // Display order is stored in children array order
+
+  // const compareFile = (itemA: string, itemB: string) => {
+  //   const fileA = newItems[itemA];
+  //   const fileB = newItems[itemB];
+  //   const aFolder = fileA.data.fileType === FileType.DIR;
+  //   const bFolder = fileB.data.fileType === FileType.EXP;
+
+  //   if (aFolder !== bFolder) {
+  //     return aFolder ? 1 : -1;
+  //   }
+
+  //   return fileA.data.name.localeCompare(fileB.data.name);
+  // };
+
+  // [...experiments, ...directories].forEach((file) => {
+  //   const parentId = getIdFromPath(file.prefixPath);
+  //   newItems[parentId].children.push(file._id);
+  // });
+
+  // Object.values(directories).forEach((dir) => {
+  //   newItems[dir._id].children.sort(compareFile);
+  // });
+
+  // return newItems;
 };

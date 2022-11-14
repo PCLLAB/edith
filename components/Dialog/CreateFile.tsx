@@ -35,11 +35,16 @@ export const CreateFileDialog = ({
 }: Props) => {
   const [fileName, setFileName] = useState("");
 
+  const handleClose = () => {
+    setFileName("");
+    onClose();
+  };
+
   const directories = useDirectoryStore((state) => state.directories);
 
   const handleCreate = () => {
     DialogInfo[type].create({ name: fileName, prefixPath });
-    onClose();
+    handleClose();
   };
 
   const parentPath = prefixPath
@@ -50,7 +55,7 @@ export const CreateFileDialog = ({
   const filePath = `${parentPath}/${fileName}`;
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
       <DialogTitle>Create {DialogInfo[type].title}</DialogTitle>
       <Box sx={{ px: 2 }}>
         <TextField
@@ -66,7 +71,7 @@ export const CreateFileDialog = ({
         />
       </Box>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleClose}>Cancel</Button>
         <Button onClick={handleCreate}>Create</Button>
       </DialogActions>
     </Dialog>
