@@ -17,8 +17,11 @@ export interface ExperimentDoc<IdType = Types.ObjectId, DateType = Date> {
   /** if disabled, save to communal cache, if enabled save to unique collection */
   enabled: boolean;
 
+  /** Ref to document containing experiment metadata */
+  mongoDBData: IdType;
+
   /** Document containing collection stats and ref to collection with trial data */
-  dataCollection: string;
+  // dataCollection: string;
 
   /** Experiment Owner */
   user: IdType;

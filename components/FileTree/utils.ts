@@ -1,5 +1,3 @@
-import { TreeData, TreeItem } from "@atlaskit/tree";
-
 import {
   DirectoryFile,
   DirectoryJson,
@@ -172,6 +170,12 @@ export const buildTree = (
     const node = {
       key: exp._id,
       title: exp.name,
+      /**
+       * This doesn't do what it seems.
+       * Icons are rendered before the data is normalized,
+       * so this is used to render the correct icons,
+       * however, directories will also have isLeaf: true
+       */
       isLeaf: true as const,
     };
 

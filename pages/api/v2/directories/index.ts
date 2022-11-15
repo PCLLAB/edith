@@ -1,5 +1,4 @@
 import type { DirectoryJson } from "../../../../lib/common/models/types";
-import { getIdFromPath } from "../../../../lib/common/models/utils";
 import { MissingArgsError } from "../../../../lib/server/errors";
 import initHandler, {
   TypedApiHandlerWithAuth,
@@ -52,7 +51,7 @@ const post: TypedApiHandlerWithAuth<DirectoriesPostSignature> = async (
     return res.json(dir);
   }
 
-  const parentId = getIdFromPath(prefixPath);
+  // const parentId = getIdFromPath(prefixPath);
 
   const dir = new Directory({
     name,

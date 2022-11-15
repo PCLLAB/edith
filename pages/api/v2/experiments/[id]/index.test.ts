@@ -67,7 +67,7 @@ describe(`GET ${ENDPOINT}`, () => {
     const expInfo = {
       name: "exp1",
       user: user._id.toString(),
-      dataCollection: "placeholder",
+      mongoDBData: getValidObjectId(),
     };
     const exp = await Experiment.create(expInfo);
 
@@ -113,7 +113,7 @@ describe(`PUT ${ENDPOINT}`, () => {
     const expInfo = {
       name: "exp1",
       user: user._id.toString(),
-      dataCollection: "placeholder",
+      mongoDBData: getValidObjectId(),
     };
     const exp = await Experiment.create(expInfo);
 
@@ -163,7 +163,7 @@ describe(`DELETE ${ENDPOINT}`, () => {
     const expInfo = {
       name: "tobedeleted",
       user: user._id.toString(),
-      dataCollection: "placeholder",
+      mongoDBData: getValidObjectId(),
     };
     const exp = await Experiment.create(expInfo);
 
@@ -200,8 +200,7 @@ describe(`POST ${ENDPOINT}`, () => {
     const expInfo = {
       name: "tobearchived",
       user: user._id.toString(),
-
-      dataCollection: "placeholder",
+      mongoDBData: getValidObjectId(),
     };
     const exp = await ArchivedExperiment.create(expInfo);
 
@@ -220,7 +219,7 @@ describe(`ARCHIVE and RESTORE ${ENDPOINT}`, () => {
     const expInfo = {
       name: "zombie experiment",
       user: user._id.toString(),
-      dataCollection: "placeholder",
+      mongoDBData: getValidObjectId(),
     };
     const experiment = await Experiment.create(expInfo);
 

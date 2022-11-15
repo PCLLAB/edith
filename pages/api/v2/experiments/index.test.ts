@@ -5,6 +5,7 @@ import dbConnect from "../../../../lib/server/dbConnect";
 import {
   getCreatedUserAndToken,
   getReqResMocker,
+  getValidObjectId,
   getValidPrefixPath,
 } from "../../../../lib/testUtils";
 import Experiment from "../../../../models/Experiment";
@@ -50,12 +51,12 @@ describe(`GET ${ENDPOINT}`, () => {
     const exp1 = {
       name: "exp1",
       user: user._id.toString(),
-      dataCollection: "placeholder",
+      mongoDBData: getValidObjectId(),
     };
     const exp2 = {
       name: "exp2",
       user: user._id.toString(),
-      dataCollection: "placeholder",
+      mongoDBData: getValidObjectId(),
     };
 
     await Experiment.create([exp1, exp2]);
@@ -108,7 +109,7 @@ describe(`POST ${ENDPOINT}`, () => {
         enabled: false,
         prefixPath: "r",
         user: user._id.toString(),
-        dataCollection: expect.any(String),
+        mongoDBData: expect.any(String),
         createdAt: expect.any(String),
         updatedAt: expect.any(String),
       })
@@ -133,7 +134,7 @@ describe(`POST ${ENDPOINT}`, () => {
         enabled,
         prefixPath,
         user: user._id.toString(),
-        dataCollection: expect.any(String),
+        mongoDBData: expect.any(String),
         createdAt: expect.any(String),
         updatedAt: expect.any(String),
       })

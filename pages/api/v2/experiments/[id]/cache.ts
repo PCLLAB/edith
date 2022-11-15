@@ -1,11 +1,9 @@
+import { CachedDataEntryJson } from "../../../../../lib/common/models/types";
 import { ModelNotFoundError } from "../../../../../lib/server/errors";
 import initHandler, {
   TypedApiHandlerWithAuth,
 } from "../../../../../lib/server/initHandler";
-import {
-  CachedDataEntry,
-  CachedDataEntryJson,
-} from "../../../../../models/DataEntry";
+import { CachedDataEntry } from "../../../../../models/DataEntry";
 
 export const ENDPOINT = "/api/v2/experiments/[id]/cache";
 

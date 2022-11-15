@@ -8,12 +8,9 @@ import "../lib/client/rc-tree-custom.css";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    // Switching the provider order can break things for some reason
     <MuiThemeProvider theme={muiDarkTheme}>
-      {/* <StyledThemeProvider theme={styledDarkTheme}> */}
       <CssBaseline />
       <Component {...pageProps} />
-      {/* </StyledThemeProvider> */}
     </MuiThemeProvider>
   );
 }

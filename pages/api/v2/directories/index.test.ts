@@ -1,5 +1,6 @@
 jest.mock("../../../../lib/server/dbConnect");
 
+import { UserDoc } from "../../../../lib/common/models/types";
 import dbConnect from "../../../../lib/server/dbConnect";
 import {
   getCreatedUserAndToken,
@@ -7,7 +8,6 @@ import {
   ReqResMocker,
 } from "../../../../lib/testUtils";
 import Directory from "../../../../models/Directory";
-import { UserDoc } from "../../../../models/User";
 import handler from "./index";
 
 const ENDPOINT = "/api/v2/directories";

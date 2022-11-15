@@ -48,6 +48,9 @@ const CachedDataEntrySchema = new mongoose.Schema<CachedDataEntryDoc>(
       createdAt: true,
       updatedAt: false, // disabled because a data entry is readonly
     },
+    /** This is the legacy collection name from Jarvis v1.
+     * Feel free to rename once fully migrated off Jarvis web app. */
+    collection: "experimentcaches",
   }
 );
 CachedDataEntrySchema.plugin(throwIfNull("CachedDataEntry"));

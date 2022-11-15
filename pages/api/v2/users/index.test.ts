@@ -1,11 +1,11 @@
 jest.mock("../../../../lib/server/dbConnect");
 
+import { UserDoc } from "../../../../lib/common/models/types";
 import dbConnect from "../../../../lib/server/dbConnect";
 import {
   getCreatedUserAndToken,
   getReqResMocker,
 } from "../../../../lib/testUtils";
-import { UserDoc } from "../../../../models/User";
 import handler, { ENDPOINT } from "./index";
 
 let user: UserDoc;

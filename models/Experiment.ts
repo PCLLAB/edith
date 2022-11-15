@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 
 import { ExperimentDoc } from "../lib/common/models/types";
 import { throwIfNull } from "../lib/server/throwIfNull";
@@ -11,7 +11,13 @@ const ExperimentSchema = new mongoose.Schema<ExperimentDoc>(
       required: [true, "Please provide an experiment name"],
     },
     enabled: { type: Boolean, default: false },
-    dataCollection: { type: String, required: true },
+    mongoDBData: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "MongoDBData",
+      required: true,
+    },
+    // TODO consider removing mongoDBData
+    // dataCollection: { type: String, required: true },
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     prefixPath: {
       type: String,
@@ -27,8 +33,9 @@ const ExperimentSchema = new mongoose.Schema<ExperimentDoc>(
 ExperimentSchema.plugin(throwIfNull("Experiment"));
 
 export const ArchivedExperiment =
-  mongoose.models.ArchivedExperiment ||
-  mongoose.model("ArchivedExperiment", ExperimentSchema);
+  /** This is the legacy collection name from Jarvis v1.
+   * Feel free to rename once fully migrated off Jarvis web app. */
+  mongoose.models.Archive || mongoose.model("Archive", ExperimentSchema);
 
 export default mongoose.models.Experiment ||
   mongoose.model("Experiment", ExperimentSchema);

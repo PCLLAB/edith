@@ -1,11 +1,10 @@
+import { DataEntryJson } from "../../../../../../lib/common/models/types";
 import initHandler, {
   TypedApiHandlerWithAuth,
 } from "../../../../../../lib/server/initHandler";
+import { modelForCollection } from "../../../../../../models/DataEntry";
 import Experiment from "../../../../../../models/Experiment";
-import {
-  DataEntryJson,
-  modelForCollection,
-} from "../../../../../../models/DataEntry";
+import MongoDBData from "../../../../../../models/MongoDBData";
 
 export const ENDPOINT = "/api/v2/experiments/[id]/data";
 
@@ -25,8 +24,9 @@ const get: TypedApiHandlerWithAuth<ExperimentsIdDataGetSignature> = async (
   const id = req.query.id;
 
   const expObj = await Experiment.findById(id).lean();
+  const meta = await MongoDBData.findById(expObj.mongoDBData).lean();
 
-  const DataModel = modelForCollection(expObj.dataCollection);
+  const DataModel = modelForCollection(meta.dataCollection);
   const data = await DataModel.find({});
 
   res.json(data);
@@ -52,9 +52,11 @@ const post: TypedApiHandlerWithAuth<ExperimentsIdDataPostSignature> = async (
 
   const expObj = await Experiment.findById(id).lean();
 
-  // TODO cached data entry
+  const meta = await MongoDBData.findById(expObj.mongoDBData).lean();
 
-  const DataModel = modelForCollection(expObj.dataCollection);
+  // TODO cached data entry
+  const DataModel = modelForCollection(meta.dataCollection);
+
   const entry = new DataModel({
     data: req.body,
   });

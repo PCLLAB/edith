@@ -1,9 +1,12 @@
-import dynamic from "next/dynamic";
-import { useCallback, useContext, useEffect, useState } from "react";
+import Tree from "rc-tree";
+import { useContext, useState } from "react";
+
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import NewDirectoryIcon from "@mui/icons-material/CreateNewFolder";
 import RenameIcon from "@mui/icons-material/DriveFileRenameOutline";
+import FolderIcon from "@mui/icons-material/Folder";
 import NewExperimentIcon from "@mui/icons-material/NoteAdd";
+import ScienceIcon from "@mui/icons-material/Science";
 import {
   Box,
   Divider,
@@ -14,39 +17,26 @@ import {
   Paper,
   styled,
 } from "@mui/material";
-import FolderIcon from "@mui/icons-material/Folder";
-import ScienceIcon from "@mui/icons-material/Science";
 
 import { getDirectoryContent } from "../../lib/client/api/directories";
+import {
+  FileSelectionContext,
+  FileType,
+} from "../../lib/client/context/FileSelectionProvider";
 import { useDirectoryStore } from "../../lib/client/hooks/stores/useDirectoryStore";
 import { useExperimentStore } from "../../lib/client/hooks/stores/useExperimentStore";
 import { getPath, ROOT_DIRECTORY } from "../../lib/common/models/utils";
 import { ContextMenu } from "../ContextMenu/ContextMenu";
 import { CreateFileDialog } from "../Dialog/CreateFile";
-import { BaseFile } from "./File";
-import { FileActionBar } from "./FileActionBar";
-import {
-  FileType,
-  FileSelectionContext,
-} from "../../lib/client/context/FileSelectionProvider";
-import { buildTree, INITIAL_TREE_DATA, updatedTreeItems } from "./utils";
 import { RenameFileDialog } from "../Dialog/RenameFile";
-import Tree, { TreeNode } from "rc-tree";
+import { FileActionBar } from "./FileActionBar";
+import { buildTree } from "./utils";
 
 const TreeBase = styled(Paper)({
   height: "100%",
   display: "flex",
   flexDirection: "column",
 });
-
-const TreeItem = styled(Box)((props) => ({
-  "&:hover": {
-    backgroundColor: props.theme.palette.action.hover,
-  },
-  "& > *": {
-    borderLeft: `1px solid ${props.theme.palette.action.hover}`,
-  },
-}));
 
 const FillSpaceContextMenu = styled(ContextMenu)({
   flex: 1,
@@ -179,7 +169,6 @@ export const FileTree = ({ className }: Props) => {
               switcherIcon={(node) =>
                 node.isLeaf ? null : (
                   <ArrowRightIcon
-                    fontSize="small"
                     sx={{
                       rotate: node.expanded ? "90deg" : null,
                       transition: "100ms",

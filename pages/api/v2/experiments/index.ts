@@ -4,6 +4,7 @@ import initHandler, {
   TypedApiHandlerWithAuth,
 } from "../../../../lib/server/initHandler";
 import Experiment from "../../../../models/Experiment";
+import MongoDBData from "../../../../models/MongoDBData";
 
 export const ENDPOINT = "/api/v2/experiments";
 
@@ -48,11 +49,17 @@ const post: TypedApiHandlerWithAuth<ExperimentsPostSignature> = async (
     .split(" ")
     .join("_")}_${new Date().toISOString()}`.toLowerCase();
 
+  const mongoDBData = new MongoDBData({
+    dataCollection,
+  });
+
+  await mongoDBData.save();
+
   const experiment = new Experiment({
     name,
     enabled,
     user,
-    dataCollection,
+    mongoDBData: mongoDBData._id,
     prefixPath,
   });
   await experiment.save();
