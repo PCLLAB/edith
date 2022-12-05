@@ -18,7 +18,10 @@ import {
   styled,
 } from "@mui/material";
 
-import { getDirectoryContent } from "../../lib/client/api/directories";
+import {
+  getDirectoryContent,
+  updateDirectory,
+} from "../../lib/client/api/directories";
 import {
   FileSelectionContext,
   FileType,
@@ -31,6 +34,7 @@ import { CreateFileDialog } from "../Dialog/CreateFile";
 import { RenameFileDialog } from "../Dialog/RenameFile";
 import { FileActionBar } from "./FileActionBar";
 import { buildTree } from "./utils";
+import { updateExperiment } from "../../lib/client/api/experiments";
 
 const TreeBase = styled(Paper)({
   height: "100%",
@@ -109,7 +113,7 @@ export const FileTree = ({ className }: Props) => {
               <Divider />
               <MenuItem
                 onClick={() => {
-                  () => setDialog(Dialogs.CREATE_DIR);
+                  setDialog(Dialogs.CREATE_DIR);
                   onClose();
                 }}
               >
@@ -120,7 +124,7 @@ export const FileTree = ({ className }: Props) => {
               </MenuItem>
               <MenuItem
                 onClick={() => {
-                  () => setDialog(Dialogs.CREATE_EXP);
+                  setDialog(Dialogs.CREATE_EXP);
                   onClose();
                 }}
               >
@@ -140,8 +144,26 @@ export const FileTree = ({ className }: Props) => {
                 Object.values(experiments),
                 Object.values(directories)
               )}
-              /** before data normalized */
               allowDrop={(s) => !s.dropNode.isLeaf}
+              onDrop={({ dragNode, node, dropPosition }) => {
+                // If drop above, move to same directory instead of inside
+                const update =
+                  dropPosition < 0
+                    ? {
+                        prefixPath: directories[node.key].prefixPath,
+                      }
+                    : {
+                        prefixPath: getPath(directories[node.key]),
+                      };
+
+                dragNode.isLeaf
+                  ? experiments[dragNode.key].prefixPath !==
+                      update.prefixPath &&
+                    updateExperiment(dragNode.key, update)
+                  : directories[dragNode.key].prefixPath !==
+                      update.prefixPath &&
+                    updateDirectory(dragNode.key, update);
+              }}
               // Prevent deselecting files by ignoring empty selection
               onSelect={(s) => {
                 if (!s.length) return;
@@ -154,18 +176,17 @@ export const FileTree = ({ className }: Props) => {
               }}
               selectedKeys={selectedKeys}
               icon={(node) =>
-                /**
-                 * Icons are rendered before the data is normalized,
-                 * so this is used to render the correct icons,
-                 * however, directories will also have isLeaf: true
-                 */
                 node.isLeaf ? (
                   <ScienceIcon fontSize="small" color="primary" />
                 ) : (
                   <FolderIcon fontSize="small" color="secondary" />
                 )
               }
-              /** after data normalized */
+              /**
+               * For all above props, directories will not have isLeaf, and
+               * it seems to match what we input for treeData
+               * however, leaf directories will have isLeaf: true here
+               */
               switcherIcon={(node) =>
                 node.isLeaf ? null : (
                   <ArrowRightIcon
