@@ -27,7 +27,10 @@ export interface ExperimentDoc<IdType = Types.ObjectId, DateType = Date> {
   user: IdType;
 
   /** Comma delimited string of ancestor ids ex: "r,ABC213,BADFA123," */
-  prefixPath: string;
+  // prefixPath: string;
+
+  /** Parent directory id */
+  directory: IdType;
 
   /** managed by mongoose using timestamp option */
   createdAt: DateType;

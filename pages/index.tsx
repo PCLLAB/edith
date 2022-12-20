@@ -5,7 +5,7 @@ import { useEffect } from "react";
 const Home: NextPage = () => {
   const router = useRouter();
   useEffect(() => {
-    // router.push("/explorer");
+    router.push("/explorer");
   });
   return <div></div>;
 };

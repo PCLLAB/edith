@@ -38,7 +38,7 @@ export const useDirectoryStore = create<DirectoryState>((set) => ({
           );
         });
       });
-
+      console.log("new", mutableDirMap);
       return { directories: mutableDirMap };
     }),
   deleteDirectories: (ids) =>

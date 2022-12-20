@@ -6,7 +6,6 @@ import {
   getCreatedUserAndToken,
   getReqResMocker,
   getValidObjectId,
-  getValidPrefixPath,
 } from "../../../../lib/testUtils";
 import Experiment from "../../../../models/Experiment";
 import handler from "./index";
@@ -52,11 +51,13 @@ describe(`GET ${ENDPOINT}`, () => {
       name: "exp1",
       user: user._id.toString(),
       mongoDBData: getValidObjectId(),
+      directory: getValidObjectId(),
     };
     const exp2 = {
       name: "exp2",
       user: user._id.toString(),
       mongoDBData: getValidObjectId(),
+      directory: getValidObjectId(),
     };
 
     await Experiment.create([exp1, exp2]);
@@ -77,13 +78,13 @@ describe(`GET ${ENDPOINT}`, () => {
 
 describe(`POST ${ENDPOINT}`, () => {
   const name = "created exp";
-  const prefixPath = getValidPrefixPath();
+  const directory = getValidObjectId();
   const enabled = true;
 
   it("returns 400 if missing name", async () => {
     const { req, res } = mockPostReqRes({
       body: {
-        prefixPath,
+        directory,
         enabled,
       },
     });
@@ -96,6 +97,7 @@ describe(`POST ${ENDPOINT}`, () => {
   it("returns 200 if name provided", async () => {
     const { req, res } = mockPostReqRes({
       body: {
+        directory,
         name,
       },
     });
@@ -107,7 +109,7 @@ describe(`POST ${ENDPOINT}`, () => {
       expect.objectContaining({
         name,
         enabled: false,
-        prefixPath: "r",
+        directory,
         user: user._id.toString(),
         mongoDBData: expect.any(String),
         createdAt: expect.any(String),
@@ -120,7 +122,7 @@ describe(`POST ${ENDPOINT}`, () => {
     const { req, res } = mockPostReqRes({
       body: {
         name,
-        prefixPath,
+        directory,
         enabled,
       },
     });
@@ -132,7 +134,7 @@ describe(`POST ${ENDPOINT}`, () => {
       expect.objectContaining({
         name,
         enabled,
-        prefixPath,
+        directory,
         user: user._id.toString(),
         mongoDBData: expect.any(String),
         createdAt: expect.any(String),

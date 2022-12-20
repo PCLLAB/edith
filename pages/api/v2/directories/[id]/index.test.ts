@@ -179,7 +179,7 @@ describe(`PUT ${ENDPOINT}`, () => {
     const uncle = await mockPostExperiment({
       body: {
         name: "uncle experiment",
-        prefixPath: getPath(grandparent),
+        directory: grandparent._id,
       },
     });
 
@@ -193,7 +193,7 @@ describe(`PUT ${ENDPOINT}`, () => {
     const sibling = await mockPostExperiment({
       body: {
         name: "sibling experiment",
-        prefixPath: getPath(parent),
+        directory: parent._id,
       },
     });
 
@@ -207,7 +207,7 @@ describe(`PUT ${ENDPOINT}`, () => {
     const otherchild = await mockPostExperiment({
       body: {
         name: "other child experiment",
-        prefixPath: getPath(you),
+        directory: you._id,
       },
     });
 
@@ -221,7 +221,7 @@ describe(`PUT ${ENDPOINT}`, () => {
     const grandchild = await mockPostExperiment({
       body: {
         name: "grandchild experiment",
-        prefixPath: getPath(child),
+        directory: child._id,
       },
     });
 
@@ -281,23 +281,9 @@ describe(`PUT ${ENDPOINT}`, () => {
     expect(allExps).toEqual(
       expect.arrayContaining([
         expect.objectContaining(uncle),
-        expect.objectContaining({
-          ...sibling,
-          updatedAt: expect.not.stringMatching(sibling.updatedAt),
-          prefixPath: `${getPath(ROOT_DIRECTORY)},${parent._id}`,
-        }),
-        expect.objectContaining({
-          ...otherchild,
-          updatedAt: expect.not.stringMatching(otherchild.updatedAt),
-          prefixPath: `${getPath(ROOT_DIRECTORY)},${parent._id},${you._id}`,
-        }),
-        expect.objectContaining({
-          ...grandchild,
-          updatedAt: expect.not.stringMatching(grandchild.updatedAt),
-          prefixPath: `${getPath(ROOT_DIRECTORY)},${parent._id},${you._id},${
-            child._id
-          }`,
-        }),
+        expect.objectContaining(sibling),
+        expect.objectContaining(otherchild),
+        expect.objectContaining(grandchild),
       ])
     );
   });

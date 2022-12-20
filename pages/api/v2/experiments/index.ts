@@ -27,7 +27,7 @@ export type ExperimentsPostSignature = {
   method: "POST";
   body: {
     name: string;
-    prefixPath: string;
+    directory: string;
     enabled?: boolean;
   };
   data: ExperimentJson;
@@ -37,7 +37,7 @@ const post: TypedApiHandlerWithAuth<ExperimentsPostSignature> = async (
   req,
   res
 ) => {
-  const { name, prefixPath, enabled = false } = req.body;
+  const { name, directory, enabled = false } = req.body;
   const user = req.auth._id;
 
   if (!name) {
@@ -60,7 +60,7 @@ const post: TypedApiHandlerWithAuth<ExperimentsPostSignature> = async (
     enabled,
     user,
     mongoDBData: mongoDBData._id,
-    prefixPath,
+    directory,
   });
   await experiment.save();
 

@@ -7,11 +7,8 @@ import { InvalidArgsError } from "./errors";
 
 export const moveDirectory = async (
   dir: any, // mongoose documents are any-typed for performance reasons?
-  { name, prefixPath }: { name: string; prefixPath: string }
+  prefixPath: string
 ) => {
-  // const nameChanged = dir.name !== name;
-  const pathChanged = dir.prefixPath !== prefixPath;
-
   const newParentId = getIdFromPath(prefixPath);
   const newParentDir = isRootId(newParentId)
     ? ROOT_DIRECTORY
@@ -41,28 +38,16 @@ export const moveDirectory = async (
       };
     });
     await Directory.bulkWrite(dirUpdates);
-
-    if (pathChanged) {
-      const exps = await Experiment.find({ prefixPath: oldPathRegex });
-      const expUpdates = exps.map((exp) => {
-        return {
-          updateOne: {
-            filter: { _id: exp._id },
-            update: { prefixPath: exp.prefixPath.replace(oldPath, newPath) },
-          },
-        };
-      });
-      await Experiment.bulkWrite(expUpdates);
-    }
   } catch (err) {
     session.abortTransaction();
     await session.endSession();
     return;
   }
 
-  dir.name = name;
   dir.prefixPath = prefixPath;
+
   await dir.save();
+
   session.commitTransaction();
   await session.endSession();
 };

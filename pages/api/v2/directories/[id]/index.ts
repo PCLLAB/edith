@@ -59,14 +59,14 @@ const put: TypedApiHandlerWithAuth<DirectoriesIdPutSignature> = async (
 
   if (ownerIds) {
     dir.ownerIds = ownerIds;
-    await dir.save();
   }
+  if (name) {
+    dir.name = name;
+  }
+  await dir.save();
 
-  if (prefixPath || name) {
-    await moveDirectory(dir, {
-      name: name ?? dir.name,
-      prefixPath: prefixPath ?? dir.prefixPath,
-    });
+  if (prefixPath) {
+    await moveDirectory(dir, prefixPath);
   }
 
   res.json(dir);

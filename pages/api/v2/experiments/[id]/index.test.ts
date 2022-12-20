@@ -68,6 +68,7 @@ describe(`GET ${ENDPOINT}`, () => {
       name: "exp1",
       user: user._id.toString(),
       mongoDBData: getValidObjectId(),
+      directory: getValidObjectId(),
     };
     const exp = await Experiment.create(expInfo);
 
@@ -109,11 +110,12 @@ describe(`PUT ${ENDPOINT}`, () => {
     expect(res.statusCode).toBe(404);
   });
 
-  it("returns 200 and updates name, enabled, user, prefixpath", async () => {
+  it("returns 200 and updates name, enabled, user, directory", async () => {
     const expInfo = {
       name: "exp1",
       user: user._id.toString(),
       mongoDBData: getValidObjectId(),
+      directory: getValidObjectId(),
     };
     const exp = await Experiment.create(expInfo);
 
@@ -121,7 +123,7 @@ describe(`PUT ${ENDPOINT}`, () => {
       name: "newname",
       enabled: true,
       user: getValidObjectId(),
-      prefixPath: getValidPrefixPath(),
+      directory: getValidObjectId(),
     };
 
     const { req, res } = mockPutReqRes({
@@ -164,6 +166,7 @@ describe(`DELETE ${ENDPOINT}`, () => {
       name: "tobedeleted",
       user: user._id.toString(),
       mongoDBData: getValidObjectId(),
+      directory: getValidObjectId(),
     };
     const exp = await Experiment.create(expInfo);
 
@@ -201,6 +204,7 @@ describe(`POST ${ENDPOINT}`, () => {
       name: "tobearchived",
       user: user._id.toString(),
       mongoDBData: getValidObjectId(),
+      directory: getValidObjectId(),
     };
     const exp = await ArchivedExperiment.create(expInfo);
 
@@ -220,6 +224,7 @@ describe(`ARCHIVE and RESTORE ${ENDPOINT}`, () => {
       name: "zombie experiment",
       user: user._id.toString(),
       mongoDBData: getValidObjectId(),
+      directory: getValidObjectId(),
     };
     const experiment = await Experiment.create(expInfo);
 

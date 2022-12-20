@@ -8,7 +8,6 @@ import FolderIcon from "@mui/icons-material/Folder";
 import NewExperimentIcon from "@mui/icons-material/NoteAdd";
 import ScienceIcon from "@mui/icons-material/Science";
 import {
-  Box,
   Divider,
   List,
   ListItemIcon,

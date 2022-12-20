@@ -1,7 +1,4 @@
-import {
-  ExperimentJson,
-  UserJson,
-} from "../../../../../lib/common/models/types";
+import { ExperimentJson } from "../../../../../lib/common/models/types";
 import initHandler, {
   TypedApiHandlerWithAuth,
 } from "../../../../../lib/server/initHandler";
@@ -43,8 +40,8 @@ export type ExperimentsIdPutSignature = {
   body: {
     name?: string;
     enabled?: boolean;
-    user?: UserJson;
-    prefixPath?: string;
+    user?: string;
+    directory?: string;
   };
   data: ExperimentJson;
 };
@@ -55,14 +52,14 @@ const put: TypedApiHandlerWithAuth<ExperimentsIdPutSignature> = async (
 ) => {
   const id = req.query.id;
 
-  const { name, enabled, user, prefixPath } = req.body;
+  const { name, enabled, user, directory } = req.body;
   const experiment = await Experiment.findByIdAndUpdate(
     id,
     {
       name,
       enabled,
       user,
-      prefixPath,
+      directory,
     },
     { new: true }
   );

@@ -38,6 +38,7 @@ export const updateDirectory = (
     query: { id },
     body: update,
   }).then((dir) => {
+    console.log("here we are");
     useDirectoryStore.getState().updateDirectories([dir]);
   });
 

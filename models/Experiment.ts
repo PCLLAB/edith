@@ -16,14 +16,18 @@ const ExperimentSchema = new mongoose.Schema<ExperimentDoc>(
       ref: "MongoDBData",
       required: true,
     },
-    // TODO consider removing mongoDBData
     // dataCollection: { type: String, required: true },
     user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    prefixPath: {
-      type: String,
-      default: "r",
-      match: [/^r(,([a-z\d]){24})*$/, "Incorrect prefixpath pattern"],
+    directory: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Directory",
+      required: true,
     },
+    // prefixPath: {
+    //   type: String,
+    //   default: "r",
+    //   match: [/^r(,([a-z\d]){24})*$/, "Incorrect prefixpath pattern"],
+    // },
   },
   {
     timestamps: true,
