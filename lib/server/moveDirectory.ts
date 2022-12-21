@@ -1,7 +1,5 @@
 import Directory from "../../models/Directory";
-import Experiment from "../../models/Experiment";
-import { ROOT_DIRECTORY } from "../common/models/utils";
-import { getIdFromPath, getPath, isRootId } from "../common/models/utils";
+import { getIdFromPath, getPath } from "../common/models/utils";
 import dbConnect from "./dbConnect";
 import { InvalidArgsError } from "./errors";
 
@@ -10,9 +8,7 @@ export const moveDirectory = async (
   prefixPath: string
 ) => {
   const newParentId = getIdFromPath(prefixPath);
-  const newParentDir = isRootId(newParentId)
-    ? ROOT_DIRECTORY
-    : await Directory.findById(newParentId).lean();
+  const newParentDir = await Directory.findById(newParentId).lean();
 
   if (getPath(newParentDir) !== prefixPath) {
     throw new InvalidArgsError(["prefixPath"]);

@@ -18,11 +18,6 @@ export interface DirectoryJson
   ownerIds: string[];
 }
 
-export type RootDirectory = {
-  _id: "r";
-  name: "Root";
-};
-
-export type AnyDirectory = DirectoryDoc | DirectoryJson | RootDirectory;
+export type AnyDirectory = DirectoryDoc | DirectoryJson;
 
 export type DirectoryFile = DirectoryJson | ExperimentJson;

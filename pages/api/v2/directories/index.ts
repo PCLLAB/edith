@@ -26,7 +26,7 @@ export type DirectoriesPostSignature = {
   method: "POST";
   body: {
     name: string;
-    prefixPath?: string;
+    prefixPath: string;
   };
   data: DirectoryJson;
 };
@@ -38,20 +38,12 @@ const post: TypedApiHandlerWithAuth<DirectoriesPostSignature> = async (
   const { name, prefixPath } = req.body;
   const user = req.auth._id;
 
-  if (!name) {
-    throw new MissingArgsError(["name"]);
+  if (!name || prefixPath == null) {
+    throw new MissingArgsError(
+      // @ts-ignore: filter out falsy
+      [!name && "name", prefixPath == null && "prefixPath"].filter(Boolean)
+    );
   }
-
-  if (!prefixPath) {
-    const dir = new Directory({
-      name,
-      ownerIds: [user],
-    });
-    await dir.save();
-    return res.json(dir);
-  }
-
-  // const parentId = getIdFromPath(prefixPath);
 
   const dir = new Directory({
     name,

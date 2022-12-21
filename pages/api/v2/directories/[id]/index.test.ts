@@ -1,6 +1,5 @@
 jest.mock("../../../../../lib/server/dbConnect");
 
-import { ROOT_DIRECTORY } from "../../../../../lib/common/models/utils";
 import { getPath } from "../../../../../lib/common/models/utils";
 import dbConnect from "../../../../../lib/server/dbConnect";
 import {
@@ -39,6 +38,7 @@ describe(`GET ${ENDPOINT}`, () => {
     const dir = await mockPostDirectory({
       body: {
         name: "dir1",
+        prefixPath: "",
       },
     });
 
@@ -81,6 +81,7 @@ describe(`PUT ${ENDPOINT}`, () => {
     const dir = await mockPostDirectory({
       body: {
         name: "dir1",
+        prefixPath: "",
       },
     });
 
@@ -104,6 +105,7 @@ describe(`PUT ${ENDPOINT}`, () => {
     const dir = await mockPostDirectory({
       body: {
         name: "dir1",
+        prefixPath: "",
       },
     });
 
@@ -124,9 +126,17 @@ describe(`PUT ${ENDPOINT}`, () => {
   });
 
   it("returns 200 and updates prefixPath", async () => {
+    const root = await mockPostDirectory({
+      body: {
+        name: "Root",
+        prefixPath: "",
+      },
+    });
+
     const dir1 = await mockPostDirectory({
       body: {
         name: "dir1",
+        prefixPath: getPath(root),
       },
     });
 
@@ -139,12 +149,10 @@ describe(`PUT ${ENDPOINT}`, () => {
 
     expect(dir2.prefixPath).toEqual(getPath(dir1));
 
-    const newPrefixPath = getPath(ROOT_DIRECTORY);
-
     const { req, res } = mockPutReqRes({
       query: { id: dir2._id },
       body: {
-        prefixPath: newPrefixPath,
+        prefixPath: getPath(root),
       },
     });
 
@@ -152,7 +160,7 @@ describe(`PUT ${ENDPOINT}`, () => {
 
     expect(res.statusCode).toBe(200);
     expect(res._getJSONData()).toMatchObject({
-      prefixPath: newPrefixPath,
+      prefixPath: getPath(root),
     });
   });
 
@@ -172,8 +180,15 @@ describe(`PUT ${ENDPOINT}`, () => {
       token
     );
 
+    const root = await mockPostDirectory({
+      body: {
+        name: "Root",
+        prefixPath: "",
+      },
+    });
+
     const grandparent = await mockPostDirectory({
-      body: { name: "grandparent directory" },
+      body: { name: "grandparent directory", prefixPath: getPath(root) },
     });
 
     const uncle = await mockPostExperiment({
@@ -232,7 +247,7 @@ describe(`PUT ${ENDPOINT}`, () => {
       },
       body: {
         name: "updated parent directory",
-        prefixPath: getPath(ROOT_DIRECTORY),
+        prefixPath: getPath(root),
       },
     });
 
@@ -254,18 +269,18 @@ describe(`PUT ${ENDPOINT}`, () => {
         expect.objectContaining({
           ...parent,
           updatedAt: expect.not.stringMatching(parent.updatedAt),
-          prefixPath: getPath(ROOT_DIRECTORY),
+          prefixPath: getPath(root),
           name: "updated parent directory",
         }),
         expect.objectContaining({
           ...you,
           updatedAt: expect.not.stringMatching(you.updatedAt),
-          prefixPath: `${getPath(ROOT_DIRECTORY)},${parent._id}`,
+          prefixPath: `${getPath(root)},${parent._id}`,
         }),
         expect.objectContaining({
           ...child,
           updatedAt: expect.not.stringMatching(child.updatedAt),
-          prefixPath: `${getPath(ROOT_DIRECTORY)},${parent._id},${you._id}`,
+          prefixPath: `${getPath(root)},${parent._id},${you._id}`,
         }),
       ])
     );

@@ -18,12 +18,20 @@ const DirectorySchema = new mongoose.Schema<DirectoryDoc>(
     },
     prefixPath: {
       type: String,
-      default: "r",
-      match: [/^r(,([a-z\d]){24})*$/, "Incorrect prefixpath pattern"],
+      required: AllowEmptyString,
+      match: [
+        /^([a-z\d]{24}(,[a-z\d]{24})*)?$/,
+        "Incorrect prefixpath pattern",
+      ],
     },
   },
   { timestamps: true }
 );
+
+function AllowEmptyString() {
+  //@ts-ignore `this` is the schema + just want require any string
+  return typeof this.prefixPath === "string" ? false : true;
+}
 
 DirectorySchema.plugin(throwIfNull("Directory"));
 

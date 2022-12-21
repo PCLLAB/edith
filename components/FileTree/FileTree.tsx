@@ -27,13 +27,14 @@ import {
 } from "../../lib/client/context/FileSelectionProvider";
 import { useDirectoryStore } from "../../lib/client/hooks/stores/useDirectoryStore";
 import { useExperimentStore } from "../../lib/client/hooks/stores/useExperimentStore";
-import { getPath, ROOT_DIRECTORY } from "../../lib/common/models/utils";
+import { getIdFromPath, getPath } from "../../lib/common/models/utils";
 import { ContextMenu } from "../ContextMenu/ContextMenu";
 import { CreateFileDialog } from "../Dialog/CreateFile";
 import { RenameFileDialog } from "../Dialog/RenameFile";
 import { FileActionBar } from "./FileActionBar";
 import { buildTree } from "./utils";
 import { updateExperiment } from "../../lib/client/api/experiments";
+import { WorkspaceContext } from "../../lib/client/context/WorkspaceProvider";
 
 const TreeBase = styled(Paper)({
   height: "100%",
@@ -56,17 +57,13 @@ export type TreeItemData = {
 
 export const FileTree = ({ className }: Props) => {
   const directories = useDirectoryStore((state) => state.directories);
-  // const updateDirectories = useDirectoryStore(
-  //   (state) => state.updateDirectories
-  // );
   const experiments = useExperimentStore((state) => state.experiments);
-  // const updateExperiments = useExperimentStore(
-  //   (state) => state.updateExperiments
-  // );
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
 
+  const { rootId } = useContext(WorkspaceContext);
+
   const onRefresh = () => {
-    getDirectoryContent(ROOT_DIRECTORY._id);
+    getDirectoryContent(rootId);
     // TODO update for all expanded directories?
   };
 
@@ -84,8 +81,8 @@ export const FileTree = ({ className }: Props) => {
   const newFilePrefixPath = fileSelection
     ? fileSelection.type === FileType.DIR
       ? getPath(directories[fileSelection.id])
-      : experiments[fileSelection.id].prefixPath
-    : ROOT_DIRECTORY._id;
+      : getPath(directories[experiments[fileSelection.id].directory])
+    : rootId;
 
   return (
     <>
@@ -146,22 +143,24 @@ export const FileTree = ({ className }: Props) => {
               allowDrop={(s) => !s.dropNode.isLeaf}
               onDrop={({ dragNode, node, dropPosition }) => {
                 // If drop above, move to same directory instead of inside
-                const update =
+                const destPrefixPath =
                   dropPosition < 0
-                    ? {
-                        prefixPath: directories[node.key].prefixPath,
-                      }
-                    : {
-                        prefixPath: getPath(directories[node.key]),
-                      };
+                    ? directories[node.key].prefixPath
+                    : getPath(directories[node.key]);
 
-                dragNode.isLeaf
-                  ? experiments[dragNode.key].prefixPath !==
-                      update.prefixPath &&
-                    updateExperiment(dragNode.key, update)
-                  : directories[dragNode.key].prefixPath !==
-                      update.prefixPath &&
-                    updateDirectory(dragNode.key, update);
+                if (dragNode.isLeaf) {
+                  const destDirectory = getIdFromPath(destPrefixPath);
+                  if (experiments[dragNode.key].directory === destDirectory) {
+                    return;
+                  }
+                  updateExperiment(dragNode.key, { directory: destDirectory });
+                } else {
+                  if (directories[dragNode.key].prefixPath == destPrefixPath) {
+                    return;
+                  }
+
+                  updateDirectory(dragNode.key, { prefixPath: destPrefixPath });
+                }
               }}
               // Prevent deselecting files by ignoring empty selection
               onSelect={(s) => {

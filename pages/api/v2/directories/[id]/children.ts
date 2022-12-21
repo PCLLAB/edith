@@ -2,11 +2,7 @@ import {
   DirectoryJson,
   ExperimentJson,
 } from "../../../../../lib/common/models/types";
-import {
-  getPath,
-  isRootId,
-  ROOT_DIRECTORY,
-} from "../../../../../lib/common/models/utils";
+import { getPath } from "../../../../../lib/common/models/utils";
 import initHandler, {
   TypedApiHandlerWithAuth,
 } from "../../../../../lib/server/initHandler";
@@ -33,7 +29,7 @@ const get: TypedApiHandlerWithAuth<DirectoriesIdChildrenGetSignature> = async (
 ) => {
   const { id } = req.query;
 
-  const parent = isRootId(id) ? ROOT_DIRECTORY : await Directory.findById(id);
+  const parent = await Directory.findById(id);
   const path = getPath(parent);
 
   const data = {

@@ -1,6 +1,7 @@
 jest.mock("../../../../lib/server/dbConnect");
 
 import { UserDoc } from "../../../../lib/common/models/types";
+import { getPath } from "../../../../lib/common/models/utils";
 import dbConnect from "../../../../lib/server/dbConnect";
 import {
   getCreatedUserAndToken,
@@ -47,10 +48,12 @@ describe(`GET ${ENDPOINT}`, () => {
     const dir1 = {
       name: "exp1",
       ownerIds: [user._id.toString()],
+      prefixPath: "",
     };
     const dir2 = {
       name: "exp2",
       ownerIds: [user._id.toString()],
+      prefixPath: "",
     };
 
     await Directory.create([dir1, dir2]);
@@ -82,7 +85,7 @@ describe(`POST ${ENDPOINT}`, () => {
     expect(res.statusCode).toBe(400);
   });
 
-  it("returns 200 if name provided", async () => {
+  it("returns 400 if missing prefixPath", async () => {
     const { req, res } = mockPostReqRes();
 
     req.body = {
@@ -91,22 +94,14 @@ describe(`POST ${ENDPOINT}`, () => {
 
     await handler(req, res);
 
-    expect(res.statusCode).toBe(200);
-    expect(res._getJSONData()).toEqual(
-      expect.objectContaining({
-        name,
-        prefixPath: "r",
-        ownerIds: expect.arrayContaining([user._id.toString()]),
-        createdAt: expect.any(String),
-        updatedAt: expect.any(String),
-      })
-    );
+    expect(res.statusCode).toBe(400);
   });
 
-  it("accepts prefixPath", async () => {
+  it("returns 200 with name and prefixPath", async () => {
     const dir1 = {
       name: "exp1",
       ownerIds: [user._id.toString()],
+      prefixPath: "",
     };
 
     const parent = new Directory(dir1);
@@ -115,7 +110,7 @@ describe(`POST ${ENDPOINT}`, () => {
     const { req, res } = mockPostReqRes({
       body: {
         name,
-        prefixPath: `r,${parent._id.toString()}`,
+        prefixPath: getPath(parent),
       },
     });
 
@@ -125,7 +120,7 @@ describe(`POST ${ENDPOINT}`, () => {
     expect(res._getJSONData()).toEqual(
       expect.objectContaining({
         name,
-        prefixPath: `r,${parent._id.toString()}`,
+        prefixPath: getPath(parent),
         ownerIds: expect.arrayContaining([user._id.toString()]),
         createdAt: expect.any(String),
         updatedAt: expect.any(String),

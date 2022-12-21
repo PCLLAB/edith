@@ -1,24 +1,5 @@
-import {
-  DirectoryFile,
-  DirectoryJson,
-  ExperimentJson,
-} from "../../lib/common/models/types";
-import { getIdFromPath, ROOT_DIRECTORY } from "../../lib/common/models/utils";
-import { FileType } from "../../lib/client/context/FileSelectionProvider";
-
-export const INITIAL_TREE_DATA = {
-  rootId: ROOT_DIRECTORY._id,
-  items: {
-    [ROOT_DIRECTORY._id]: {
-      id: ROOT_DIRECTORY._id,
-      children: [],
-      data: {
-        fileType: FileType.DIR,
-        name: ROOT_DIRECTORY.name,
-      },
-    },
-  },
-};
+import { DirectoryJson, ExperimentJson } from "../../lib/common/models/types";
+import { getIdFromPath } from "../../lib/common/models/utils";
 
 type InternalNode = LeafNode & {
   children: (InternalNode | LeafNode)[];
@@ -34,13 +15,7 @@ export const buildTree = (
   experiments: ExperimentJson[],
   directories: DirectoryJson[]
 ) => {
-  const dirMap: Record<string, InternalNode> = {
-    [ROOT_DIRECTORY._id]: {
-      children: [],
-      key: ROOT_DIRECTORY._id,
-      title: ROOT_DIRECTORY.name,
-    },
-  };
+  const dirMap: Record<string, InternalNode> = {};
 
   // Shortest prefixPath first, aka parent nodes first
   const orderedDirs = directories.sort((dirA, dirB) => {
@@ -79,9 +54,8 @@ export const buildTree = (
       isLeaf: true as const,
     };
 
-    const parentId = getIdFromPath(exp.prefixPath);
-    dirMap[parentId].children.push(node);
+    dirMap[exp.directory].children.push(node);
   });
 
-  return dirMap[ROOT_DIRECTORY._id].children;
+  return dirMap[orderedDirs[0]._id].children;
 };
