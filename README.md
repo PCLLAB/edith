@@ -73,3 +73,11 @@ https://mongoosejs.com/docs/queries.html#queries-are-not-promises
 https://stackoverflow.com/questions/31549857/mongoose-what-does-the-exec-function-do
 
 `Model.find().lean()` gives an normal object instead of mongoose object
+
+For some reason this just needs to happen
+
+`sudo chown mongodb:mongodb /var/run/mongod.pid`
+
+To connect to default uri
+
+`mongosh --user USERNAMEHERE --authenticationDatabase bedi`

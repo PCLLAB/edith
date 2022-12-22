@@ -1,13 +1,17 @@
 import { createContext, ReactNode, useState } from "react";
 
 interface Workspace {
-  name: string;
   rootId: string;
 }
 
-export const WorkspaceContext = createContext<Workspace>({
-  name: "Fallback",
-  rootId: "",
+interface WorkspaceContext {
+  workspace: Workspace;
+  setWorkspace: (w: Workspace) => void;
+}
+
+export const WorkspaceContext = createContext<WorkspaceContext>({
+  workspace: { rootId: "you forgot to add a provider" },
+  setWorkspace: () => {},
 });
 
 type Props = {
@@ -15,13 +19,11 @@ type Props = {
 };
 export const WorkspaceProvider = ({ children }: Props) => {
   const [workspace, setWorkspace] = useState<Workspace>({
-    name: "Main",
-    // Hardcoded for now, since only one workspace
     rootId: "",
   });
 
   return (
-    <WorkspaceContext.Provider value={workspace}>
+    <WorkspaceContext.Provider value={{ workspace, setWorkspace }}>
       {children}
     </WorkspaceContext.Provider>
   );

@@ -12,10 +12,18 @@ type LeafNode = {
 };
 
 export const buildTree = (
+  rootId: string,
   experiments: ExperimentJson[],
   directories: DirectoryJson[]
 ) => {
-  const dirMap: Record<string, InternalNode> = {};
+  console.log("building tree");
+  const dirMap: Record<string, InternalNode> = {
+    [rootId]: {
+      key: rootId,
+      title: "Current Root Dir",
+      children: [] as InternalNode["children"],
+    },
+  };
 
   // Shortest prefixPath first, aka parent nodes first
   const orderedDirs = directories.sort((dirA, dirB) => {
@@ -39,6 +47,9 @@ export const buildTree = (
     dirMap[dir._id] = node;
 
     const parentId = getIdFromPath(dir.prefixPath);
+
+    if (!parentId) return;
+
     dirMap[parentId].children.push(node);
   });
 
@@ -57,5 +68,5 @@ export const buildTree = (
     dirMap[exp.directory].children.push(node);
   });
 
-  return dirMap[orderedDirs[0]._id].children;
+  return dirMap[rootId].children;
 };

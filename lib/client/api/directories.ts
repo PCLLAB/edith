@@ -2,6 +2,7 @@ import {
   DirectoriesGetSignature,
   DirectoriesPostSignature,
 } from "../../../pages/api/v2/directories";
+import { DirectoriesRootsGetSignature } from "../../../pages/api/v2/directories/roots";
 import {
   DirectoriesIdGetSignature,
   DirectoriesIdPutSignature,
@@ -28,19 +29,38 @@ export const getDirectory = (id: string) =>
     useDirectoryStore.getState().updateDirectories([dir]);
   });
 
+export const getDirectoryRoots = async () => {
+  const roots = await fetcher<DirectoriesRootsGetSignature>({
+    url: "/api/v2/directories/roots" as const,
+    method: "GET" as const,
+  });
+  useDirectoryStore.getState().updateDirectories(roots);
+  return roots;
+};
+
 export const updateDirectory = (
   id: string,
   update: DirectoriesIdPutSignature["body"]
-) =>
+) => {
+  const original = useDirectoryStore.getState().directories[id];
+  const optimistic = {
+    ...original,
+    ...update,
+  };
+
+  useDirectoryStore.getState().updateDirectories([optimistic]);
+
   fetcher<DirectoriesIdPutSignature>({
     url: "/api/v2/directories/[id]" as const,
     method: "PUT" as const,
     query: { id },
     body: update,
-  }).then((dir) => {
-    console.log("here we are");
-    useDirectoryStore.getState().updateDirectories([dir]);
-  });
+  })
+    .then((dir) => {
+      useDirectoryStore.getState().updateDirectories([dir]);
+    })
+    .catch(() => useDirectoryStore.getState().updateDirectories([original]));
+};
 
 export const createDirectory = (body: DirectoriesPostSignature["body"]) =>
   fetcher<DirectoriesPostSignature>({

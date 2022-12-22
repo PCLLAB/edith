@@ -17,12 +17,13 @@ export const useDirectoryStore = create<DirectoryState>((set) => ({
   updateDirectories: (updates) =>
     set((state) => {
       const currentDirList = Object.values(state.directories);
-      const mutableDirMap = state.directories;
+      const mutableDirMap = { ...state.directories };
 
       updates.forEach((update) => {
+        mutableDirMap[update._id] = update;
+
         const existingEntry = state.directories[update._id];
         if (!existingEntry || update.prefixPath === existingEntry.prefixPath) {
-          mutableDirMap[update._id] = update;
           return;
         }
 
@@ -38,7 +39,6 @@ export const useDirectoryStore = create<DirectoryState>((set) => ({
           );
         });
       });
-      console.log("new", mutableDirMap);
       return { directories: mutableDirMap };
     }),
   deleteDirectories: (ids) =>

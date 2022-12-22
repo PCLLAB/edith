@@ -10,7 +10,5 @@ export const ExperimentViewer = ({ experimentId }: Props) => {
     (state) => state.experiments[experimentId]
   );
 
-  console.log("exp view", experiment);
-
   return <Paper>Experiment viewr</Paper>;
 };

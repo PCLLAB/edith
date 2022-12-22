@@ -10,6 +10,5 @@ export const DirectoryViewer = ({ directoryId }: Props) => {
   const directory = useDirectoryStore(
     (state) => state.directories[directoryId]
   );
-  console.log("directory viewer", directory);
   return <Paper>Directory viewr</Paper>;
 };

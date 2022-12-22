@@ -5,6 +5,9 @@ import { FileViewer } from "../../components/FileViewer";
 import { FileSelectionProvider } from "../../lib/client/context/FileSelectionProvider";
 
 import type { NextPage } from "next";
+import { WorkspaceContext } from "../../lib/client/context/WorkspaceProvider";
+import { useContext, useEffect } from "react";
+import { getDirectoryRoots } from "../../lib/client/api/directories";
 
 const ExplorerBox = styled("div")({
   display: "flex",
@@ -21,12 +24,25 @@ const StyledFileViewer = styled(FileViewer)((props) => ({
 }));
 
 const Explorer: NextPage = () => {
-  console.debug("explorer render");
+  const { workspace, setWorkspace } = useContext(WorkspaceContext);
+
+  useEffect(() => {
+    getDirectoryRoots().then((dirs) =>
+      setWorkspace({
+        rootId: dirs[0]._id,
+      })
+    );
+  }, []);
+
   return (
     <FileSelectionProvider>
       <ExplorerBox>
-        <StyledFileTree />
-        <StyledFileViewer />
+        {workspace.rootId && (
+          <>
+            <StyledFileTree />
+            <StyledFileViewer />
+          </>
+        )}
       </ExplorerBox>
     </FileSelectionProvider>
   );

@@ -1,5 +1,5 @@
 import Tree from "rc-tree";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import NewDirectoryIcon from "@mui/icons-material/CreateNewFolder";
@@ -60,12 +60,16 @@ export const FileTree = ({ className }: Props) => {
   const experiments = useExperimentStore((state) => state.experiments);
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
 
-  const { rootId } = useContext(WorkspaceContext);
+  const { workspace } = useContext(WorkspaceContext);
 
   const onRefresh = () => {
-    getDirectoryContent(rootId);
+    getDirectoryContent(workspace.rootId);
     // TODO update for all expanded directories?
   };
+
+  useEffect(() => {
+    getDirectoryContent(workspace.rootId);
+  }, [workspace]);
 
   enum Dialogs {
     CREATE_EXP,
@@ -82,7 +86,7 @@ export const FileTree = ({ className }: Props) => {
     ? fileSelection.type === FileType.DIR
       ? getPath(directories[fileSelection.id])
       : getPath(directories[experiments[fileSelection.id].directory])
-    : rootId;
+    : workspace.rootId;
 
   return (
     <>
@@ -137,6 +141,7 @@ export const FileTree = ({ className }: Props) => {
               showLine
               draggable
               treeData={buildTree(
+                workspace.rootId,
                 Object.values(experiments),
                 Object.values(directories)
               )}
@@ -158,7 +163,6 @@ export const FileTree = ({ className }: Props) => {
                   if (directories[dragNode.key].prefixPath == destPrefixPath) {
                     return;
                   }
-
                   updateDirectory(dragNode.key, { prefixPath: destPrefixPath });
                 }
               }}

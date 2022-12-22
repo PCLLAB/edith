@@ -8,6 +8,7 @@ import {
   DirectoriesIdPutSignature,
 } from "../../pages/api/v2/directories/[id]";
 import { DirectoriesIdChildrenGetSignature } from "../../pages/api/v2/directories/[id]/children";
+import { DirectoriesRootsGetSignature } from "../../pages/api/v2/directories/roots";
 import {
   ExperimentsGetSignature,
   ExperimentsPostSignature,
@@ -47,7 +48,8 @@ export type ApiSignature =
   | ExperimentsIdCache
   | Directories
   | DirectoriesId
-  | DirectoriesIdChildren;
+  | DirectoriesIdChildren
+  | DirectoriesRootsGetSignature;
 
 type Users = UsersGetSignature | UsersPostSignature;
 type UsersAuth = UsersAuthPostSignature;

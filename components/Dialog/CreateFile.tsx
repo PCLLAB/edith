@@ -12,8 +12,8 @@ import {
 import { createDirectory } from "../../lib/client/api/directories";
 import { createExperiment } from "../../lib/client/api/experiments";
 import { useDirectoryStore } from "../../lib/client/hooks/stores/useDirectoryStore";
-import { isRootId } from "../../lib/common/models/utils";
 import { FileType } from "../../lib/client/context/FileSelectionProvider";
+import { getIdFromPath } from "../../lib/common/models/utils";
 
 const DialogInfo = {
   [FileType.DIR]: { create: createDirectory, title: "Directory" },
@@ -43,13 +43,17 @@ export const CreateFileDialog = ({
   const directories = useDirectoryStore((state) => state.directories);
 
   const handleCreate = () => {
-    DialogInfo[type].create({ name: fileName, prefixPath });
+    DialogInfo[type].create({
+      name: fileName,
+      directory: getIdFromPath(prefixPath),
+      prefixPath,
+    });
     handleClose();
   };
 
   const parentPath = prefixPath
     .split(",")
-    .map((id) => (isRootId(id) ? "" : directories[id].name))
+    .map((id) => directories[id].name)
     .join("/");
 
   const filePath = `${parentPath}/${fileName}`;
