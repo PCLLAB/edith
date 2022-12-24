@@ -4,7 +4,12 @@ import { ThemeProvider as MuiThemeProvider } from "@mui/material/styles";
 
 import { muiDarkTheme } from "../lib/client/theme";
 
+// Explorer sidebar styles
 import "../lib/client/rc-tree-custom.css";
+
+// Code highlight styles
+import "../lib/client/prism-one-dark.css";
+
 import { WorkspaceProvider } from "../lib/client/context/WorkspaceProvider";
 
 export default function App({ Component, pageProps }: AppProps) {

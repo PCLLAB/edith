@@ -166,6 +166,14 @@ export const FileTree = ({ className }: Props) => {
                   updateDirectory(dragNode.key, { prefixPath: destPrefixPath });
                 }
               }}
+              onRightClick={({ node }) => {
+                setSelectedKeys([node.key]);
+                const fileId = node.key;
+                setFileSelection({
+                  id: fileId,
+                  type: fileId in directories ? FileType.DIR : FileType.EXP,
+                });
+              }}
               // Prevent deselecting files by ignoring empty selection
               onSelect={(s) => {
                 if (!s.length) return;

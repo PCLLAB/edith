@@ -16,8 +16,8 @@ import { FileType } from "../../lib/client/context/FileSelectionProvider";
 import { getIdFromPath } from "../../lib/common/models/utils";
 
 const DialogInfo = {
-  [FileType.DIR]: { create: createDirectory, title: "Directory" },
-  [FileType.EXP]: { create: createExperiment, title: "Experiment" },
+  [FileType.DIR]: { create: createDirectory, title: "directory" },
+  [FileType.EXP]: { create: createExperiment, title: "experiment" },
 };
 
 type Props = {
