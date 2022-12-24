@@ -1,12 +1,13 @@
+import { useEffect, useRef, useState } from "react";
+
 import {
-  Dialog,
+  Box,
+  Button,
+  DialogActions,
   DialogTitle,
   TextField,
-  DialogActions,
-  Button,
-  Box,
 } from "@mui/material";
-import { useState } from "react";
+
 import { updateDirectory } from "../../lib/client/api/directories";
 import { updateExperiment } from "../../lib/client/api/experiments";
 import { FileType } from "../../lib/client/context/FileSelectionProvider";
@@ -20,16 +21,12 @@ const DialogInfo = {
 
 type Props = {
   id: string;
-  open: boolean;
   onClose: () => void;
   type: FileType;
 };
 
-export const RenameFileDialog = ({ open, type, onClose, id }: Props) => {
-  const [fileName, setFileName] = useState("");
-
+export const RenameFileDialog = ({ type, onClose, id }: Props) => {
   const handleClose = () => {
-    setFileName("");
     onClose();
   };
 
@@ -38,16 +35,25 @@ export const RenameFileDialog = ({ open, type, onClose, id }: Props) => {
     onClose();
   };
 
+  useEffect(() => {
+    if (!inputRef.current) return;
+    inputRef.current.focus();
+  }, []);
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const directories = useDirectoryStore((state) => state.directories);
   const experiments = useExperimentStore((state) => state.experiments);
-
   const file = type === FileType.DIR ? directories[id] : experiments[id];
 
+  const [fileName, setFileName] = useState(file.name);
+
   return (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-      <DialogTitle>Rename: {file.name}</DialogTitle>
+    <>
+      <DialogTitle>Rename {DialogInfo[type].title}</DialogTitle>
       <Box sx={{ px: 2 }}>
         <TextField
+          inputRef={inputRef}
           value={fileName}
           onChange={(e) => setFileName(e.target.value)}
           autoFocus
@@ -61,8 +67,8 @@ export const RenameFileDialog = ({ open, type, onClose, id }: Props) => {
       </Box>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
-        <Button onClick={handleRename}>Create</Button>
+        <Button onClick={handleRename}>Rename</Button>
       </DialogActions>
-    </Dialog>
+    </>
   );
 };

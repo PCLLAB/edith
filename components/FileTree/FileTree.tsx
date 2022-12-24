@@ -8,6 +8,7 @@ import FolderIcon from "@mui/icons-material/Folder";
 import NewExperimentIcon from "@mui/icons-material/NoteAdd";
 import ScienceIcon from "@mui/icons-material/Science";
 import {
+  Dialog,
   Divider,
   List,
   ListItemIcon,
@@ -71,11 +72,11 @@ export const FileTree = ({ className }: Props) => {
     getDirectoryContent(workspace.rootId);
   }, [workspace]);
 
+  // skip 0, because its falsey
   enum Dialogs {
-    CREATE_EXP,
+    CREATE_EXP = 1,
     CREATE_DIR,
-    RENAME_EXP,
-    RENAME_DIR,
+    RENAME,
   }
   const [dialog, setDialog] = useState<Dialogs | null>(null);
   const onCloseDialog = () => setDialog(null);
@@ -101,7 +102,7 @@ export const FileTree = ({ className }: Props) => {
             <>
               <MenuItem
                 onClick={() => {
-                  setDialog(Dialogs.RENAME_DIR);
+                  setDialog(Dialogs.RENAME);
                   onClose();
                 }}
               >
@@ -239,20 +240,23 @@ export const FileTree = ({ className }: Props) => {
           )}
         />
       </TreeBase>
-      <CreateFileDialog
-        open={dialog === Dialogs.CREATE_DIR || dialog === Dialogs.CREATE_EXP}
-        onClose={onCloseDialog}
-        prefixPath={newFilePrefixPath}
-        type={dialog === Dialogs.CREATE_DIR ? FileType.DIR : FileType.EXP}
-      />
-      {fileSelection && (
-        <RenameFileDialog
-          open={dialog === (Dialogs.RENAME_DIR || Dialogs.RENAME_EXP)}
-          onClose={onCloseDialog}
-          id={fileSelection.id}
-          type={fileSelection.type}
-        />
-      )}
+      <Dialog open={dialog!!} onClose={onCloseDialog} fullWidth maxWidth="sm">
+        {fileSelection && dialog === Dialogs.RENAME ? (
+          <RenameFileDialog
+            onClose={onCloseDialog}
+            id={fileSelection.id}
+            type={fileSelection.type}
+          />
+        ) : (
+          (dialog === Dialogs.CREATE_EXP || dialog === Dialogs.CREATE_DIR) && (
+            <CreateFileDialog
+              onClose={onCloseDialog}
+              prefixPath={newFilePrefixPath}
+              type={dialog === Dialogs.CREATE_DIR ? FileType.DIR : FileType.EXP}
+            />
+          )
+        )}
+      </Dialog>
     </>
   );
 };
