@@ -1,5 +1,5 @@
 import Directory from "../../models/Directory";
-import { getIdFromPath, getPath } from "../common/models/utils";
+import { getIdFromPath, getPath } from "../common/utils";
 import dbConnect from "./dbConnect";
 import { InvalidArgsError } from "./errors";
 

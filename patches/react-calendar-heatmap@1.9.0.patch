@@ -1,0 +1,217 @@
+diff --git a/dist/react-calendar-heatmap.cjs.js b/dist/react-calendar-heatmap.cjs.js
+index 9c6243481a03bfe0a83206f9d371580f57f7c06f..8f08ff6cbd8ecb7491ebafd80799dac352539bdf 100644
+--- a/dist/react-calendar-heatmap.cjs.js
++++ b/dist/react-calendar-heatmap.cjs.js
+@@ -320,8 +320,13 @@ function (_React$Component) {
+ 
+     _defineProperty(_assertThisInitialized(_this), "getValueCache", memoizeOne(function (props) {
+       return props.values.reduce(function (memo, value) {
+-        var date = convertToDate(value.date);
+-        var index = Math.floor((date - _this.getStartDateWithEmptyDays()) / MILLISECONDS_IN_ONE_DAY); // eslint-disable-next-line no-param-reassign
++        function convertToUtc(date) {
++          return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
++        }
++
++        const utc1 = convertToUtc(convertToDate(value.date));
++        const utc2 = convertToUtc(_this.getStartDateWithEmptyDays());
++        const index = Math.floor((utc1 - utc2) / MILLISECONDS_IN_ONE_DAY);
+ 
+         memo[index] = {
+           value: value,
+@@ -340,7 +345,6 @@ function (_React$Component) {
+     key: "getDateDifferenceInDays",
+     value: function getDateDifferenceInDays() {
+       var _this$props = this.props,
+-          startDate = _this$props.startDate,
+           numDays = _this$props.numDays;
+ 
+       if (numDays) {
+@@ -349,8 +353,14 @@ function (_React$Component) {
+         return numDays;
+       }
+ 
+-      var timeDiff = this.getEndDate() - convertToDate(startDate);
+-      return Math.ceil(timeDiff / MILLISECONDS_IN_ONE_DAY);
++      function convertToUtc(date) {
++        return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
++      }
++
++      const utc1 = convertToUtc(this.getStartDate());
++      const utc2 = convertToUtc(shiftDate(this.getEndDate(), 1)); // shift date 1 because end date is inclusive
++
++      return Math.floor((utc2 - utc1) / MILLISECONDS_IN_ONE_DAY);
+     }
+   }, {
+     key: "getSquareSizeWithGutter",
+@@ -386,7 +396,7 @@ function (_React$Component) {
+   }, {
+     key: "getStartDate",
+     value: function getStartDate() {
+-      return shiftDate(this.getEndDate(), -this.getDateDifferenceInDays() + 1); // +1 because endDate is inclusive
++      return getBeginningTimeForDate(convertToDate(this.props.startDate));
+     }
+   }, {
+     key: "getEndDate",
+@@ -427,7 +437,7 @@ function (_React$Component) {
+   }, {
+     key: "getHeight",
+     value: function getHeight() {
+-      return this.getWeekWidth() + (this.getMonthLabelSize() - this.props.gutterSize) + this.getWeekdayLabelSize();
++      return this.getWeekWidth() + (this.getMonthLabelSize() - this.props.gutterSize);
+     }
+   }, {
+     key: "getValueForIndex",
+@@ -492,7 +502,7 @@ function (_React$Component) {
+     key: "getTransformForWeekdayLabels",
+     value: function getTransformForWeekdayLabels() {
+       if (this.props.horizontal) {
+-        return "translate(".concat(SQUARE_SIZE, ", ").concat(this.getMonthLabelSize(), ")");
++        return "translate(".concat(SQUARE_SIZE / 2, ", ").concat(this.getMonthLabelSize(), ")");
+       }
+ 
+       return null;
+diff --git a/dist/react-calendar-heatmap.esm.js b/dist/react-calendar-heatmap.esm.js
+index c02c01b62aaeda75804fc345d674466851fa299d..e5f715cd8a67fac5aff9c336ba3fd18ea0404ccb 100644
+--- a/dist/react-calendar-heatmap.esm.js
++++ b/dist/react-calendar-heatmap.esm.js
+@@ -316,9 +316,14 @@ function (_React$Component) {
+ 
+     _defineProperty(_assertThisInitialized(_this), "getValueCache", memoizeOne(function (props) {
+       return props.values.reduce(function (memo, value) {
+-        var date = convertToDate(value.date);
+-        var index = Math.floor((date - _this.getStartDateWithEmptyDays()) / MILLISECONDS_IN_ONE_DAY); // eslint-disable-next-line no-param-reassign
++        function convertToUtc(date) {
++          return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
++        }
+ 
++        const utc1 = convertToUtc(convertToDate(value.date));
++        const utc2 = convertToUtc(_this.getStartDateWithEmptyDays());
++        const index = Math.floor((utc1 - utc2) / MILLISECONDS_IN_ONE_DAY);
++        
+         memo[index] = {
+           value: value,
+           className: _this.props.classForValue(value),
+@@ -336,7 +341,6 @@ function (_React$Component) {
+     key: "getDateDifferenceInDays",
+     value: function getDateDifferenceInDays() {
+       var _this$props = this.props,
+-          startDate = _this$props.startDate,
+           numDays = _this$props.numDays;
+ 
+       if (numDays) {
+@@ -345,8 +349,14 @@ function (_React$Component) {
+         return numDays;
+       }
+ 
+-      var timeDiff = this.getEndDate() - convertToDate(startDate);
+-      return Math.ceil(timeDiff / MILLISECONDS_IN_ONE_DAY);
++      function convertToUtc(date) {
++        return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
++      }
++
++      const utc1 = convertToUtc(this.getStartDate());
++      const utc2 = convertToUtc(shiftDate(this.getEndDate(), 1)); // shift date 1 because end date is inclusive
++
++      return Math.floor((utc2 - utc1) / MILLISECONDS_IN_ONE_DAY);
+     }
+   }, {
+     key: "getSquareSizeWithGutter",
+@@ -382,7 +392,7 @@ function (_React$Component) {
+   }, {
+     key: "getStartDate",
+     value: function getStartDate() {
+-      return shiftDate(this.getEndDate(), -this.getDateDifferenceInDays() + 1); // +1 because endDate is inclusive
++      return getBeginningTimeForDate(convertToDate(this.props.startDate));
+     }
+   }, {
+     key: "getEndDate",
+@@ -423,7 +433,7 @@ function (_React$Component) {
+   }, {
+     key: "getHeight",
+     value: function getHeight() {
+-      return this.getWeekWidth() + (this.getMonthLabelSize() - this.props.gutterSize) + this.getWeekdayLabelSize();
++      return this.getWeekWidth() + (this.getMonthLabelSize() - this.props.gutterSize);
+     }
+   }, {
+     key: "getValueForIndex",
+@@ -488,7 +498,7 @@ function (_React$Component) {
+     key: "getTransformForWeekdayLabels",
+     value: function getTransformForWeekdayLabels() {
+       if (this.props.horizontal) {
+-        return "translate(".concat(SQUARE_SIZE, ", ").concat(this.getMonthLabelSize(), ")");
++        return "translate(".concat(SQUARE_SIZE / 2, ", ").concat(this.getMonthLabelSize(), ")");
+       }
+ 
+       return null;
+diff --git a/dist/react-calendar-heatmap.umd.js b/dist/react-calendar-heatmap.umd.js
+index 14d61c58ae6736c41964feb61831e2f283826070..97bf6796dfe76116249175d5f705c222d9a789ac 100644
+--- a/dist/react-calendar-heatmap.umd.js
++++ b/dist/react-calendar-heatmap.umd.js
+@@ -322,8 +322,13 @@
+ 
+       _defineProperty(_assertThisInitialized(_this), "getValueCache", memoizeOne(function (props) {
+         return props.values.reduce(function (memo, value) {
+-          var date = convertToDate(value.date);
+-          var index = Math.floor((date - _this.getStartDateWithEmptyDays()) / MILLISECONDS_IN_ONE_DAY); // eslint-disable-next-line no-param-reassign
++          
++          function convertToUtc(date) {
++            return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
++          }
++          const utc1 = convertToUtc(convertToDate(value.date));
++          const utc2 = convertToUtc(_this.getStartDateWithEmptyDays());
++          const index = Math.floor((utc1 - utc2) / MILLISECONDS_IN_ONE_DAY);
+ 
+           memo[index] = {
+             value: value,
+@@ -342,7 +347,6 @@
+       key: "getDateDifferenceInDays",
+       value: function getDateDifferenceInDays() {
+         var _this$props = this.props,
+-            startDate = _this$props.startDate,
+             numDays = _this$props.numDays;
+ 
+         if (numDays) {
+@@ -351,8 +355,14 @@
+           return numDays;
+         }
+ 
+-        var timeDiff = this.getEndDate() - convertToDate(startDate);
+-        return Math.ceil(timeDiff / MILLISECONDS_IN_ONE_DAY);
++        function convertToUtc(date) {
++          return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
++        }
++
++        const utc1 = convertToUtc(this.getStartDate());
++        const utc2 = convertToUtc(shiftDate(this.getEndDate(), 1)); // shift date 1 because end date is inclusive
++
++        return Math.floor((utc2 - utc1) / MILLISECONDS_IN_ONE_DAY);
+       }
+     }, {
+       key: "getSquareSizeWithGutter",
+@@ -388,7 +398,7 @@
+     }, {
+       key: "getStartDate",
+       value: function getStartDate() {
+-        return shiftDate(this.getEndDate(), -this.getDateDifferenceInDays() + 1); // +1 because endDate is inclusive
++        return getBeginningTimeForDate(convertToDate(this.props.startDate));
+       }
+     }, {
+       key: "getEndDate",
+@@ -429,7 +439,7 @@
+     }, {
+       key: "getHeight",
+       value: function getHeight() {
+-        return this.getWeekWidth() + (this.getMonthLabelSize() - this.props.gutterSize) + this.getWeekdayLabelSize();
++        return this.getWeekWidth() + (this.getMonthLabelSize() - this.props.gutterSize);
+       }
+     }, {
+       key: "getValueForIndex",
+@@ -494,7 +504,7 @@
+       key: "getTransformForWeekdayLabels",
+       value: function getTransformForWeekdayLabels() {
+         if (this.props.horizontal) {
+-          return "translate(".concat(SQUARE_SIZE, ", ").concat(this.getMonthLabelSize(), ")");
++          return "translate(".concat(SQUARE_SIZE / 2, ", ").concat(this.getMonthLabelSize(), ")");
+         }
+ 
+         return null;

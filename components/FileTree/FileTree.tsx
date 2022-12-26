@@ -26,9 +26,7 @@ import {
   FileSelectionContext,
   FileType,
 } from "../../lib/client/context/FileSelectionProvider";
-import { useDirectoryStore } from "../../lib/client/hooks/stores/useDirectoryStore";
-import { useExperimentStore } from "../../lib/client/hooks/stores/useExperimentStore";
-import { getIdFromPath, getPath } from "../../lib/common/models/utils";
+import { getIdFromPath, getPath } from "../../lib/common/utils";
 import { ContextMenu } from "../ContextMenu/ContextMenu";
 import { CreateFileDialog } from "../Dialog/CreateFile";
 import { RenameFileDialog } from "../Dialog/RenameFile";
@@ -36,6 +34,7 @@ import { FileActionBar } from "./FileActionBar";
 import { buildTree } from "./utils";
 import { updateExperiment } from "../../lib/client/api/experiments";
 import { WorkspaceContext } from "../../lib/client/context/WorkspaceProvider";
+import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
 
 const TreeBase = styled(Paper)({
   height: "100%",
@@ -57,8 +56,8 @@ export type TreeItemData = {
 };
 
 export const FileTree = ({ className }: Props) => {
-  const directories = useDirectoryStore((state) => state.directories);
-  const experiments = useExperimentStore((state) => state.experiments);
+  const directories = useBoundStore((state) => state.directory);
+  const experiments = useBoundStore((state) => state.experiment);
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
 
   const { workspace } = useContext(WorkspaceContext);

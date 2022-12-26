@@ -1,4 +1,6 @@
 import { DateTime } from "luxon";
+import { ExperimentMeta } from "../../../../../../lib/common/types/misc";
+import { getLocalDayISO } from "../../../../../../lib/common/utils";
 
 import initHandler, {
   TypedApiHandlerWithAuth,
@@ -17,12 +19,7 @@ export type ExperimentsIdMetaGetSignature = {
   query: {
     id: string;
   };
-  data: {
-    mongoDBData: MongoDBDataJson;
-    activityLog: {
-      [date: string]: number;
-    };
-  };
+  data: ExperimentMeta;
 };
 
 const get: TypedApiHandlerWithAuth<ExperimentsIdMetaGetSignature> = async (
@@ -43,13 +40,9 @@ const get: TypedApiHandlerWithAuth<ExperimentsIdMetaGetSignature> = async (
   const activityLog: Record<string, number> = {};
 
   dates.forEach((doc) => {
-    const localDate = DateTime.fromJSDate(doc.createdAt, {})
-      .setZone(userTimezone)
-      .endOf("day")
-      .toISO();
-
-    const count = activityLog[localDate] ?? 0;
-    activityLog[localDate] = count + 1;
+    const localDateKey = getLocalDayISO(doc.createdAt);
+    const count = activityLog[localDateKey] ?? 0;
+    activityLog[localDateKey] = count + 1;
   });
 
   res.json({

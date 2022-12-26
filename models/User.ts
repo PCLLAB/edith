@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
 
-import { RawUnsafeUserDoc } from "../lib/common/models/types";
+import { RawUnsafeUserDoc } from "../lib/common/types/models";
 import { ModelNotFoundError } from "../lib/server/errors";
 
 const UserSchema = new mongoose.Schema<RawUnsafeUserDoc>(

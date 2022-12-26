@@ -1,4 +1,4 @@
-import { DataEntryJson } from "../../../../../../lib/common/models/types";
+import { DataEntryJson } from "../../../../../../lib/common/types/models";
 import initHandler, {
   TypedApiHandlerWithAuth,
 } from "../../../../../../lib/server/initHandler";

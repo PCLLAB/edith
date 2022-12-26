@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-import { DirectoryDoc } from "../lib/common/models/types";
+import { DirectoryDoc } from "../lib/common/types/models";
 import { throwIfNull } from "../lib/server/throwIfNull";
 
 const arrayNotEmpty = (array: any[]) => array.length;

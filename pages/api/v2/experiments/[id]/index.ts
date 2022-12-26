@@ -1,4 +1,4 @@
-import { ExperimentJson } from "../../../../../lib/common/models/types";
+import { ExperimentJson } from "../../../../../lib/common/types/models";
 import initHandler, {
   TypedApiHandlerWithAuth,
 } from "../../../../../lib/server/initHandler";

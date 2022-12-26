@@ -11,8 +11,7 @@ import {
 import { updateDirectory } from "../../lib/client/api/directories";
 import { updateExperiment } from "../../lib/client/api/experiments";
 import { FileType } from "../../lib/client/context/FileSelectionProvider";
-import { useDirectoryStore } from "../../lib/client/hooks/stores/useDirectoryStore";
-import { useExperimentStore } from "../../lib/client/hooks/stores/useExperimentStore";
+import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
 
 const DialogInfo = {
   [FileType.DIR]: { update: updateDirectory, title: "directory" },
@@ -42,8 +41,8 @@ export const RenameFileDialog = ({ type, onClose, id }: Props) => {
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const directories = useDirectoryStore((state) => state.directories);
-  const experiments = useExperimentStore((state) => state.experiments);
+  const directories = useBoundStore((state) => state.directory);
+  const experiments = useBoundStore((state) => state.experiment);
   const file = type === FileType.DIR ? directories[id] : experiments[id];
 
   const [fileName, setFileName] = useState(file.name);

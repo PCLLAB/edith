@@ -1,4 +1,4 @@
-import type { DirectoryJson } from "../../../../../lib/common/models/types";
+import type { DirectoryJson } from "../../../../../lib/common/types/models";
 import initHandler, {
   TypedApiHandlerWithAuth,
 } from "../../../../../lib/server/initHandler";

@@ -1,4 +1,4 @@
-import { ExperimentJson } from "../../../../lib/common/models/types";
+import { ExperimentJson } from "../../../../lib/common/types/models";
 import { MissingArgsError } from "../../../../lib/server/errors";
 import initHandler, {
   TypedApiHandlerWithAuth,

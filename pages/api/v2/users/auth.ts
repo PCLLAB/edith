@@ -4,7 +4,7 @@ import { JWT_COOKIE_KEY } from "../../../../lib/common/constants";
 import {
   RawUnsafeUserDoc,
   UserJson,
-} from "../../../../lib/common/models/types";
+} from "../../../../lib/common/types/models";
 
 import config from "../../../../lib/config";
 import { MissingArgsError } from "../../../../lib/server/errors";

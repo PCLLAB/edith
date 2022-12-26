@@ -1,8 +1,8 @@
 import {
   DirectoryJson,
   ExperimentJson,
-} from "../../../../../lib/common/models/types";
-import { getPath } from "../../../../../lib/common/models/utils";
+} from "../../../../../lib/common/types/models";
+import { getPath } from "../../../../../lib/common/utils";
 import initHandler, {
   TypedApiHandlerWithAuth,
 } from "../../../../../lib/server/initHandler";

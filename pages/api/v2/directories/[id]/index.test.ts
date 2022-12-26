@@ -1,6 +1,6 @@
 jest.mock("../../../../../lib/server/dbConnect");
 
-import { getPath } from "../../../../../lib/common/models/utils";
+import { getPath } from "../../../../../lib/common/utils";
 import dbConnect from "../../../../../lib/server/dbConnect";
 import {
   ApiCallMocker,

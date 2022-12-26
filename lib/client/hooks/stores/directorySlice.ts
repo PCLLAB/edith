@@ -1,28 +1,28 @@
-import create from "zustand";
+import { StateCreator } from "zustand";
 
-import { DirectoryJson } from "../../../common/models/types";
-import { getPath } from "../../../common/models/utils";
+import { DirectoryJson } from "../../../common/types/models";
+import { getPath } from "../../../common/utils";
 
-interface DirectoryState {
-  directories: Record<string, DirectoryJson>;
+export type DirectorySlice = {
+  directory: Record<string, DirectoryJson>;
   updateDirectories: (updates: DirectoryJson[]) => void;
   deleteDirectories: (ids: string[]) => void;
-}
+};
 
 // Look, it's not beautiful, but it works and it's easy to understand
 // I did try to write it more "functionally", but it got too complicated
 
-export const useDirectoryStore = create<DirectoryState>((set) => ({
-  directories: {},
+export const createDirectorySlice: StateCreator<DirectorySlice> = (set) => ({
+  directory: {},
   updateDirectories: (updates) =>
     set((state) => {
-      const currentDirList = Object.values(state.directories);
-      const mutableDirMap = { ...state.directories };
+      const currentDirList = Object.values(state.directory);
+      const mutableDirMap = { ...state.directory };
 
       updates.forEach((update) => {
         mutableDirMap[update._id] = update;
 
-        const existingEntry = state.directories[update._id];
+        const existingEntry = state.directory[update._id];
         if (!existingEntry || update.prefixPath === existingEntry.prefixPath) {
           return;
         }
@@ -39,16 +39,16 @@ export const useDirectoryStore = create<DirectoryState>((set) => ({
           );
         });
       });
-      return { directories: mutableDirMap };
+      return { directory: mutableDirMap };
     }),
   deleteDirectories: (ids) =>
     set((state) => {
-      const currentDirList = Object.values(state.directories);
-      const mutableDirMap = state.directories;
+      const currentDirList = Object.values(state.directory);
+      const mutableDirMap = state.directory;
       ids.forEach((id) => {
         delete mutableDirMap[id];
 
-        const subtreePrefix = getPath(state.directories[id]);
+        const subtreePrefix = getPath(state.directory[id]);
 
         currentDirList.forEach((dir) => {
           if (!dir.prefixPath.startsWith(subtreePrefix)) {
@@ -57,6 +57,6 @@ export const useDirectoryStore = create<DirectoryState>((set) => ({
           delete mutableDirMap[dir._id];
         });
       });
-      return { directories: mutableDirMap };
+      return { directory: mutableDirMap };
     }),
-}));
+});

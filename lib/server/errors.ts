@@ -1,4 +1,4 @@
-import { HTTP_METHOD } from "../common/types";
+import { HTTP_METHOD } from "../common/types/api";
 
 export type ModelType =
   | "Directory"

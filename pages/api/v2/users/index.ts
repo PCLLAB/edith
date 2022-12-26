@@ -1,4 +1,4 @@
-import { UserJson } from "../../../../lib/common/models/types";
+import { UserJson } from "../../../../lib/common/types/models";
 import {
   MissingArgsError,
   UserPermissionError,

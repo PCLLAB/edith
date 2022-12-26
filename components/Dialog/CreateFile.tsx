@@ -11,8 +11,8 @@ import {
 import { createDirectory } from "../../lib/client/api/directories";
 import { createExperiment } from "../../lib/client/api/experiments";
 import { FileType } from "../../lib/client/context/FileSelectionProvider";
-import { useDirectoryStore } from "../../lib/client/hooks/stores/useDirectoryStore";
-import { getIdFromPath } from "../../lib/common/models/utils";
+import { getIdFromPath } from "../../lib/common/utils";
+import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
 
 const DialogInfo = {
   [FileType.DIR]: { create: createDirectory, title: "directory" },
@@ -28,7 +28,7 @@ type Props = {
 export const CreateFileDialog = ({ type, onClose, prefixPath }: Props) => {
   const [fileName, setFileName] = useState("");
 
-  const directories = useDirectoryStore((state) => state.directories);
+  const directories = useBoundStore((state) => state.directory);
 
   const handleCreate = () => {
     DialogInfo[type].create({

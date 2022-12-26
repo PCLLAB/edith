@@ -1,6 +1,6 @@
 jest.mock("../../../../lib/server/dbConnect");
 
-import { UserDoc } from "../../../../lib/common/models/types";
+import { UserDoc } from "../../../../lib/common/types/models";
 import dbConnect from "../../../../lib/server/dbConnect";
 import {
   getCreatedUserAndToken,

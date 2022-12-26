@@ -1,9 +1,10 @@
+import { DateTime } from "luxon";
 import type {
   AnyDirectory,
   DirectoryFile,
   DirectoryJson,
   ExperimentJson,
-} from "./types";
+} from "./types/models";
 
 export const getIdFromPath = (path: string) => path.split(",").pop() as string;
 
@@ -16,4 +17,8 @@ export const isDirectory = (file: DirectoryFile): file is DirectoryJson => {
 
 export const isExperiment = (file: DirectoryFile): file is ExperimentJson => {
   return "directory" in file;
+};
+
+export const getLocalDayISO = (date: Date, timezone: string) => {
+  return DateTime.fromJSDate(date).setZone(timezone).endOf("day").toISO();
 };

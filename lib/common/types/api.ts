@@ -1,43 +1,43 @@
 import {
   DirectoriesGetSignature,
   DirectoriesPostSignature,
-} from "../../pages/api/v2/directories";
+} from "../../../pages/api/v2/directories";
 import {
   DirectoriesIdDeleteSignature,
   DirectoriesIdGetSignature,
   DirectoriesIdPutSignature,
-} from "../../pages/api/v2/directories/[id]";
-import { DirectoriesIdChildrenGetSignature } from "../../pages/api/v2/directories/[id]/children";
-import { DirectoriesRootsGetSignature } from "../../pages/api/v2/directories/roots";
+} from "../../../pages/api/v2/directories/[id]";
+import { DirectoriesIdChildrenGetSignature } from "../../../pages/api/v2/directories/[id]/children";
+import { DirectoriesRootsGetSignature } from "../../../pages/api/v2/directories/roots";
 import {
   ExperimentsGetSignature,
   ExperimentsPostSignature,
-} from "../../pages/api/v2/experiments";
+} from "../../../pages/api/v2/experiments";
 import {
   ExperimentsIdDeleteSignature,
   ExperimentsIdGetSignature,
   ExperimentsIdPostSignature,
   ExperimentsIdPutSignature,
-} from "../../pages/api/v2/experiments/[id]";
+} from "../../../pages/api/v2/experiments/[id]";
 import {
   ExperimentsIdCacheDeleteSignature,
   ExperimentsIdCacheGetSignature,
-} from "../../pages/api/v2/experiments/[id]/cache";
+} from "../../../pages/api/v2/experiments/[id]/cache";
 import {
   ExperimentsIdDataGetSignature,
   ExperimentsIdDataPostSignature,
-} from "../../pages/api/v2/experiments/[id]/data";
+} from "../../../pages/api/v2/experiments/[id]/data";
 import {
   UsersGetSignature,
   UsersPostSignature,
-} from "../../pages/api/v2/users";
+} from "../../../pages/api/v2/users";
 import {
   UsersIdDeleteSignature,
   UsersIdGetSignature,
   UsersIdPutSignature,
-} from "../../pages/api/v2/users/[id]";
-import { UsersAuthPostSignature } from "../../pages/api/v2/users/auth";
-import { ExperimentsIdMetaGetSignature } from "../../pages/api/v2/experiments/[id]/meta";
+} from "../../../pages/api/v2/users/[id]";
+import { UsersAuthPostSignature } from "../../../pages/api/v2/users/auth";
+import { ExperimentsIdMetaGetSignature } from "../../../pages/api/v2/experiments/[id]/meta";
 
 export type ApiSignature =
   | Users

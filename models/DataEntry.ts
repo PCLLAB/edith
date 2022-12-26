@@ -1,6 +1,6 @@
 import mongoose, { Types } from "mongoose";
 
-import { CachedDataEntryDoc, DataEntryDoc } from "../lib/common/models/types";
+import { CachedDataEntryDoc, DataEntryDoc } from "../lib/common/types/models";
 import { throwIfNull } from "../lib/server/throwIfNull";
 
 const dataEntryFormat = {

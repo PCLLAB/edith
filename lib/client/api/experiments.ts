@@ -8,27 +8,27 @@ import {
 } from "../../../pages/api/v2/experiments/[id]";
 import { ExperimentsIdMetaGetSignature } from "../../../pages/api/v2/experiments/[id]/meta";
 import { fetcher } from "../fetcher";
-import { useExperimentStore } from "../hooks/stores/useExperimentStore";
+import { useBoundStore } from "../hooks/stores/useBoundStore";
 
 export const getExperiments = () =>
   fetcher<ExperimentsGetSignature>({
     url: "/api/v2/experiments" as const,
     method: "GET" as const,
-  }).then((exps) => useExperimentStore.getState().updateExperiments(exps));
+  }).then((exps) => useBoundStore.getState().updateExperiments(exps));
 
 export const getExperiment = (id: string) =>
   fetcher<ExperimentsIdGetSignature>({
     url: "/api/v2/experiments/[id]" as const,
     method: "GET" as const,
     query: { id },
-  }).then((exp) => useExperimentStore.getState().updateExperiments([exp]));
+  }).then((exp) => useBoundStore.getState().updateExperiments([exp]));
 
 export const getExperimentMeta = (id: string) =>
   fetcher<ExperimentsIdMetaGetSignature>({
     url: "/api/v2/experiments/[id]/meta" as const,
     method: "GET" as const,
     query: { id },
-  }).then((exp) => useExperimentStore.getState().updateExperiments([exp]));
+  }).then((meta) => useBoundStore.getState().updateExperimentMeta(id, meta));
 
 /**
  * Optimistic update that will rollback on failure
@@ -37,13 +37,13 @@ export const updateExperiment = async (
   id: string,
   update: ExperimentsIdPutSignature["body"]
 ) => {
-  const original = useExperimentStore.getState().experiments[id];
+  const original = useBoundStore.getState().experiment[id];
   const optimistic = {
     ...original,
     ...update,
   };
 
-  useExperimentStore.getState().updateExperiments([optimistic]);
+  useBoundStore.getState().updateExperiments([optimistic]);
 
   try {
     const exp = await fetcher<ExperimentsIdPutSignature>({
@@ -52,9 +52,9 @@ export const updateExperiment = async (
       query: { id },
       body: update,
     });
-    useExperimentStore.getState().updateExperiments([exp]);
+    useBoundStore.getState().updateExperiments([exp]);
   } catch {
-    useExperimentStore.getState().updateExperiments([original]);
+    useBoundStore.getState().updateExperiments([original]);
   }
 };
 
@@ -63,4 +63,4 @@ export const createExperiment = (body: ExperimentsPostSignature["body"]) =>
     url: "/api/v2/experiments" as const,
     method: "POST" as const,
     body,
-  }).then((exp) => useExperimentStore.getState().updateExperiments([exp]));
+  }).then((exp) => useBoundStore.getState().updateExperiments([exp]));

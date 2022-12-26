@@ -1,26 +1,39 @@
+import { ChangeEvent, useEffect, useMemo, useState } from "react";
+import CalendarHeatmap from "react-calendar-heatmap";
+
+// CalendarHeatmap.prototype.getHeight = function () {
+//   return (
+//     this.getWeekWidth() + (this.getMonthLabelSize() - this.props.gutterSize)
+//   );
+// };
+
+// CalendarHeatmap.prototype.getTransformForWeekdayLabels = function () {
+//   if (this.props.horizontal) {
+//     return `translate(5, ${this.getMonthLabelSize()})`;
+//   }
+//   return null;
+// };
+
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   Box,
+  Button,
   Card,
-  CardActions,
   CardContent,
-  CardHeader,
   CircularProgress,
   FormControlLabel,
-  Paper,
-  styled,
   Switch,
   Typography,
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
-import CalendarHeatmap from "react-calendar-heatmap";
-import { useExperimentStore } from "../../lib/client/hooks/stores/useExperimentStore";
-import { ExperimentJson } from "../../lib/common/models/types";
-import { updateExperiment } from "../../lib/client/api/experiments";
-import { ChangeEvent, useEffect, useState } from "react";
-import { CodeBlock, CodeInline } from "../Code/Code";
+
+import {
+  getExperimentMeta,
+  updateExperiment,
+} from "../../lib/client/api/experiments";
+import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
+import { ExperimentJson } from "../../lib/common/types/models";
+import { CodeBlock } from "../Code/Code";
+import { getLocalDayISO } from "../../lib/common/utils";
 
 type Props = {
   experimentId: string;
@@ -28,9 +41,7 @@ type Props = {
 };
 
 export const ExperimentViewer = ({ experimentId, className }: Props) => {
-  const experiment = useExperimentStore(
-    (state) => state.experiments[experimentId]
-  );
+  const experiment = useBoundStore((state) => state.experiment[experimentId]);
 
   return (
     <Grid container spacing={2} m={1}>
@@ -127,16 +138,16 @@ fetch("https://jarvis.psych.purdue.edu/api/v1/experiments/data/${exp._id}", {
   );
 };
 
-const getDateOneYearAgoPlusOne = () => {
-  const date = new Date();
-  date.setFullYear(date.getFullYear() - 1);
-  date.setDate(date.getDate() + 1);
-  return date;
+const getMinusYear = (date: Date) => {
+  const minus = new Date(date);
+  minus.setFullYear(minus.getFullYear() - 1);
+  minus.setDate(minus.getDate() + 1);
+  return minus;
 };
 
 /** Return list of dates in inclusive range [start, end] */
 const getDatesInRange = (start: Date, end: Date) => {
-  console.log("GOT DATES");
+  console.log("EXPENSIVE CALCULATION IS RUNNING");
   const dates = [];
   for (; start <= end; start.setDate(start.getDate() + 1)) {
     dates.push(new Date(start));
@@ -145,13 +156,51 @@ const getDatesInRange = (start: Date, end: Date) => {
 };
 
 const CollectionDataCard = ({ exp }: CardProps) => {
-  const [startDate, setStartDate] = useState(getDateOneYearAgoPlusOne());
-  const [endDate, setEndDate] = useState(new Date());
+  const [selectedYear, setSelectedYear] = useState<number | null>(null);
 
-  const values = getDatesInRange(new Date(startDate), endDate).map((date) => ({
-    date,
-    count: Math.floor(Math.random() * 10),
-  }));
+  const endDate =
+    selectedYear == null ? new Date() : new Date(selectedYear, 11, 31);
+  const startDate = getMinusYear(endDate);
+
+  console.log(startDate, endDate);
+  // const [endDate, setEndDate] = useState(new Date());
+
+  const expMeta = useBoundStore((store) => store.experimentMeta);
+
+  const years = (() => {
+    return [2020, 2021, 2022];
+    const years = [new Date().getFullYear()];
+
+    const log = expMeta[exp._id]?.activityLog;
+    if (log == null) return years;
+
+    Object.keys(log).forEach((iso) => {
+      const year = new Date(iso).getFullYear();
+      if (years.includes(year)) return;
+      years.push(year);
+    }, []);
+
+    return years;
+  })();
+
+  const values = useMemo(
+    () =>
+      getDatesInRange(new Date(startDate), endDate).map((date) => {
+        const localZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const localDateKey = getLocalDayISO(date, localZone);
+        const count = expMeta[exp._id]?.activityLog[localDateKey] ?? 0;
+        return {
+          date,
+          count,
+        };
+      }),
+    [startDate, endDate, exp._id, expMeta]
+  );
+
+  console.log(values[0]);
+  useEffect(() => {
+    getExperimentMeta(exp._id);
+  }, [exp._id]);
 
   return (
     <Card>
@@ -159,33 +208,56 @@ const CollectionDataCard = ({ exp }: CardProps) => {
         <Typography variant="h6" component="h2">
           Experiment Activity
         </Typography>
-        <CalendarHeatmap
-          startDate={startDate}
-          endDate={endDate}
-          values={values}
-          titleForValue={(value) =>
-            value ? value.date.toISOString() : "fucked up"
-          }
-          showWeekdayLabels
-          classForValue={(value) => {
-            // see lib/client/calendar-heatmap.css
-            if (!value || !value.count) {
-              return "color-0";
-            }
-            if (value.count < 2) {
-              return "color-1";
-            }
-            if (value.count < 4) {
-              return "color-2";
-            }
-            if (value.count < 8) {
-              return "color-3";
-            }
-            return "color-4";
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            columnGap: 2,
           }}
-          // showOutOfRangeDays
-          // horizontal={false}
-        />
+        >
+          <Box sx={{ flex: 1 }}>
+            <CalendarHeatmap
+              startDate={startDate}
+              endDate={endDate}
+              values={values}
+              titleForValue={(value) => {
+                // This is called on values not included in values. Something to do with out of range days.
+                if (!value) return;
+                return `${
+                  value.count
+                } entries on ${value.date.toLocaleDateString()}`;
+              }}
+              showWeekdayLabels
+              classForValue={(value) => {
+                // see lib/client/calendar-heatmap.css
+                if (!value || !value.count) {
+                  return "color-0";
+                }
+                if (value.count < 2) {
+                  return "color-1";
+                }
+                if (value.count < 4) {
+                  return "color-2";
+                }
+                if (value.count < 8) {
+                  return "color-3";
+                }
+                return "color-4";
+              }}
+            />
+          </Box>
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            {years.reverse().map((year) => (
+              <Button
+                key={year}
+                variant={endDate.getFullYear() === year ? "contained" : "text"}
+                onClick={() => setSelectedYear(year)}
+              >
+                {year}
+              </Button>
+            ))}
+          </Box>
+        </Box>
       </CardContent>
     </Card>
   );

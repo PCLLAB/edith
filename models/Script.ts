@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-import { ScriptDoc } from "../lib/common/models/types";
+import { ScriptDoc } from "../lib/common/types/models";
 import { throwIfNull } from "../lib/server/throwIfNull";
 
 const ScriptSchema = new mongoose.Schema<ScriptDoc>({

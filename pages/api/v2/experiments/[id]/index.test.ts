@@ -1,4 +1,4 @@
-import { UserDoc } from "../../../../../lib/common/models/types";
+import { UserDoc } from "../../../../../lib/common/types/models";
 import dbConnect from "../../../../../lib/server/dbConnect";
 import { ModelNotFoundError } from "../../../../../lib/server/errors";
 import {

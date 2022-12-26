@@ -1,6 +1,6 @@
 import mongoose, { mongo } from "mongoose";
 
-import { ExperimentDoc } from "../lib/common/models/types";
+import { ExperimentDoc } from "../lib/common/types/models";
 import { throwIfNull } from "../lib/server/throwIfNull";
 
 const ExperimentSchema = new mongoose.Schema<ExperimentDoc>(

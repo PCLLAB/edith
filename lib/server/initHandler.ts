@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
-import { UserJson } from "../common/models/types";
-import { ApiSignature, HTTP_METHOD } from "../common/types";
+import { UserJson } from "../common/types/models";
+import { ApiSignature, HTTP_METHOD } from "../common/types/api";
 import dbConnect from "./dbConnect";
 import { NotAllowedMethodError } from "./errors";
 import jwtAuth from "./jwtAuth";

@@ -1,4 +1,4 @@
-import { CachedDataEntryJson } from "../../../../../lib/common/models/types";
+import { CachedDataEntryJson } from "../../../../../lib/common/types/models";
 import { ModelNotFoundError } from "../../../../../lib/server/errors";
 import initHandler, {
   TypedApiHandlerWithAuth,

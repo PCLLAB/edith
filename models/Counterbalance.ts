@@ -1,6 +1,6 @@
 import mongoose, { Types } from "mongoose";
 
-import { CounterbalanceDoc } from "../lib/common/models/types";
+import { CounterbalanceDoc } from "../lib/common/types/models";
 import { throwIfNull } from "../lib/server/throwIfNull";
 
 const CounterbalanceSchema = new mongoose.Schema<CounterbalanceDoc>({

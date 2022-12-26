@@ -1,5 +1,5 @@
-import { DirectoryJson, ExperimentJson } from "../../lib/common/models/types";
-import { getIdFromPath } from "../../lib/common/models/utils";
+import { DirectoryJson, ExperimentJson } from "../../lib/common/types/models";
+import { getIdFromPath } from "../../lib/common/utils";
 
 type InternalNode = LeafNode & {
   children: (InternalNode | LeafNode)[];
