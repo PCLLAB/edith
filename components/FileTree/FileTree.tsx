@@ -7,6 +7,7 @@ import RenameIcon from "@mui/icons-material/DriveFileRenameOutline";
 import FolderIcon from "@mui/icons-material/Folder";
 import NewExperimentIcon from "@mui/icons-material/NoteAdd";
 import ScienceIcon from "@mui/icons-material/Science";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
   Dialog,
   Divider,
@@ -35,6 +36,7 @@ import { buildTree } from "./utils";
 import { updateExperiment } from "../../lib/client/api/experiments";
 import { WorkspaceContext } from "../../lib/client/context/WorkspaceProvider";
 import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
+import { DeleteFileDialog } from "../Dialog/DeleteFile";
 
 const TreeBase = styled(Paper)({
   height: "100%",
@@ -76,6 +78,7 @@ export const FileTree = ({ className }: Props) => {
     CREATE_EXP = 1,
     CREATE_DIR,
     RENAME,
+    DELETE,
   }
   const [dialog, setDialog] = useState<Dialogs | null>(null);
   const onCloseDialog = () => setDialog(null);
@@ -109,6 +112,17 @@ export const FileTree = ({ className }: Props) => {
                   <RenameIcon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText>Rename</ListItemText>
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  setDialog(Dialogs.DELETE);
+                  onClose();
+                }}
+              >
+                <ListItemIcon>
+                  <DeleteIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Delete</ListItemText>
               </MenuItem>
               <Divider />
               <MenuItem
@@ -242,20 +256,33 @@ export const FileTree = ({ className }: Props) => {
       {/*
       //@ts-ignore: enums are numbers */}
       <Dialog open={dialog!!} onClose={onCloseDialog} fullWidth maxWidth="sm">
-        {fileSelection && dialog === Dialogs.RENAME ? (
+        {fileSelection && dialog === Dialogs.RENAME && (
           <RenameFileDialog
             onClose={onCloseDialog}
             id={fileSelection.id}
             type={fileSelection.type}
           />
-        ) : (
-          (dialog === Dialogs.CREATE_EXP || dialog === Dialogs.CREATE_DIR) && (
-            <CreateFileDialog
-              onClose={onCloseDialog}
-              prefixPath={newFilePrefixPath}
-              type={dialog === Dialogs.CREATE_DIR ? FileType.DIR : FileType.EXP}
-            />
-          )
+        )}
+        {fileSelection && dialog === Dialogs.DELETE && (
+          <DeleteFileDialog
+            onClose={onCloseDialog}
+            id={fileSelection.id}
+            type={fileSelection.type}
+          />
+        )}
+        {dialog === Dialogs.CREATE_EXP && (
+          <CreateFileDialog
+            onClose={onCloseDialog}
+            prefixPath={newFilePrefixPath}
+            type={FileType.EXP}
+          />
+        )}
+        {dialog === Dialogs.CREATE_DIR && (
+          <CreateFileDialog
+            onClose={onCloseDialog}
+            prefixPath={newFilePrefixPath}
+            type={FileType.DIR}
+          />
         )}
       </Dialog>
     </>

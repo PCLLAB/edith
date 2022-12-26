@@ -4,18 +4,27 @@ import {
   Box,
   Button,
   DialogActions,
+  DialogContent,
+  DialogContentText,
   DialogTitle,
   TextField,
+  Typography,
 } from "@mui/material";
 
-import { updateDirectory } from "../../lib/client/api/directories";
-import { updateExperiment } from "../../lib/client/api/experiments";
+import {
+  deleteDirectory,
+  updateDirectory,
+} from "../../lib/client/api/directories";
+import {
+  deleteExperiment,
+  updateExperiment,
+} from "../../lib/client/api/experiments";
 import { FileType } from "../../lib/client/context/FileSelectionProvider";
 import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
 
 const DialogInfo = {
-  [FileType.DIR]: { update: updateDirectory, title: "directory" },
-  [FileType.EXP]: { update: updateExperiment, title: "experiment" },
+  [FileType.DIR]: { delete: deleteDirectory, title: "directory" },
+  [FileType.EXP]: { delete: deleteExperiment, title: "experiment" },
 };
 
 type Props = {
@@ -24,9 +33,9 @@ type Props = {
   type: FileType;
 };
 
-export const RenameFileDialog = ({ type, onClose, id }: Props) => {
-  const handleRename = () => {
-    DialogInfo[type].update(id, { name: fileName });
+export const DeleteFileDialog = ({ type, onClose, id }: Props) => {
+  const handleDelete = () => {
+    DialogInfo[type].delete(id);
     onClose();
   };
 
@@ -41,28 +50,33 @@ export const RenameFileDialog = ({ type, onClose, id }: Props) => {
   const experiments = useBoundStore((state) => state.experiment);
   const file = type === FileType.DIR ? directories[id] : experiments[id];
 
-  const [fileName, setFileName] = useState(file.name);
+  const [fileName, setFileName] = useState("");
 
   return (
     <>
-      <DialogTitle>Rename {DialogInfo[type].title}</DialogTitle>
-      <Box sx={{ px: 2 }}>
+      <DialogTitle>Delete {DialogInfo[type].title}</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          Type <b>{file.name}</b> to confirm.
+        </DialogContentText>
         <TextField
           inputRef={inputRef}
           value={fileName}
+          error={!file.name.startsWith(fileName)}
           onChange={(e) => setFileName(e.target.value)}
           autoFocus
           margin="dense"
           id="name"
-          label={file.name}
           type="text"
           fullWidth
           variant="outlined"
         />
-      </Box>
+      </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleRename}>Rename</Button>
+        <Button onClick={handleDelete} disabled={fileName != file.name}>
+          Delete
+        </Button>
       </DialogActions>
     </>
   );

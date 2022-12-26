@@ -4,7 +4,7 @@ import { Box, Button } from "@mui/material";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
 type Props = {
-  children: ReactNode;
+  children: string;
   language?: string;
 };
 
@@ -19,10 +19,14 @@ export const CodeBlock = ({ children, language = "markdown" }: Props) => {
   useEffect(() => {
     Prism.highlightAll();
   }, []);
+
+  const onClick = () => navigator.clipboard.writeText(children);
+
   return (
     <Box position={"relative"}>
       <Button
         sx={{ position: "absolute", right: 0, m: 0.5 }}
+        onClick={onClick}
         // variant="outlined"
         endIcon={<ContentCopyIcon />}
         size="small"

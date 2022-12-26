@@ -1,19 +1,6 @@
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import CalendarHeatmap from "react-calendar-heatmap";
 
-// CalendarHeatmap.prototype.getHeight = function () {
-//   return (
-//     this.getWeekWidth() + (this.getMonthLabelSize() - this.props.gutterSize)
-//   );
-// };
-
-// CalendarHeatmap.prototype.getTransformForWeekdayLabels = function () {
-//   if (this.props.horizontal) {
-//     return `translate(5, ${this.getMonthLabelSize()})`;
-//   }
-//   return null;
-// };
-
 import {
   Box,
   Button,
@@ -21,6 +8,7 @@ import {
   CardContent,
   CircularProgress,
   FormControlLabel,
+  IconButton,
   Switch,
   Typography,
 } from "@mui/material";
@@ -34,6 +22,8 @@ import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
 import { ExperimentJson } from "../../lib/common/types/models";
 import { CodeBlock } from "../Code/Code";
 import { getLocalDayISO } from "../../lib/common/utils";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 type Props = {
   experimentId: string;
@@ -47,6 +37,12 @@ export const ExperimentViewer = ({ experimentId, className }: Props) => {
     <Grid container spacing={2} m={1}>
       <Grid xs={12}>
         <h2>{experiment.name}</h2>
+        <IconButton>
+          <EditIcon />
+        </IconButton>
+        <IconButton>
+          <DeleteIcon />
+        </IconButton>
       </Grid>
       <Grid xs={12} md={6}>
         <CollectionModeCard exp={experiment} />
@@ -162,13 +158,10 @@ const CollectionDataCard = ({ exp }: CardProps) => {
     selectedYear == null ? new Date() : new Date(selectedYear, 11, 31);
   const startDate = getMinusYear(endDate);
 
-  console.log(startDate, endDate);
-  // const [endDate, setEndDate] = useState(new Date());
-
   const expMeta = useBoundStore((store) => store.experimentMeta);
 
   const years = (() => {
-    return [2020, 2021, 2022];
+    // return [2020, 2021, 2022];
     const years = [new Date().getFullYear()];
 
     const log = expMeta[exp._id]?.activityLog;
@@ -197,7 +190,6 @@ const CollectionDataCard = ({ exp }: CardProps) => {
     [startDate, endDate, exp._id, expMeta]
   );
 
-  console.log(values[0]);
   useEffect(() => {
     getExperimentMeta(exp._id);
   }, [exp._id]);
@@ -206,7 +198,7 @@ const CollectionDataCard = ({ exp }: CardProps) => {
     <Card>
       <CardContent>
         <Typography variant="h6" component="h2">
-          Experiment Activity
+          {expMeta[exp._id]?.mongoDBData.numDocuments} total data entries
         </Typography>
         <Box
           sx={{
@@ -261,4 +253,8 @@ const CollectionDataCard = ({ exp }: CardProps) => {
       </CardContent>
     </Card>
   );
+};
+
+const DownloadDataCard = ({ exp }: CardProps) => {
+  return <Card></Card>;
 };

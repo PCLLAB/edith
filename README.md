@@ -81,3 +81,11 @@ For some reason this just needs to happen
 To connect to default uri
 
 `mongosh --user USERNAMEHERE --authenticationDatabase bedi`
+
+Patching `react-calendar-heatmap`
+
+I patched in the following fixes
+
+- https://github.com/kevinsqi/react-calendar-heatmap/issues/146
+
+- https://github.com/kevinsqi/react-calendar-heatmap/pull/128

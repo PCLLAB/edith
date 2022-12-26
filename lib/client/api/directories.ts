@@ -4,6 +4,7 @@ import {
 } from "../../../pages/api/v2/directories";
 import { DirectoriesRootsGetSignature } from "../../../pages/api/v2/directories/roots";
 import {
+  DirectoriesIdDeleteSignature,
   DirectoriesIdGetSignature,
   DirectoriesIdPutSignature,
 } from "../../../pages/api/v2/directories/[id]";
@@ -57,6 +58,24 @@ export const updateDirectory = (
   })
     .then((dir) => {
       useBoundStore.getState().updateDirectories([dir]);
+    })
+    .catch(() => useBoundStore.getState().updateDirectories([original]));
+};
+
+export const deleteDirectory = (id: string) => {
+  const original = useBoundStore.getState().directory[id];
+
+  useBoundStore.getState().deleteDirectories([id]);
+
+  fetcher<DirectoriesIdDeleteSignature>({
+    url: "/api/v2/directories/[id]" as const,
+    method: "DELETE" as const,
+    query: { id },
+  })
+    .then(() => {
+      // TODO optimization to free memory
+      // remove all children directories from store as well
+      // useBoundStore.getState().updateDirectories([]);
     })
     .catch(() => useBoundStore.getState().updateDirectories([original]));
 };

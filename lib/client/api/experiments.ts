@@ -3,6 +3,7 @@ import {
   ExperimentsPostSignature,
 } from "../../../pages/api/v2/experiments";
 import {
+  ExperimentsIdDeleteSignature,
   ExperimentsIdGetSignature,
   ExperimentsIdPutSignature,
 } from "../../../pages/api/v2/experiments/[id]";
@@ -53,6 +54,25 @@ export const updateExperiment = async (
       body: update,
     });
     useBoundStore.getState().updateExperiments([exp]);
+  } catch {
+    useBoundStore.getState().updateExperiments([original]);
+  }
+};
+
+export const deleteExperiment = async (id: string) => {
+  const original = useBoundStore.getState().experiment[id];
+
+  useBoundStore.getState().deleteExperiments([id]);
+
+  try {
+    await fetcher<ExperimentsIdDeleteSignature>({
+      url: "/api/v2/experiments/[id]" as const,
+      method: "DELETE" as const,
+      query: { id },
+    });
+
+    // TODO optimization
+    // delete related metadata etc
   } catch {
     useBoundStore.getState().updateExperiments([original]);
   }
