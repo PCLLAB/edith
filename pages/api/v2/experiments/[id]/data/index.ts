@@ -27,7 +27,7 @@ const get: TypedApiHandlerWithAuth<ExperimentsIdDataGetSignature> = async (
   const meta = await MongoDBData.findById(expObj.mongoDBData).lean();
 
   const DataModel = modelForCollection(meta.dataCollection);
-  const data = await DataModel.find({});
+  const data = await DataModel.find();
 
   res.json(data);
 };

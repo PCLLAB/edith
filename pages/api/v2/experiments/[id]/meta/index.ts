@@ -40,7 +40,7 @@ const get: TypedApiHandlerWithAuth<ExperimentsIdMetaGetSignature> = async (
   const activityLog: Record<string, number> = {};
 
   dates.forEach((doc) => {
-    const localDateKey = getLocalDayISO(doc.createdAt);
+    const localDateKey = getLocalDayISO(doc.createdAt, userTimezone);
     const count = activityLog[localDateKey] ?? 0;
     activityLog[localDateKey] = count + 1;
   });
