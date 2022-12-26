@@ -37,6 +37,7 @@ import {
   UsersIdPutSignature,
 } from "../../pages/api/v2/users/[id]";
 import { UsersAuthPostSignature } from "../../pages/api/v2/users/auth";
+import { ExperimentsIdMetaGetSignature } from "../../pages/api/v2/experiments/[id]/meta";
 
 export type ApiSignature =
   | Users
@@ -46,6 +47,7 @@ export type ApiSignature =
   | ExperimentsId
   | ExperimentsIdData
   | ExperimentsIdCache
+  | ExperimentsIdMetaGetSignature
   | Directories
   | DirectoriesId
   | DirectoriesIdChildren

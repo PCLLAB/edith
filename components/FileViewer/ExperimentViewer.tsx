@@ -15,11 +15,11 @@ import {
   Typography,
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
-
+import CalendarHeatmap from "react-calendar-heatmap";
 import { useExperimentStore } from "../../lib/client/hooks/stores/useExperimentStore";
 import { ExperimentJson } from "../../lib/common/models/types";
 import { updateExperiment } from "../../lib/client/api/experiments";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { CodeBlock, CodeInline } from "../Code/Code";
 
 type Props = {
@@ -42,6 +42,9 @@ export const ExperimentViewer = ({ experimentId, className }: Props) => {
       </Grid>
       <Grid xs={12} md={6}>
         <PostSnippetCard exp={experiment} />
+      </Grid>
+      <Grid xs={12}>
+        <CollectionDataCard exp={experiment} />
       </Grid>
     </Grid>
   );
@@ -119,6 +122,70 @@ fetch("https://jarvis.psych.purdue.edu/api/v1/experiments/data/${exp._id}", {
   body: JSON.stringify(data)
 })`}
         </CodeBlock>
+      </CardContent>
+    </Card>
+  );
+};
+
+const getDateOneYearAgoPlusOne = () => {
+  const date = new Date();
+  date.setFullYear(date.getFullYear() - 1);
+  date.setDate(date.getDate() + 1);
+  return date;
+};
+
+/** Return list of dates in inclusive range [start, end] */
+const getDatesInRange = (start: Date, end: Date) => {
+  console.log("GOT DATES");
+  const dates = [];
+  for (; start <= end; start.setDate(start.getDate() + 1)) {
+    dates.push(new Date(start));
+  }
+  return dates;
+};
+
+const CollectionDataCard = ({ exp }: CardProps) => {
+  const [startDate, setStartDate] = useState(getDateOneYearAgoPlusOne());
+  const [endDate, setEndDate] = useState(new Date());
+
+  const values = getDatesInRange(new Date(startDate), endDate).map((date) => ({
+    date,
+    count: Math.floor(Math.random() * 10),
+  }));
+
+  return (
+    <Card>
+      <CardContent>
+        <Typography variant="h6" component="h2">
+          Experiment Activity
+        </Typography>
+        <CalendarHeatmap
+          startDate={startDate}
+          endDate={endDate}
+          values={values}
+          titleForValue={(value) =>
+            value ? value.date.toISOString() : "fucked up"
+          }
+          showWeekdayLabels
+          classForValue={(value) => {
+            // see lib/client/calendar-heatmap.css
+            if (!value || !value.count) {
+              return "color-0";
+            }
+            if (value.count < 2) {
+              return "color-1";
+            }
+            if (value.count < 4) {
+              return "color-2";
+            }
+            if (value.count < 8) {
+              return "color-3";
+            }
+            return "color-4";
+          }}
+          // showOutOfRangeDays
+          // horizontal={false}
+        />
       </CardContent>
     </Card>
   );

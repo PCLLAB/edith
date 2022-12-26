@@ -10,6 +10,9 @@ import "../lib/client/rc-tree-custom.css";
 // Code highlight styles
 import "../lib/client/prism-one-dark.css";
 
+// Calendar heatmap styles
+import "../lib/client/calendar-heatmap.css";
+
 import { WorkspaceProvider } from "../lib/client/context/WorkspaceProvider";
 
 export default function App({ Component, pageProps }: AppProps) {

@@ -240,6 +240,8 @@ export const FileTree = ({ className }: Props) => {
           )}
         />
       </TreeBase>
+      {/*
+      //@ts-ignore: enums are numbers */}
       <Dialog open={dialog!!} onClose={onCloseDialog} fullWidth maxWidth="sm">
         {fileSelection && dialog === Dialogs.RENAME ? (
           <RenameFileDialog

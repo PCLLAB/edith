@@ -6,6 +6,7 @@ import {
   ExperimentsIdGetSignature,
   ExperimentsIdPutSignature,
 } from "../../../pages/api/v2/experiments/[id]";
+import { ExperimentsIdMetaGetSignature } from "../../../pages/api/v2/experiments/[id]/meta";
 import { fetcher } from "../fetcher";
 import { useExperimentStore } from "../hooks/stores/useExperimentStore";
 
@@ -18,6 +19,13 @@ export const getExperiments = () =>
 export const getExperiment = (id: string) =>
   fetcher<ExperimentsIdGetSignature>({
     url: "/api/v2/experiments/[id]" as const,
+    method: "GET" as const,
+    query: { id },
+  }).then((exp) => useExperimentStore.getState().updateExperiments([exp]));
+
+export const getExperimentMeta = (id: string) =>
+  fetcher<ExperimentsIdMetaGetSignature>({
+    url: "/api/v2/experiments/[id]/meta" as const,
     method: "GET" as const,
     query: { id },
   }).then((exp) => useExperimentStore.getState().updateExperiments([exp]));
