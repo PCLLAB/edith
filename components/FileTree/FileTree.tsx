@@ -29,14 +29,16 @@ import {
 } from "../../lib/client/context/FileSelectionProvider";
 import { getIdFromPath, getPath } from "../../lib/common/utils";
 import { ContextMenu } from "../ContextMenu/ContextMenu";
-import { CreateFileDialog } from "../Dialog/CreateFile";
-import { RenameFileDialog } from "../Dialog/RenameFile";
 import { FileActionBar } from "./FileActionBar";
 import { buildTree } from "./utils";
 import { updateExperiment } from "../../lib/client/api/experiments";
 import { WorkspaceContext } from "../../lib/client/context/WorkspaceProvider";
 import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
-import { DeleteFileDialog } from "../Dialog/DeleteFile";
+import {
+  RenameFileDialog,
+  DeleteFileDialog,
+  CreateFileDialog,
+} from "../Dialog";
 
 const TreeBase = styled(Paper)({
   height: "100%",

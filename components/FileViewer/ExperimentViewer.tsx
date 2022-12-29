@@ -1,14 +1,23 @@
-import { ChangeEvent, useEffect, useMemo, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import CalendarHeatmap from "react-calendar-heatmap";
 
 import {
   Box,
   Button,
+  ButtonGroup,
   Card,
   CardContent,
   CircularProgress,
+  ClickAwayListener,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   FormControlLabel,
   IconButton,
+  MenuItem,
+  MenuList,
+  Paper,
+  Popper,
   Switch,
   Typography,
 } from "@mui/material";
@@ -24,6 +33,17 @@ import { CodeBlock } from "../Code/Code";
 import { getLocalDayISO } from "../../lib/common/utils";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import {
+  DataGrid,
+  GridToolbar,
+  GridToolbarColumnsButton,
+  GridToolbarContainer,
+  GridToolbarDensitySelector,
+  GridToolbarExport,
+  GridToolbarFilterButton,
+  gridVisibleSortedRowIdsSelector,
+} from "@mui/x-data-grid";
 
 type Props = {
   experimentId: string;
@@ -46,6 +66,9 @@ export const ExperimentViewer = ({ experimentId, className }: Props) => {
       </Grid>
       <Grid xs={12} md={6}>
         <CollectionModeCard exp={experiment} />
+      </Grid>
+      <Grid xs={12} md={6}>
+        <DataDownloadCard exp={experiment} />
       </Grid>
       <Grid xs={12} md={6}>
         <PostSnippetCard exp={experiment} />
@@ -255,6 +278,86 @@ const CollectionDataCard = ({ exp }: CardProps) => {
   );
 };
 
-const DownloadDataCard = ({ exp }: CardProps) => {
-  return <Card></Card>;
+const DownloadOptions = [
+  {
+    name: "Download as CSV",
+  },
+  {
+    name: "Download as JSON",
+  },
+];
+
+const DataDownloadCard = ({ exp }: CardProps) => {
+  const [dropOpen, setDropOpen] = useState(false);
+  const onToggleDrop = () => setDropOpen((prev) => !prev);
+
+  const anchorRef = useRef(null);
+
+  return (
+    <>
+      <Card>
+        <CardContent>
+          <ButtonGroup variant="contained" ref={anchorRef}>
+            <Button>Download as CSV</Button>
+            <Button size="small" onClick={onToggleDrop}>
+              <ArrowDropDownIcon />
+            </Button>
+          </ButtonGroup>
+          <Popper
+            open={dropOpen}
+            disablePortal
+            anchorEl={anchorRef.current}
+            nonce={undefined}
+            onResize={undefined}
+            onResizeCapture={undefined}
+          >
+            <Paper>
+              <ClickAwayListener onClickAway={onToggleDrop}>
+                <MenuList autoFocusItem>
+                  <MenuItem>test</MenuItem>
+                </MenuList>
+              </ClickAwayListener>
+            </Paper>
+          </Popper>
+        </CardContent>
+      </Card>
+      <Dialog open={true} maxWidth="xl" fullWidth sx={{ color: "red" }}>
+        <DialogTitle>Title</DialogTitle>
+        <DialogContent>
+          <DataGrid
+            columns={columns}
+            rows={rows}
+            components={{ Toolbar: CustomToolbar }}
+            // componentsProps={{
+            //   toolbar: { getRowsToExport: gridVisibleSortedRowIdsSelector },
+            // }}
+          />
+        </DialogContent>
+      </Dialog>
+    </>
+  );
 };
+
+function CustomToolbar() {
+  return (
+    <GridToolbarContainer>
+      <GridToolbarColumnsButton />
+      <GridToolbarFilterButton />
+      <GridToolbarDensitySelector />
+      <GridToolbarExport
+        csvOptions={{ getRowsToExport: gridVisibleSortedRowIdsSelector }}
+      />
+    </GridToolbarContainer>
+  );
+}
+
+const rows = [
+  { id: 1, col1: "Hello", col2: "World" },
+  { id: 2, col1: "DataGridPro", col2: "is Awesome" },
+  { id: 3, col1: "MUI", col2: "is Amazing" },
+];
+
+const columns = [
+  { field: "col1", headerName: "Column 1", width: 150 },
+  { field: "col2", headerName: "Column 2", width: 150 },
+];

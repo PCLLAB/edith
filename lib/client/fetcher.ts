@@ -48,7 +48,12 @@ export const fetcher = async <T extends ApiSignature>(
     body,
   });
 
-  if (!res.ok) return Promise.reject(`${signature.method} ${finalUrl} failed`);
+  if (!res.ok)
+    return Promise.reject({
+      method: signature.method,
+      url: finalUrl,
+      status: res.status,
+    });
 
   return res.json() as Promise<T["data"]>;
 };

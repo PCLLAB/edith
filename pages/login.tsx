@@ -1,24 +1,28 @@
 import type { NextPage } from "next";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+
 import LoadingButton from "@mui/lab/LoadingButton";
+import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
+import Card from "@mui/material/Card";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 
-import Image from "next/image";
-import betty from "../public/betty.png";
-import Alert from "@mui/material/Alert";
-import { UsersAuthPostSignature } from "./api/v2/users/auth";
 import { fetcher } from "../lib/client/fetcher";
+import betty from "../public/betty.png";
+import { UsersAuthPostSignature } from "./api/v2/users/auth";
+
+const UNAUTHORIZED_ALERT = "Incorrect email or password.";
+const SERVER_ERROR_ALERT = "Server error occured. 😓";
 
 const Login: NextPage = () => {
   const router = useRouter();
 
-  const [showAlert, setShowAlert] = useState(false);
+  const [showAlert, setShowAlert] = useState("");
   const [loading, setLoading] = useState(false);
 
   const {
@@ -39,9 +43,15 @@ const Login: NextPage = () => {
         });
         console.debug("login data", data);
         router.push("/explorer");
-      } catch {
+      } catch (e) {
         setLoading(false);
-        setShowAlert(true);
+
+        if (e.status === 401) {
+          setShowAlert(UNAUTHORIZED_ALERT);
+          return;
+        }
+
+        setShowAlert(SERVER_ERROR_ALERT);
       }
     },
     []
@@ -83,8 +93,8 @@ const Login: NextPage = () => {
         </Typography>
       </Box>
       {showAlert && (
-        <Alert severity="error" onClose={() => setShowAlert(false)}>
-          Incorrect email or password.
+        <Alert severity="error" onClose={() => setShowAlert("")}>
+          {showAlert}
         </Alert>
       )}
       <Card
