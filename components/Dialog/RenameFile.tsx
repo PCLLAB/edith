@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   DialogActions,
+  DialogContent,
   DialogTitle,
   TextField,
 } from "@mui/material";
@@ -12,6 +13,7 @@ import { updateDirectory } from "../../lib/client/api/directories";
 import { updateExperiment } from "../../lib/client/api/experiments";
 import { FileType } from "../../lib/client/context/FileSelectionProvider";
 import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
+import { DialogTitleWithClose } from "./DialogTitleWithClose";
 
 const DialogInfo = {
   [FileType.DIR]: { update: updateDirectory, title: "directory" },
@@ -45,8 +47,10 @@ export const RenameFileDialog = ({ type, onClose, id }: Props) => {
 
   return (
     <>
-      <DialogTitle>Rename {DialogInfo[type].title}</DialogTitle>
-      <Box sx={{ px: 2 }}>
+      <DialogTitleWithClose onClose={onClose}>
+        Rename {DialogInfo[type].title}
+      </DialogTitleWithClose>
+      <DialogContent>
         <TextField
           inputRef={inputRef}
           value={fileName}
@@ -59,9 +63,8 @@ export const RenameFileDialog = ({ type, onClose, id }: Props) => {
           fullWidth
           variant="outlined"
         />
-      </Box>
+      </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
         <Button onClick={handleRename}>Rename</Button>
       </DialogActions>
     </>

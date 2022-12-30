@@ -1,17 +1,20 @@
+import dayjs, { Dayjs } from "dayjs";
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import CalendarHeatmap from "react-calendar-heatmap";
 
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import {
   Box,
   Button,
   ButtonGroup,
   Card,
+  CardActions,
   CardContent,
   CircularProgress,
   ClickAwayListener,
   Dialog,
-  DialogContent,
-  DialogTitle,
   FormControlLabel,
   IconButton,
   MenuItem,
@@ -19,9 +22,13 @@ import {
   Paper,
   Popper,
   Switch,
+  TextField,
   Typography,
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider/LocalizationProvider";
 
 import {
   getExperimentMeta,
@@ -29,21 +36,9 @@ import {
 } from "../../lib/client/api/experiments";
 import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
 import { ExperimentJson } from "../../lib/common/types/models";
-import { CodeBlock } from "../Code/Code";
 import { getLocalDayISO } from "../../lib/common/utils";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import {
-  DataGrid,
-  GridToolbar,
-  GridToolbarColumnsButton,
-  GridToolbarContainer,
-  GridToolbarDensitySelector,
-  GridToolbarExport,
-  GridToolbarFilterButton,
-  gridVisibleSortedRowIdsSelector,
-} from "@mui/x-data-grid";
+import { CodeBlock } from "../Code/Code";
+import { DataGridDialog } from "../Dialog/DataGrid";
 
 type Props = {
   experimentId: string;
@@ -64,17 +59,17 @@ export const ExperimentViewer = ({ experimentId, className }: Props) => {
           <DeleteIcon />
         </IconButton>
       </Grid>
-      <Grid xs={12} md={6}>
+      <Grid xs={12} md={4}>
         <CollectionModeCard exp={experiment} />
       </Grid>
-      <Grid xs={12} md={6}>
+      <Grid xs={12} md={8}>
         <DataDownloadCard exp={experiment} />
-      </Grid>
-      <Grid xs={12} md={6}>
-        <PostSnippetCard exp={experiment} />
       </Grid>
       <Grid xs={12}>
         <CollectionDataCard exp={experiment} />
+      </Grid>
+      <Grid xs={12} md={6}>
+        <PostSnippetCard exp={experiment} />
       </Grid>
     </Grid>
   );
@@ -118,9 +113,8 @@ const CollectionModeCard = ({ exp }: CardProps) => {
           />
         </Box>
         <Typography variant="body2" color="text.secondary">
-          In Test mode, any new experiment data will be cached instead of
-          collected. Cached data can be viewed, deleted, or converted into
-          collected data.
+          In Test mode, any new experiment data will be saved but not collected.
+          Test data can be viewed, deleted, or converted into collected data.
         </Typography>
       </CardContent>
     </Card>
@@ -181,13 +175,13 @@ const CollectionDataCard = ({ exp }: CardProps) => {
     selectedYear == null ? new Date() : new Date(selectedYear, 11, 31);
   const startDate = getMinusYear(endDate);
 
-  const expMeta = useBoundStore((store) => store.experimentMeta);
+  const expMeta = useBoundStore((store) => store.experimentMeta[exp._id]);
 
   const years = (() => {
     // return [2020, 2021, 2022];
     const years = [new Date().getFullYear()];
 
-    const log = expMeta[exp._id]?.activityLog;
+    const log = expMeta?.activityLog;
     if (log == null) return years;
 
     Object.keys(log).forEach((iso) => {
@@ -204,13 +198,13 @@ const CollectionDataCard = ({ exp }: CardProps) => {
       getDatesInRange(new Date(startDate), endDate).map((date) => {
         const localZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         const localDateKey = getLocalDayISO(date, localZone);
-        const count = expMeta[exp._id]?.activityLog[localDateKey] ?? 0;
+        const count = expMeta?.activityLog[localDateKey] ?? 0;
         return {
           date,
           count,
         };
       }),
-    [startDate, endDate, exp._id, expMeta]
+    [startDate, endDate, expMeta]
   );
 
   useEffect(() => {
@@ -221,7 +215,7 @@ const CollectionDataCard = ({ exp }: CardProps) => {
     <Card>
       <CardContent>
         <Typography variant="h6" component="h2">
-          {expMeta[exp._id]?.mongoDBData.numDocuments} total data entries
+          {expMeta?.mongoDBData.numDocuments} total data entries
         </Typography>
         <Box
           sx={{
@@ -291,13 +285,68 @@ const DataDownloadCard = ({ exp }: CardProps) => {
   const [dropOpen, setDropOpen] = useState(false);
   const onToggleDrop = () => setDropOpen((prev) => !prev);
 
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const onToggleDialog = () => setDialogOpen((prev) => !prev);
+
   const anchorRef = useRef(null);
+  const [startDate, setStartDate] = useState<Dayjs | null>(dayjs("2022-04-07"));
+  const [endDate, setEndDate] = useState<Dayjs | null>(dayjs());
+
+  const expMeta = useBoundStore((state) => state.experimentMeta[exp._id]);
+  console.log("expmeta", expMeta);
+
+  const activityLog = expMeta?.activityLog ?? {};
+
+  const numEntries = Object.keys(activityLog).length;
 
   return (
     <>
       <Card>
         <CardContent>
-          <ButtonGroup variant="contained" ref={anchorRef}>
+          <Typography variant="h6" component="h2">
+            Collected Data
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Select entries within range (inclusive).
+          </Typography>
+          <Box display="flex" flexWrap="wrap" sx={{ gap: 2, mt: 2 }}>
+            <TextField label="First" defaultValue={Math.min(1, numEntries)} />
+            <TextField
+              label="Last"
+              defaultValue={numEntries}
+              inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+            />
+          </Box>
+
+          <Typography variant="body2" color="text.secondary">
+            Select data between start and end (inclusive).
+          </Typography>
+          <Box display="flex" flexWrap="wrap" sx={{ gap: 2, mt: 2 }}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DateTimePicker
+                label="Start"
+                value={startDate}
+                onChange={(date) => setStartDate(date)}
+                renderInput={(props) => <TextField {...props} />}
+              />
+              <DateTimePicker
+                label="End"
+                value={endDate}
+                onChange={(date) => setEndDate(date)}
+                renderInput={(props) => <TextField {...props} />}
+              />
+            </LocalizationProvider>
+          </Box>
+        </CardContent>
+        <CardActions sx={{ p: 2 }}>
+          <Button onClick={onToggleDialog} variant="contained">
+            View data
+          </Button>
+          <ButtonGroup
+            variant="outlined"
+            ref={anchorRef}
+            sx={{ ml: 1, flex: "right" }}
+          >
             <Button>Download as CSV</Button>
             <Button size="small" onClick={onToggleDrop}>
               <ArrowDropDownIcon />
@@ -319,45 +368,16 @@ const DataDownloadCard = ({ exp }: CardProps) => {
               </ClickAwayListener>
             </Paper>
           </Popper>
-        </CardContent>
+        </CardActions>
       </Card>
-      <Dialog open={true} maxWidth="xl" fullWidth sx={{ color: "red" }}>
-        <DialogTitle>Title</DialogTitle>
-        <DialogContent>
-          <DataGrid
-            columns={columns}
-            rows={rows}
-            components={{ Toolbar: CustomToolbar }}
-            // componentsProps={{
-            //   toolbar: { getRowsToExport: gridVisibleSortedRowIdsSelector },
-            // }}
-          />
-        </DialogContent>
+      <Dialog
+        open={dialogOpen}
+        maxWidth="xl"
+        fullWidth
+        onClose={onToggleDialog}
+      >
+        <DataGridDialog onClose={onToggleDialog} />
       </Dialog>
     </>
   );
 };
-
-function CustomToolbar() {
-  return (
-    <GridToolbarContainer>
-      <GridToolbarColumnsButton />
-      <GridToolbarFilterButton />
-      <GridToolbarDensitySelector />
-      <GridToolbarExport
-        csvOptions={{ getRowsToExport: gridVisibleSortedRowIdsSelector }}
-      />
-    </GridToolbarContainer>
-  );
-}
-
-const rows = [
-  { id: 1, col1: "Hello", col2: "World" },
-  { id: 2, col1: "DataGridPro", col2: "is Awesome" },
-  { id: 3, col1: "MUI", col2: "is Amazing" },
-];
-
-const columns = [
-  { field: "col1", headerName: "Column 1", width: 150 },
-  { field: "col2", headerName: "Column 2", width: 150 },
-];

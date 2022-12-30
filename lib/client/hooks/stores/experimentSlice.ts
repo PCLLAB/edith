@@ -1,7 +1,9 @@
 import { StateCreator } from "zustand";
+import { ExperimentsIdMetaGetSignature } from "../../../../pages/api/v2/experiments/[id]/meta";
 import { ExperimentMeta } from "../../../common/types/misc";
 
 import { ExperimentJson } from "../../../common/types/models";
+import { fetcher } from "../../fetcher";
 
 export type ExperimentSlice = {
   experiment: Record<string, ExperimentJson>;
@@ -9,9 +11,13 @@ export type ExperimentSlice = {
   deleteExperiments: (ids: string[]) => void;
   experimentMeta: Record<string, ExperimentMeta>;
   updateExperimentMeta: (id: string, update: ExperimentMeta) => void;
+  getExperimentMeta: (id: string) => ExperimentMeta | undefined;
 };
 
-export const createExperimentSlice: StateCreator<ExperimentSlice> = (set) => ({
+export const createExperimentSlice: StateCreator<ExperimentSlice> = (
+  set,
+  get
+) => ({
   experiment: {},
   updateExperiments: (updates) =>
     set((state) => ({
@@ -31,4 +37,18 @@ export const createExperimentSlice: StateCreator<ExperimentSlice> = (set) => ({
     set((state) => ({
       experimentMeta: { ...state.experimentMeta, [id]: update },
     })),
+  getExperimentMeta: (id) => {
+    const attempt = get().experimentMeta[id];
+    if (attempt) return attempt;
+
+    fetcher<ExperimentsIdMetaGetSignature>({
+      url: "/api/v2/experiments/[id]/meta" as const,
+      method: "GET" as const,
+      query: { id },
+    }).then((update) =>
+      set((state) => ({
+        experimentMeta: { ...state.experimentMeta, [id]: update },
+      }))
+    );
+  },
 });

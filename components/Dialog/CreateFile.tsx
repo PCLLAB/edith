@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   DialogActions,
+  DialogContent,
   DialogTitle,
   TextField,
 } from "@mui/material";
@@ -13,6 +14,7 @@ import { createExperiment } from "../../lib/client/api/experiments";
 import { FileType } from "../../lib/client/context/FileSelectionProvider";
 import { getIdFromPath } from "../../lib/common/utils";
 import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
+import { DialogTitleWithClose } from "./DialogTitleWithClose";
 
 const DialogInfo = {
   [FileType.DIR]: { create: createDirectory, title: "directory" },
@@ -27,7 +29,6 @@ type Props = {
 
 export const CreateFileDialog = ({ type, onClose, prefixPath }: Props) => {
   const [fileName, setFileName] = useState("");
-
   const directories = useBoundStore((state) => state.directory);
 
   const handleCreate = () => {
@@ -55,8 +56,10 @@ export const CreateFileDialog = ({ type, onClose, prefixPath }: Props) => {
 
   return (
     <>
-      <DialogTitle>Create {DialogInfo[type].title}</DialogTitle>
-      <Box sx={{ px: 2 }}>
+      <DialogTitleWithClose onClose={onClose}>
+        Create {DialogInfo[type].title}
+      </DialogTitleWithClose>
+      <DialogContent sx={{ px: 2 }}>
         <TextField
           inputRef={inputRef}
           value={fileName}
@@ -69,9 +72,8 @@ export const CreateFileDialog = ({ type, onClose, prefixPath }: Props) => {
           fullWidth
           variant="outlined"
         />
-      </Box>
+      </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
         <Button onClick={handleCreate}>Create</Button>
       </DialogActions>
     </>

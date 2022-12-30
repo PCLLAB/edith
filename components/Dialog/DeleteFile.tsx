@@ -21,6 +21,7 @@ import {
 } from "../../lib/client/api/experiments";
 import { FileType } from "../../lib/client/context/FileSelectionProvider";
 import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
+import { DialogTitleWithClose } from "./DialogTitleWithClose";
 
 const DialogInfo = {
   [FileType.DIR]: { delete: deleteDirectory, title: "directory" },
@@ -54,7 +55,9 @@ export const DeleteFileDialog = ({ type, onClose, id }: Props) => {
 
   return (
     <>
-      <DialogTitle>Delete {DialogInfo[type].title}</DialogTitle>
+      <DialogTitleWithClose onClose={onClose}>
+        Delete {DialogInfo[type].title}
+      </DialogTitleWithClose>
       <DialogContent>
         <DialogContentText>
           Type <b>{file.name}</b> to confirm.
@@ -73,7 +76,6 @@ export const DeleteFileDialog = ({ type, onClose, id }: Props) => {
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
         <Button onClick={handleDelete} disabled={fileName != file.name}>
           Delete
         </Button>
