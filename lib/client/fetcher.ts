@@ -5,6 +5,13 @@ export type Fetcher<T extends ApiSignature> = (
   s: DistributiveOmit<T, "data">
 ) => Promise<T["data"]>;
 
+type DupeRequestHandler = {
+  resolve: (T: any) => void;
+  reject: (T: any) => void;
+};
+
+const inFlightRequests = new Map<string, DupeRequestHandler[]>();
+
 /**
  * This takes an object defining the desired request and builds the actual URL,
  * query parameters, and request body if specified
@@ -15,6 +22,22 @@ export type Fetcher<T extends ApiSignature> = (
 export const fetcher = async <T extends ApiSignature>(
   signature: DistributiveOmit<T, "data">
 ) => {
+  const requestKey = JSON.stringify(signature);
+
+  const isDupe = inFlightRequests.has(requestKey);
+
+  if (!isDupe) {
+    inFlightRequests.set(requestKey, []);
+  }
+
+  const duplicates = inFlightRequests.get(requestKey);
+
+  if (isDupe) {
+    return new Promise<T["data"]>((resolve, reject) => {
+      duplicates!.push({ resolve, reject });
+    });
+  }
+
   let finalUrl: string = signature.url;
   let firstQuery = true;
 
@@ -48,12 +71,25 @@ export const fetcher = async <T extends ApiSignature>(
     body,
   });
 
-  if (!res.ok)
-    return Promise.reject({
+  inFlightRequests.delete(requestKey);
+
+  if (!res.ok) {
+    const rejection = {
       method: signature.method,
       url: finalUrl,
       status: res.status,
+    };
+    duplicates!.forEach((handler) => {
+      handler.reject(rejection);
     });
 
-  return res.json() as Promise<T["data"]>;
+    return Promise.reject(rejection);
+  }
+
+  const data = (await res.json()) as T["data"];
+  duplicates!.forEach((handler) => {
+    handler.resolve(data);
+  });
+
+  return data;
 };

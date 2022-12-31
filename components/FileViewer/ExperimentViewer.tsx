@@ -30,10 +30,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider/LocalizationProvider";
 
-import {
-  getExperimentMeta,
-  updateExperiment,
-} from "../../lib/client/api/experiments";
+import { updateExperiment } from "../../lib/client/api/experiments";
 import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
 import { ExperimentJson } from "../../lib/common/types/models";
 import { getLocalDayISO } from "../../lib/common/utils";
@@ -169,13 +166,17 @@ const getDatesInRange = (start: Date, end: Date) => {
 };
 
 const CollectionDataCard = ({ exp }: CardProps) => {
+  console.log("CC card render");
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
 
   const endDate =
     selectedYear == null ? new Date() : new Date(selectedYear, 11, 31);
   const startDate = getMinusYear(endDate);
 
-  const expMeta = useBoundStore((store) => store.experimentMeta[exp._id]);
+  const getExperimentMeta = useBoundStore((store) => store.getExperimentMeta);
+
+  const expMeta = getExperimentMeta(exp._id);
+  console.log("expmeta in cc card", expMeta);
 
   const years = (() => {
     // return [2020, 2021, 2022];
@@ -206,10 +207,6 @@ const CollectionDataCard = ({ exp }: CardProps) => {
       }),
     [startDate, endDate, expMeta]
   );
-
-  useEffect(() => {
-    getExperimentMeta(exp._id);
-  }, [exp._id]);
 
   return (
     <Card>
@@ -282,6 +279,7 @@ const DownloadOptions = [
 ];
 
 const DataDownloadCard = ({ exp }: CardProps) => {
+  console.log("DD card render");
   const [dropOpen, setDropOpen] = useState(false);
   const onToggleDrop = () => setDropOpen((prev) => !prev);
 
@@ -292,8 +290,10 @@ const DataDownloadCard = ({ exp }: CardProps) => {
   const [startDate, setStartDate] = useState<Dayjs | null>(dayjs("2022-04-07"));
   const [endDate, setEndDate] = useState<Dayjs | null>(dayjs());
 
-  const expMeta = useBoundStore((state) => state.experimentMeta[exp._id]);
-  console.log("expmeta", expMeta);
+  const getExperimentMeta = useBoundStore((state) => state.getExperimentMeta);
+  const expMeta = getExperimentMeta(exp._id);
+
+  console.log("expmeta in DD", expMeta);
 
   const activityLog = expMeta?.activityLog ?? {};
 

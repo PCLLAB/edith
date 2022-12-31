@@ -11,25 +11,25 @@ import { ExperimentsIdMetaGetSignature } from "../../../pages/api/v2/experiments
 import { fetcher } from "../fetcher";
 import { useBoundStore } from "../hooks/stores/useBoundStore";
 
-export const getExperiments = () =>
-  fetcher<ExperimentsGetSignature>({
-    url: "/api/v2/experiments" as const,
-    method: "GET" as const,
-  }).then((exps) => useBoundStore.getState().updateExperiments(exps));
+// export const getExperiments = () =>
+//   fetcher<ExperimentsGetSignature>({
+//     url: "/api/v2/experiments" as const,
+//     method: "GET" as const,
+//   }).then((exps) => useBoundStore.getState().updateExperiments(exps));
 
-export const getExperiment = (id: string) =>
-  fetcher<ExperimentsIdGetSignature>({
-    url: "/api/v2/experiments/[id]" as const,
-    method: "GET" as const,
-    query: { id },
-  }).then((exp) => useBoundStore.getState().updateExperiments([exp]));
+// export const getExperiment = (id: string) =>
+//   fetcher<ExperimentsIdGetSignature>({
+//     url: "/api/v2/experiments/[id]" as const,
+//     method: "GET" as const,
+//     query: { id },
+//   }).then((exp) => useBoundStore.getState().updateExperiments([exp]));
 
-export const getExperimentMeta = (id: string) =>
-  fetcher<ExperimentsIdMetaGetSignature>({
-    url: "/api/v2/experiments/[id]/meta" as const,
-    method: "GET" as const,
-    query: { id },
-  }).then((meta) => useBoundStore.getState().updateExperimentMeta(id, meta));
+// export const getExperimentMeta = (id: string) =>
+//   fetcher<ExperimentsIdMetaGetSignature>({
+//     url: "/api/v2/experiments/[id]/meta" as const,
+//     method: "GET" as const,
+//     query: { id },
+//   }).then((meta) => useBoundStore.getState().updateExperimentMeta(id, meta));
 
 /**
  * Optimistic update that will rollback on failure
