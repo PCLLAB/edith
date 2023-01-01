@@ -27,12 +27,6 @@ const get: TypedApiHandlerWithAuth<DirectoriesIdGetSignature> = async (
   res.json(dir);
 };
 
-type PutBody = {
-  name: string;
-  ownerIds: string[];
-  prefixPath: string;
-};
-
 export type DirectoriesIdPutSignature = {
   url: typeof ENDPOINT;
   method: "PUT";

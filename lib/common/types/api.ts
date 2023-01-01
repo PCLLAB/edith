@@ -1,3 +1,4 @@
+import { CounterbalancesPostSignature } from "../../../pages/api/v2/counterbalances";
 import {
   DirectoriesGetSignature,
   DirectoriesPostSignature,
@@ -27,6 +28,7 @@ import {
   ExperimentsIdDataGetSignature,
   ExperimentsIdDataPostSignature,
 } from "../../../pages/api/v2/experiments/[id]/data";
+import { ExperimentsIdMetaGetSignature } from "../../../pages/api/v2/experiments/[id]/meta";
 import {
   UsersGetSignature,
   UsersPostSignature,
@@ -37,8 +39,12 @@ import {
   UsersIdPutSignature,
 } from "../../../pages/api/v2/users/[id]";
 import { UsersAuthPostSignature } from "../../../pages/api/v2/users/auth";
-import { ExperimentsIdMetaGetSignature } from "../../../pages/api/v2/experiments/[id]/meta";
+import {
+  CounterbalancesIdGetSignature,
+  CounterbalancesIdPutSignature,
+} from "../../../pages/api/v2/counterbalances/[id]";
 
+/** Each unioned type represents a single URL endpoint */
 export type ApiSignature =
   | Users
   | UsersAuth
@@ -47,11 +53,13 @@ export type ApiSignature =
   | ExperimentsId
   | ExperimentsIdData
   | ExperimentsIdCache
-  | ExperimentsIdMetaGetSignature
+  | ExperimentIdMeta
   | Directories
   | DirectoriesId
   | DirectoriesIdChildren
-  | DirectoriesRootsGetSignature;
+  | DirectoriesRoots
+  | Counterbalances
+  | CounterbalancesId;
 
 type Users = UsersGetSignature | UsersPostSignature;
 type UsersAuth = UsersAuthPostSignature;
@@ -72,6 +80,7 @@ type ExperimentsIdData =
 type ExperimentsIdCache =
   | ExperimentsIdCacheGetSignature
   | ExperimentsIdCacheDeleteSignature;
+type ExperimentIdMeta = ExperimentsIdMetaGetSignature;
 
 type Directories = DirectoriesGetSignature | DirectoriesPostSignature;
 type DirectoriesId =
@@ -79,5 +88,11 @@ type DirectoriesId =
   | DirectoriesIdGetSignature
   | DirectoriesIdDeleteSignature;
 type DirectoriesIdChildren = DirectoriesIdChildrenGetSignature;
+type DirectoriesRoots = DirectoriesRootsGetSignature;
+
+type Counterbalances = CounterbalancesPostSignature;
+type CounterbalancesId =
+  | CounterbalancesIdGetSignature
+  | CounterbalancesIdPutSignature;
 
 export type HTTP_METHOD = "GET" | "POST" | "PUT" | "DELETE";

@@ -62,7 +62,7 @@ const put: TypedApiHandlerWithAuth<ExperimentsIdPutSignature> = async (
       directory,
     },
     { new: true }
-  );
+  ).lean();
 
   res.json(experiment);
 };
