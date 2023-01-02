@@ -128,7 +128,7 @@ const post: TypedApiHandlerWithAuth<ExperimentsIdPostSignature> = async (
     throw `Delete failed: ${archivedExp._id}`;
   }
 
-  return res.json({
+  res.json({
     message: `Restored: ${archivedExp._id}`,
   });
 };

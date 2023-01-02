@@ -80,7 +80,7 @@ const put: TypedApiHandlerWithAuth<CounterbalancesIdPutSignature> = async (
       quotas.map(async (quota) => {
         quota.progress = await DataModel.countDocuments({
           data: {
-            $elemMatch: quota,
+            $elemMatch: quota.params,
           },
         });
         return quota;

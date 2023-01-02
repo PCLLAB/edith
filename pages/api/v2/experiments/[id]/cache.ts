@@ -21,7 +21,7 @@ const get: TypedApiHandlerWithAuth<ExperimentsIdCacheGetSignature> = async (
   res
 ) => {
   const id = req.query.id;
-  const data = await CachedDataEntry.find({ experiment: id });
+  const data = await CachedDataEntry.findOne({ experiment: id });
 
   res.json(data);
 };

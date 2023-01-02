@@ -1,8 +1,15 @@
-import { DataEntryJson } from "../../../../../../lib/common/types/models";
+import {
+  DataEntryJson,
+  Quota,
+} from "../../../../../../lib/common/types/models";
 import initHandler, {
   TypedApiHandlerWithAuth,
 } from "../../../../../../lib/server/initHandler";
-import { modelForCollection } from "../../../../../../models/DataEntry";
+import Counterbalance from "../../../../../../models/Counterbalance";
+import {
+  CachedDataEntry,
+  modelForCollection,
+} from "../../../../../../models/DataEntry";
 import Experiment from "../../../../../../models/Experiment";
 import MongoDBData from "../../../../../../models/MongoDBData";
 
@@ -39,9 +46,7 @@ export type ExperimentsIdDataPostSignature = {
     id: string;
   };
   body: any;
-  data: {
-    message: string;
-  };
+  data: void;
 };
 
 const post: TypedApiHandlerWithAuth<ExperimentsIdDataPostSignature> = async (
@@ -50,24 +55,50 @@ const post: TypedApiHandlerWithAuth<ExperimentsIdDataPostSignature> = async (
 ) => {
   const id = req.query.id;
 
-  const expObj = await Experiment.findById(id).lean();
+  const exp = await Experiment.findById(id).lean();
 
-  const meta = await MongoDBData.findById(expObj.mongoDBData).lean();
+  const data = req.body;
 
-  // TODO cached data entry
+  if (exp.enabled) {
+    const entry = new CachedDataEntry({
+      data,
+      experiment: exp._id,
+    });
+
+    await entry.save();
+
+    return res.status(204).send();
+  }
+
+  const meta = await MongoDBData.findById(exp.mongoDBData).lean();
   const DataModel = modelForCollection(meta.dataCollection);
 
   const entry = new DataModel({
-    data: req.body,
+    data,
   });
   await entry.save();
 
-  //TODO do other stuff here
-  //FIXME hi
-  // update counterbalance/quotas
+  try {
+    const cb = await Counterbalance.findOne({
+      experiment: exp._id,
+    });
 
-  res.json({ message: `Saved data: ${id}` });
-  // TODO this is hard
+    cb.quotas.forEach((quota: Quota, index: number) => {
+      const match = Object.entries(quota.params).every(
+        ([param, option]) => data[0][param] === option
+      );
+
+      if (match) {
+        cb.quotas[index].amount++;
+      }
+    });
+
+    await cb.save();
+  } catch {
+    // no counterbalance for experiment, do nothing
+  }
+
+  res.status(204).send();
 };
 
 export default initHandler({

@@ -17,7 +17,7 @@ const UserSchema = new mongoose.Schema<RawUnsafeUserDoc>(
       required: true,
       // exclude password from results by default
       // must specify to include e.g.
-      // Users.find().select("+password")
+      // Users.findOne().select("+password")
       select: false,
     },
     name: {

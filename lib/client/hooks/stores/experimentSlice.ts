@@ -1,8 +1,12 @@
 import { StateCreator } from "zustand";
+import { CounterbalancesIdGetSignature } from "../../../../pages/api/v2/counterbalances/[id]";
 import { ExperimentsIdMetaGetSignature } from "../../../../pages/api/v2/experiments/[id]/meta";
 import { ExperimentMeta } from "../../../common/types/misc";
 
-import { ExperimentJson } from "../../../common/types/models";
+import {
+  CounterbalanceJson,
+  ExperimentJson,
+} from "../../../common/types/models";
 import { fetcher } from "../../fetcher";
 
 export type ExperimentSlice = {
@@ -12,6 +16,8 @@ export type ExperimentSlice = {
   experimentMeta: Record<string, ExperimentMeta>;
   // updateExperimentMeta: (id: string, update: ExperimentMeta) => void;
   getExperimentMeta: (id: string) => ExperimentMeta | undefined;
+  counterbalance: Record<string, CounterbalanceJson>;
+  getCounterbalance: (expId: string) => CounterbalanceJson | undefined;
 };
 
 export const createExperimentSlice: StateCreator<ExperimentSlice> = (
@@ -61,5 +67,29 @@ export const createExperimentSlice: StateCreator<ExperimentSlice> = (
         getExperimentMeta: state.getExperimentMeta.bind({}),
       }));
     });
+  },
+  counterbalance: {},
+  getCounterbalance: (expId) => {
+    const attempt = get().counterbalance[expId];
+    if (attempt) return attempt;
+
+    fetcher<CounterbalancesIdGetSignature>({
+      url: "/api/v2/counterbalances/[id]" as const,
+      method: "GET" as const,
+      query: { id: expId },
+    })
+      .then((update) => {
+        set((state) => ({
+          counterbalance: { ...state.counterbalance, [expId]: update },
+          // .bind({}) is used to clone the function, forcing a rerender
+          getCounterbalance: state.getCounterbalance.bind({}),
+        }));
+      })
+      .catch((e) => {
+        // TODO figure out
+        // we can stop future requests, but how to know when a counterbalance exists?
+        // if (e.status === 404) {
+        // }
+      });
   },
 });
