@@ -12,7 +12,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 | --------------- | ---------------------------------------- |
 | Login Page      | ![Login page](./readme/login.png)        |
 | File Tree       | ![File Tree page](./readme/fileTree.png) |
-| Experiment View | wip                                      |
+| Experiment View | ![Experiment view](./readme/expView.png) |
 | Folder View     | wip                                      |
 | Admin Page      | wip                                      |
 
