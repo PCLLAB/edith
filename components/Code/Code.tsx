@@ -1,7 +1,8 @@
-import { ReactNode, useEffect } from "react";
 import Prism from "prismjs";
-import { Box, Button } from "@mui/material";
+import { useEffect } from "react";
+
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import { Box, Button } from "@mui/material";
 
 type Props = {
   children: string;
@@ -17,8 +18,9 @@ export const CodeInline = ({ children, language = "markdown" }: Props) => {
 
 export const CodeBlock = ({ children, language = "markdown" }: Props) => {
   useEffect(() => {
+    if (!children) return;
     Prism.highlightAll();
-  }, []);
+  }, [children]);
 
   const onClick = () => navigator.clipboard.writeText(children);
 

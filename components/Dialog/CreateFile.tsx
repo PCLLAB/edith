@@ -9,16 +9,14 @@ import {
   TextField,
 } from "@mui/material";
 
-import { createDirectory } from "../../lib/client/api/directories";
-import { createExperiment } from "../../lib/client/api/experiments";
 import { FileType } from "../../lib/client/context/FileSelectionProvider";
 import { getIdFromPath } from "../../lib/common/utils";
 import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
 import { DialogTitleWithClose } from "./DialogTitleWithClose";
 
 const DialogInfo = {
-  [FileType.DIR]: { create: createDirectory, title: "directory" },
-  [FileType.EXP]: { create: createExperiment, title: "experiment" },
+  [FileType.DIR]: { title: "directory" },
+  [FileType.EXP]: { title: "experiment" },
 };
 
 type Props = {
@@ -29,10 +27,20 @@ type Props = {
 
 export const CreateFileDialog = ({ type, onClose, prefixPath }: Props) => {
   const [fileName, setFileName] = useState("");
-  const directories = useBoundStore((state) => state.directory);
+
+  const createFile = useBoundStore((state) => {
+    switch (type) {
+      case FileType.DIR:
+        return state.createDirectory;
+      case FileType.EXP:
+        return state.createExperiment;
+    }
+  });
+
+  const directories = useBoundStore((state) => state.directoryMap);
 
   const handleCreate = () => {
-    DialogInfo[type].create({
+    createFile({
       name: fileName,
       directory: getIdFromPath(prefixPath),
       prefixPath,

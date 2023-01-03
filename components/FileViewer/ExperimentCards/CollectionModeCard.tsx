@@ -10,8 +10,8 @@ import {
   Typography,
 } from "@mui/material";
 
-import { updateExperiment } from "../../../lib/client/api/experiments";
 import { ExperimentJson } from "../../../lib/common/types/models";
+import { useBoundStore } from "../../../lib/client/hooks/stores/useBoundStore";
 
 type CardProps = {
   exp: ExperimentJson;
@@ -19,6 +19,8 @@ type CardProps = {
 
 export const CollectionModeCard = ({ exp }: CardProps) => {
   const [loading, setLoading] = useState(false);
+
+  const updateExperiment = useBoundStore((state) => state.updateExperiment);
 
   const onChange = (_: ChangeEvent, enabled: boolean) => {
     setLoading(true);

@@ -9,15 +9,13 @@ import {
   TextField,
 } from "@mui/material";
 
-import { updateDirectory } from "../../lib/client/api/directories";
-import { updateExperiment } from "../../lib/client/api/experiments";
 import { FileType } from "../../lib/client/context/FileSelectionProvider";
 import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
 import { DialogTitleWithClose } from "./DialogTitleWithClose";
 
 const DialogInfo = {
-  [FileType.DIR]: { update: updateDirectory, title: "directory" },
-  [FileType.EXP]: { update: updateExperiment, title: "experiment" },
+  [FileType.DIR]: { title: "directory" },
+  [FileType.EXP]: { title: "experiment" },
 };
 
 type Props = {
@@ -27,8 +25,17 @@ type Props = {
 };
 
 export const RenameFileDialog = ({ type, onClose, id }: Props) => {
+  const updateFile = useBoundStore((state) => {
+    switch (type) {
+      case FileType.DIR:
+        return state.updateDirectory;
+      case FileType.EXP:
+        return state.updateExperiment;
+    }
+  });
+
   const handleRename = () => {
-    DialogInfo[type].update(id, { name: fileName });
+    updateFile(id, { name: fileName });
     onClose();
   };
 
@@ -39,8 +46,8 @@ export const RenameFileDialog = ({ type, onClose, id }: Props) => {
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const directories = useBoundStore((state) => state.directory);
-  const experiments = useBoundStore((state) => state.experiment);
+  const directories = useBoundStore((state) => state.directoryMap);
+  const experiments = useBoundStore((state) => state.experimentMap);
   const file = type === FileType.DIR ? directories[id] : experiments[id];
 
   const [fileName, setFileName] = useState(file.name);

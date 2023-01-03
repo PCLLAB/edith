@@ -20,10 +20,6 @@ import {
 } from "@mui/material";
 
 import {
-  getDirectoryContent,
-  updateDirectory,
-} from "../../lib/client/api/directories";
-import {
   FileSelectionContext,
   FileType,
 } from "../../lib/client/context/FileSelectionProvider";
@@ -31,7 +27,6 @@ import { getIdFromPath, getPath } from "../../lib/common/utils";
 import { ContextMenu } from "../ContextMenu/ContextMenu";
 import { FileActionBar } from "./FileActionBar";
 import { buildTree } from "./utils";
-import { updateExperiment } from "../../lib/client/api/experiments";
 import { WorkspaceContext } from "../../lib/client/context/WorkspaceProvider";
 import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
 import {
@@ -60,8 +55,14 @@ export type TreeItemData = {
 };
 
 export const FileTree = ({ className }: Props) => {
-  const directories = useBoundStore((state) => state.directory);
-  const experiments = useBoundStore((state) => state.experiment);
+  const directories = useBoundStore((state) => state.directoryMap);
+  const experiments = useBoundStore((state) => state.experimentMap);
+  const getDirectoryContent = useBoundStore(
+    (state) => state.getDirectoryContent
+  );
+  const updateExperiment = useBoundStore((state) => state.updateExperiment);
+  const updateDirectory = useBoundStore((state) => state.updateDirectory);
+
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
 
   const { workspace } = useContext(WorkspaceContext);
@@ -257,7 +258,7 @@ export const FileTree = ({ className }: Props) => {
       </TreeBase>
       {/*
       //@ts-ignore: enums are numbers */}
-      <Dialog open={dialog!!} onClose={onCloseDialog} fullWidth maxWidth="sm">
+      <Dialog open={!!dialog} onClose={onCloseDialog} fullWidth maxWidth="sm">
         {fileSelection && dialog === Dialogs.RENAME && (
           <RenameFileDialog
             onClose={onCloseDialog}

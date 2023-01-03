@@ -11,21 +11,13 @@ import {
   Typography,
 } from "@mui/material";
 
-import {
-  deleteDirectory,
-  updateDirectory,
-} from "../../lib/client/api/directories";
-import {
-  deleteExperiment,
-  updateExperiment,
-} from "../../lib/client/api/experiments";
 import { FileType } from "../../lib/client/context/FileSelectionProvider";
 import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
 import { DialogTitleWithClose } from "./DialogTitleWithClose";
 
 const DialogInfo = {
-  [FileType.DIR]: { delete: deleteDirectory, title: "directory" },
-  [FileType.EXP]: { delete: deleteExperiment, title: "experiment" },
+  [FileType.DIR]: { title: "directory" },
+  [FileType.EXP]: { title: "experiment" },
 };
 
 type Props = {
@@ -35,8 +27,16 @@ type Props = {
 };
 
 export const DeleteFileDialog = ({ type, onClose, id }: Props) => {
+  const deleteFile = useBoundStore((state) => {
+    switch (type) {
+      case FileType.DIR:
+        return state.deleteDirectory;
+      case FileType.EXP:
+        return state.deleteExperiment;
+    }
+  });
   const handleDelete = () => {
-    DialogInfo[type].delete(id);
+    deleteFile(id);
     onClose();
   };
 
@@ -47,8 +47,8 @@ export const DeleteFileDialog = ({ type, onClose, id }: Props) => {
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const directories = useBoundStore((state) => state.directory);
-  const experiments = useBoundStore((state) => state.experiment);
+  const directories = useBoundStore((state) => state.directoryMap);
+  const experiments = useBoundStore((state) => state.experimentMap);
   const file = type === FileType.DIR ? directories[id] : experiments[id];
 
   const [fileName, setFileName] = useState("");

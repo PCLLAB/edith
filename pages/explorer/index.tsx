@@ -7,7 +7,7 @@ import { FileSelectionProvider } from "../../lib/client/context/FileSelectionPro
 import type { NextPage } from "next";
 import { WorkspaceContext } from "../../lib/client/context/WorkspaceProvider";
 import { useContext, useEffect } from "react";
-import { getDirectoryRoots } from "../../lib/client/api/directories";
+import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
 
 const ExplorerBox = styled("div")({
   display: "flex",
@@ -25,6 +25,8 @@ const StyledFileViewer = styled(FileViewer)((props) => ({
 
 const Explorer: NextPage = () => {
   const { workspace, setWorkspace } = useContext(WorkspaceContext);
+
+  const getDirectoryRoots = useBoundStore((state) => state.getDirectoryRoots);
 
   useEffect(() => {
     getDirectoryRoots().then((dirs) =>

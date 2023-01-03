@@ -37,9 +37,8 @@ export const CollectionDataCard = ({ exp }: CardProps) => {
     selectedYear == null ? new Date() : new Date(selectedYear, 11, 31);
   const startDate = getMinusYear(endDate);
 
-  const getExperimentMeta = useBoundStore((store) => store.getExperimentMeta);
+  const expMeta = useBoundStore((store) => store.metadataMap[exp._id]);
 
-  const expMeta = getExperimentMeta(exp._id);
   console.log("expmeta in cc card", expMeta);
 
   const years = (() => {

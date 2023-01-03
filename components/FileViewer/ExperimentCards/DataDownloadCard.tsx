@@ -50,8 +50,7 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
   const [startDate, setStartDate] = useState<Dayjs | null>(dayjs("2022-04-07"));
   const [endDate, setEndDate] = useState<Dayjs | null>(dayjs());
 
-  const getExperimentMeta = useBoundStore((state) => state.getExperimentMeta);
-  const expMeta = getExperimentMeta(exp._id);
+  const expMeta = useBoundStore((state) => state.metadataMap[exp._id]);
 
   console.log("expmeta in DD", expMeta);
 

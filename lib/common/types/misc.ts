@@ -1,6 +1,6 @@
 import { MongoDBDataJson } from "../../../models/MongoDBData";
 
-export type ExperimentMeta = {
+export type MetadataJson = {
   mongoDBData: MongoDBDataJson;
   activityLog: {
     [date: string]: number;

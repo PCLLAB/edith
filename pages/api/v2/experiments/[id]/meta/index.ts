@@ -1,5 +1,5 @@
 import { DateTime } from "luxon";
-import { ExperimentMeta } from "../../../../../../lib/common/types/misc";
+import { MetadataJson } from "../../../../../../lib/common/types/misc";
 import { getLocalDayISO } from "../../../../../../lib/common/utils";
 
 import initHandler, {
@@ -19,7 +19,7 @@ export type ExperimentsIdMetaGetSignature = {
   query: {
     id: string;
   };
-  data: ExperimentMeta;
+  data: MetadataJson;
 };
 
 const get: TypedApiHandlerWithAuth<ExperimentsIdMetaGetSignature> = async (

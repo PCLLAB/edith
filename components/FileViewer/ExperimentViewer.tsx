@@ -2,6 +2,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { IconButton } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
+import { useEffect } from "react";
 
 import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
 import {
@@ -18,7 +19,19 @@ type Props = {
 };
 
 export const ExperimentViewer = ({ experimentId, className }: Props) => {
-  const experiment = useBoundStore((state) => state.experiment[experimentId]);
+  const experiment = useBoundStore(
+    (state) => state.experimentMap[experimentId]
+  );
+
+  const getExperimentMeta = useBoundStore((state) => state.getExperimentMeta);
+  const getCounterbalance = useBoundStore((state) => state.getCounterbalance);
+
+  useEffect(() => {
+    console.log("running exp view fetches");
+    getExperimentMeta(experimentId);
+    getCounterbalance(experimentId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [experimentId]);
 
   return (
     <Grid container spacing={2} m={1}>
