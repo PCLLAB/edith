@@ -38,7 +38,10 @@ import {
   UsersIdGetSignature,
   UsersIdPutSignature,
 } from "../../../pages/api/v2/users/[id]";
-import { UsersAuthPostSignature } from "../../../pages/api/v2/users/auth";
+import {
+  UsersAuthGetSignature,
+  UsersAuthPostSignature,
+} from "../../../pages/api/v2/users/auth";
 import {
   CounterbalancesIdGetSignature,
   CounterbalancesIdPutSignature,
@@ -62,7 +65,7 @@ export type ApiSignature =
   | CounterbalancesId;
 
 type Users = UsersGetSignature | UsersPostSignature;
-type UsersAuth = UsersAuthPostSignature;
+type UsersAuth = UsersAuthGetSignature | UsersAuthPostSignature;
 type UsersId =
   | UsersIdGetSignature
   | UsersIdPutSignature

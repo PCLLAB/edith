@@ -43,7 +43,7 @@ const Login: NextPage = () => {
         });
         console.debug("login data", data);
         router.push("/explorer");
-      } catch (e) {
+      } catch (e: any) {
         setLoading(false);
 
         if (e.status === 401) {

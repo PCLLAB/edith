@@ -10,10 +10,24 @@ import config from "../../../../lib/config";
 import { MissingArgsError } from "../../../../lib/server/errors";
 import initHandler, {
   TypedApiHandler,
+  TypedApiHandlerWithAuth,
 } from "../../../../lib/server/initHandler";
 import User from "../../../../models/User";
 
 export const ENDPOINT = "/api/v2/users/auth";
+
+export type UsersAuthGetSignature = {
+  url: typeof ENDPOINT;
+  method: "GET";
+  data: UserJson;
+};
+
+const get: TypedApiHandlerWithAuth<UsersAuthGetSignature> = async (
+  req,
+  res
+) => {
+  res.json(req.auth);
+};
 
 export type UsersAuthPostSignature = {
   url: typeof ENDPOINT;
@@ -69,5 +83,6 @@ const post: TypedApiHandler<UsersAuthPostSignature> = async (req, res) => {
 };
 
 export default initHandler({
+  GET: get,
   POST: post,
 });

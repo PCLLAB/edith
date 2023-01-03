@@ -30,7 +30,7 @@ const jwtMiddleware = expressjwt({
   },
 }).unless({
   // routes without authentication
-  path: ["/api/v2/users/auth"],
+  path: [{ url: "/api/v2/users/auth", method: "POST" }],
 });
 
 export default initMiddleware(jwtMiddleware);

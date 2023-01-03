@@ -1,32 +1,70 @@
 jest.mock("../../../../lib/server/dbConnect");
+import { UserDoc } from "../../../../lib/common/types/models";
 import dbConnect from "../../../../lib/server/dbConnect";
-import { getReqResMocker } from "../../../../lib/testUtils";
+import {
+  getCreatedUserAndToken,
+  getReqResMocker,
+  ReqResMocker,
+} from "../../../../lib/testUtils";
 import User from "../../../../models/User";
 import handler, { ENDPOINT } from "./auth";
 
+const name = "Benjamin Dover";
+const email = "benjamindover@hotmail.com";
+const password = "benjamindoveriscool";
+
+let user: UserDoc;
+let token: string;
+
+let superToken: string;
+
+let connection: any;
+
+let mockGetReqRes: ReqResMocker;
+let mockGetReqResNoToken: ReqResMocker;
+
+beforeAll(async () => {
+  connection = await dbConnect();
+
+  ({ user, token } = await getCreatedUserAndToken());
+  ({ token: superToken } = await getCreatedUserAndToken(true));
+
+  mockGetReqRes = getReqResMocker("GET", ENDPOINT, token);
+  mockGetReqResNoToken = getReqResMocker("GET", ENDPOINT);
+
+  const testUser = new User({
+    name,
+    email,
+    password,
+  });
+
+  await testUser.save();
+});
+
+afterAll(async () => {
+  await connection.disconnect();
+});
+
+describe(`GET ${ENDPOINT}`, () => {
+  it("returns 200 and user if token provided", async () => {
+    const { req, res } = mockGetReqRes();
+
+    await handler(req, res);
+    expect(res.statusCode).toBe(200);
+    expect(res._getJSONData()).toEqual(
+      expect.objectContaining(JSON.parse(JSON.stringify(user)))
+    );
+  });
+
+  it("returns 401 if no valid token provided", async () => {
+    const { req, res } = mockGetReqResNoToken();
+
+    await handler(req, res);
+    expect(res.statusCode).toBe(401);
+  });
+});
+
 describe(`POST ${ENDPOINT}`, () => {
-  const name = "Benjamin Dover";
-  const email = "benjamindover@hotmail.com";
-  const password = "benjamindoveriscool";
-
-  let connection: any;
-
-  beforeAll(async () => {
-    connection = await dbConnect();
-
-    const testUser = new User({
-      name,
-      email,
-      password,
-    });
-
-    await testUser.save();
-  });
-
-  afterAll(async () => {
-    await connection.disconnect();
-  });
-
   // This is unauthenticated, doesn't require a token, so it can be put in decribe block
   const mockReqRes = getReqResMocker("POST", ENDPOINT);
 
