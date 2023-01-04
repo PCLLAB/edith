@@ -34,6 +34,7 @@ import {
   DeleteFileDialog,
   CreateFileDialog,
 } from "../Dialog";
+import { ExpandedKeysContext } from "../../lib/client/context/ExpandedKeysProvider";
 
 const TreeBase = styled(Paper)({
   height: "100%",
@@ -63,8 +64,6 @@ export const FileTree = ({ className }: Props) => {
   const updateExperiment = useBoundStore((state) => state.updateExperiment);
   const updateDirectory = useBoundStore((state) => state.updateDirectory);
 
-  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
-
   const { workspace } = useContext(WorkspaceContext);
 
   const onRefresh = () => {
@@ -87,6 +86,7 @@ export const FileTree = ({ className }: Props) => {
   const onCloseDialog = () => setDialog(null);
 
   const { fileSelection, setFileSelection } = useContext(FileSelectionContext);
+  const { expandedKeys, setExpandedKeys } = useContext(ExpandedKeysContext);
 
   const newFilePrefixPath = fileSelection
     ? fileSelection.type === FileType.DIR
@@ -184,7 +184,6 @@ export const FileTree = ({ className }: Props) => {
                 }
               }}
               onRightClick={({ node }) => {
-                setSelectedKeys([node.key]);
                 const fileId = node.key;
                 setFileSelection({
                   id: fileId,
@@ -194,14 +193,24 @@ export const FileTree = ({ className }: Props) => {
               // Prevent deselecting files by ignoring empty selection
               onSelect={(s) => {
                 if (!s.length) return;
-                setSelectedKeys(s as string[]);
+
                 const fileId = s[0] as string;
                 setFileSelection({
                   id: fileId,
                   type: fileId in directories ? FileType.DIR : FileType.EXP,
                 });
               }}
-              selectedKeys={selectedKeys}
+              selectedKeys={fileSelection ? [fileSelection.id] : undefined}
+              onExpand={(_, info) => {
+                if (info.node.expanded) {
+                  setExpandedKeys((prev) =>
+                    prev.filter((key) => key !== info.node.key)
+                  );
+                } else {
+                  setExpandedKeys((prev) => [...prev, info.node.key]);
+                }
+              }}
+              expandedKeys={expandedKeys}
               icon={(node) =>
                 node.isLeaf ? (
                   <ScienceIcon fontSize="small" color="primary" />

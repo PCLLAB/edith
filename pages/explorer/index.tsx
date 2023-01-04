@@ -9,6 +9,7 @@ import { WorkspaceContext } from "../../lib/client/context/WorkspaceProvider";
 import { useContext, useEffect } from "react";
 import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
 import { AuthContextProvider } from "../../lib/client/context/AuthProvider";
+import { ExpandedKeysProvider } from "../../lib/client/context/ExpandedKeysProvider";
 
 const ExplorerBox = styled("div")({
   display: "flex",
@@ -40,14 +41,16 @@ const Explorer: NextPage = () => {
   return (
     <AuthContextProvider>
       <FileSelectionProvider>
-        <ExplorerBox>
-          {workspace.rootId && (
-            <>
-              <StyledFileTree />
-              <StyledFileViewer />
-            </>
-          )}
-        </ExplorerBox>
+        <ExpandedKeysProvider>
+          <ExplorerBox>
+            {workspace.rootId && (
+              <>
+                <StyledFileTree />
+                <StyledFileViewer />
+              </>
+            )}
+          </ExplorerBox>
+        </ExpandedKeysProvider>
       </FileSelectionProvider>
     </AuthContextProvider>
   );

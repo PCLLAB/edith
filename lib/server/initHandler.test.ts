@@ -7,7 +7,8 @@ import initHandler from "./initHandler";
 import { getCreatedUserAndToken, getReqResMocker } from "../testUtils";
 
 const PRIVATE_ENDPOINT = "/api/v2";
-const PUBLIC_ENDPOINT = "/api/v2/users/auth";
+// This is no longer public
+// const PUBLIC_ENDPOINT = "/api/v2/users/auth";
 
 let token: string;
 
@@ -25,7 +26,7 @@ afterAll(async () => {
 describe(`JWT TOKEN AUTH initHandler`, () => {
   const mockReqRes = getReqResMocker("GET", PRIVATE_ENDPOINT);
 
-  const mockPublicReqRes = getReqResMocker("GET", PUBLIC_ENDPOINT);
+  // const mockPublicReqRes = getReqResMocker("GET", PUBLIC_ENDPOINT);
 
   const handler = initHandler({
     GET: (req: NextApiRequest, res: NextApiResponse) => {
@@ -33,19 +34,19 @@ describe(`JWT TOKEN AUTH initHandler`, () => {
     },
   });
 
-  it("returns 200 if lacking token on path without auth required", async () => {
-    const { req, res } = mockPublicReqRes();
+  // it("returns 200 if lacking token on path without auth required", async () => {
+  //   const { req, res } = mockPublicReqRes();
 
-    await handler(req, res);
-    expect(res.statusCode).toBe(200);
-  });
+  //   await handler(req, res);
+  //   expect(res.statusCode).toBe(200);
+  // });
 
-  it("returns 200 if has token on path without auth required", async () => {
-    const { req, res } = mockPublicReqRes({ token });
+  // it("returns 200 if has token on path without auth required", async () => {
+  //   const { req, res } = mockPublicReqRes({ token });
 
-    await handler(req, res);
-    expect(res.statusCode).toBe(200);
-  });
+  //   await handler(req, res);
+  //   expect(res.statusCode).toBe(200);
+  // });
 
   it("returns 401 if lacking token on authorized path", async () => {
     const { req, res } = mockReqRes();

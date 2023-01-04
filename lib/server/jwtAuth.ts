@@ -11,8 +11,8 @@ const jwtMiddleware = expressjwt({
   //  HS256 is symmetric (one secret), RS256 asymmetric (public private)
   //  We handle auth ourselves, so no point in being asymmetric
   algorithms: ["HS256"],
-  //  Deleted and privilege modified users should have token revoked
   getToken: (req) => req.cookies[JWT_COOKIE_KEY],
+  //  Deleted and privilege modified users should have token revoked
   isRevoked: async (_, token) => {
     const { _id, superuser } = token?.payload as JwtPayload;
 
