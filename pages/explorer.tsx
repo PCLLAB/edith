@@ -1,15 +1,15 @@
 import { styled } from "@mui/material";
 
-import { FileTree } from "../../components/FileTree";
-import { FileViewer } from "../../components/FileViewer";
-import { FileSelectionProvider } from "../../lib/client/context/FileSelectionProvider";
+import { FileTree } from "../components/FileTree";
+import { FileViewer } from "../components/FileViewer";
+import { FileSelectionProvider } from "../lib/client/context/FileSelectionProvider";
 
 import type { NextPage } from "next";
-import { WorkspaceContext } from "../../lib/client/context/WorkspaceProvider";
+import { WorkspaceContext } from "../lib/client/context/WorkspaceProvider";
 import { useContext, useEffect } from "react";
-import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
-import { AuthContextProvider } from "../../lib/client/context/AuthProvider";
-import { ExpandedKeysProvider } from "../../lib/client/context/ExpandedKeysProvider";
+import { useBoundStore } from "../lib/client/hooks/stores/useBoundStore";
+import { AuthContextProvider } from "../lib/client/context/AuthProvider";
+import { ExpandedKeysProvider } from "../lib/client/context/ExpandedKeysProvider";
 
 const ExplorerBox = styled("div")({
   display: "flex",

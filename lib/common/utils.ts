@@ -6,6 +6,9 @@ import type {
   ExperimentJson,
 } from "./types/models";
 
+export const getAncestorsMinusRoot = (dir: AnyDirectory) =>
+  dir.prefixPath.split(",").slice(1);
+
 export const getIdFromPath = (path: string) => path.split(",").pop() as string;
 
 export const getPath = (dir: AnyDirectory) =>

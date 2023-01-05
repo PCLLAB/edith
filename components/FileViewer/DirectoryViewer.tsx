@@ -12,6 +12,7 @@ import {
   FileType,
 } from "../../lib/client/context/FileSelectionProvider";
 import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
+import { getAncestorsMinusRoot } from "../../lib/common/utils";
 
 type Props = {
   directoryId: string;
@@ -73,7 +74,7 @@ export const DirectoryViewer = ({ directoryId }: Props) => {
             setExpandedKeys((prev) => {
               const toAdd = [
                 directoryId,
-                ...directory.prefixPath.split(","),
+                ...getAncestorsMinusRoot(directory),
               ].filter((id) => !prev.includes(id));
               return [...prev, ...toAdd];
             });
