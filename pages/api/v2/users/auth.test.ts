@@ -103,7 +103,7 @@ describe(`POST ${ENDPOINT}`, () => {
     expect(res.statusCode).toBe(404);
   });
 
-  it("returns 400 if password does not match", async () => {
+  it("returns 401 if password does not match", async () => {
     const wrongPassword = "iamcool";
 
     expect(password).not.toEqual(wrongPassword);
@@ -116,7 +116,7 @@ describe(`POST ${ENDPOINT}`, () => {
     });
 
     await handler(req, res);
-    expect(res.statusCode).toBe(400);
+    expect(res.statusCode).toBe(401);
   });
 
   it("returns 200 and token for valid email and password", async () => {

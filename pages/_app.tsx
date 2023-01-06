@@ -13,15 +13,23 @@ import "../lib/client/prism-one-dark.css";
 // Calendar heatmap styles
 import "../lib/client/calendar-heatmap.css";
 
+// Make __next div display: flex
+import "../lib/client/global.css";
+
 import { WorkspaceProvider } from "../lib/client/context/WorkspaceProvider";
+import { AuthContextProvider } from "../lib/client/context/AuthProvider";
+import { SiteWideAppBar } from "../components/SiteWideAppBar";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <MuiThemeProvider theme={muiDarkTheme}>
       <CssBaseline />
-      <WorkspaceProvider>
-        <Component {...pageProps} />
-      </WorkspaceProvider>
+      <AuthContextProvider>
+        <WorkspaceProvider>
+          <SiteWideAppBar />
+          <Component {...pageProps} />
+        </WorkspaceProvider>
+      </AuthContextProvider>
     </MuiThemeProvider>
   );
 }

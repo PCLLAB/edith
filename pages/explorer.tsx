@@ -1,16 +1,15 @@
+import { useContext, useEffect } from "react";
+
 import { styled } from "@mui/material";
 
 import { FileTree } from "../components/FileTree";
 import { FileViewer } from "../components/FileViewer";
+import { ExpandedKeysProvider } from "../lib/client/context/ExpandedKeysProvider";
 import { FileSelectionProvider } from "../lib/client/context/FileSelectionProvider";
+import { WorkspaceContext } from "../lib/client/context/WorkspaceProvider";
+import { useBoundStore } from "../lib/client/hooks/stores/useBoundStore";
 
 import type { NextPage } from "next";
-import { WorkspaceContext } from "../lib/client/context/WorkspaceProvider";
-import { useContext, useEffect } from "react";
-import { useBoundStore } from "../lib/client/hooks/stores/useBoundStore";
-import { AuthContextProvider } from "../lib/client/context/AuthProvider";
-import { ExpandedKeysProvider } from "../lib/client/context/ExpandedKeysProvider";
-
 const ExplorerBox = styled("div")({
   display: "flex",
   flexDirection: "row",
@@ -39,20 +38,18 @@ const Explorer: NextPage = () => {
   }, []);
 
   return (
-    <AuthContextProvider>
-      <FileSelectionProvider>
-        <ExpandedKeysProvider>
-          <ExplorerBox>
-            {workspace.rootId && (
-              <>
-                <StyledFileTree />
-                <StyledFileViewer />
-              </>
-            )}
-          </ExplorerBox>
-        </ExpandedKeysProvider>
-      </FileSelectionProvider>
-    </AuthContextProvider>
+    <FileSelectionProvider>
+      <ExpandedKeysProvider>
+        <ExplorerBox>
+          {workspace.rootId && (
+            <>
+              <StyledFileTree />
+              <StyledFileViewer />
+            </>
+          )}
+        </ExplorerBox>
+      </ExpandedKeysProvider>
+    </FileSelectionProvider>
   );
 };
 

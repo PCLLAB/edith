@@ -2,21 +2,22 @@ import { useRouter } from "next/router";
 import { createContext, ReactNode, useEffect, useState } from "react";
 
 import { UsersAuthGetSignature } from "../../../pages/api/v2/users/auth";
+import { UserJson } from "../../common/types/models";
 import { fetcher } from "../fetcher";
 
 interface AuthInfo {
-  userId: string | null;
+  user: UserJson | null;
 }
 
 export const AuthContext = createContext<AuthInfo>({
-  userId: null,
+  user: null,
 });
 
 type Props = {
   children: ReactNode;
 };
 export const AuthContextProvider = ({ children }: Props) => {
-  const [userId, setUserId] = useState<AuthInfo["userId"]>(null);
+  const [user, setUser] = useState<AuthInfo["user"]>(null);
 
   const router = useRouter();
 
@@ -25,19 +26,17 @@ export const AuthContextProvider = ({ children }: Props) => {
       url: "/api/v2/users/auth",
       method: "GET",
     })
-      .then((user) => setUserId(user._id))
+      .then((user) => {
+        setUser(user);
+      })
       .catch((e) => {
         if (e.status === 401) router.push("/login");
       });
   }, []);
 
   return (
-    <AuthContext.Provider
-      value={{
-        userId,
-      }}
-    >
-      {userId && children}
+    <AuthContext.Provider value={{ user }}>
+      {user && children}
     </AuthContext.Provider>
   );
 };

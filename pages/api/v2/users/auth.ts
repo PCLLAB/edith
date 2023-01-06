@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import { UnauthorizedError } from "express-jwt";
 import jwt from "jsonwebtoken";
 import { JWT_COOKIE_KEY } from "../../../../lib/common/constants";
 import {
@@ -64,7 +65,9 @@ const post: TypedApiHandler<UsersAuthPostSignature> = async (req, res) => {
   const passwordMatch = await bcrypt.compare(password, passwordHash);
 
   if (!passwordMatch) {
-    throw "Wrong Email or Password";
+    throw new UnauthorizedError("credentials_required", {
+      message: "Wrong email or password.",
+    });
   }
 
   const token = jwt.sign(user, config.JWT_SECRET, {

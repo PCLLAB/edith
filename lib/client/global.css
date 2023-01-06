@@ -1,0 +1,5 @@
+/* This allows the AppBar + Page to exactly fill the viewport height without an extra wrapper div*/
+#__next {
+  display: flex;
+  flex-direction: column;
+}

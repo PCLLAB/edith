@@ -32,7 +32,7 @@ export const DirectoryViewer = ({ directoryId }: Props) => {
     .map((exp) => ({
       id: exp._id,
       name: exp.name,
-      updatedAt: new Date(exp.updatedAt).toLocaleString(),
+      updatedAt: new Date(exp.updatedAt),
     }));
 
   return (
@@ -62,7 +62,12 @@ export const DirectoryViewer = ({ directoryId }: Props) => {
         <DataGrid
           columns={[
             { field: "name", headerName: "Experiment", flex: 2 },
-            { field: "updatedAt", headerName: "Last Updated", flex: 1 },
+            {
+              field: "updatedAt",
+              type: "dateTime",
+              headerName: "Last Updated",
+              flex: 1,
+            },
           ]}
           rows={childrenExps}
           onRowClick={(row) => {
