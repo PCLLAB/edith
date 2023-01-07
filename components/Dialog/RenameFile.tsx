@@ -1,13 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-import {
-  Box,
-  Button,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  TextField,
-} from "@mui/material";
+import { Button, DialogActions, DialogContent, TextField } from "@mui/material";
 
 import { FileType } from "../../lib/client/context/FileSelectionProvider";
 import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";

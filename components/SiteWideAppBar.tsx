@@ -55,7 +55,11 @@ export const SiteWideAppBar = () => {
             <IconButton onClick={onToggleMenu}>
               <Avatar
                 ref={anchorRef}
-                sx={{ bgcolor: "secondary.main", width: 32, height: 32 }}
+                sx={{
+                  bgcolor: "secondary.main",
+                  width: 32,
+                  height: 32,
+                }}
               >
                 {initials}
               </Avatar>

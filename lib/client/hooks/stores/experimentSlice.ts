@@ -77,12 +77,9 @@ export const createExperimentSlice: StateCreator<ExperimentSlice> = (
     });
   },
   deleteExperiment: async (id) => {
-    const original = get().experimentMap[id];
+    const { [id]: original, ...rest } = get().experimentMap;
 
-    set((state) => {
-      const { [id]: _, ...rest } = state.experimentMap;
-      return { experimentMap: rest };
-    });
+    set({ experimentMap: rest });
 
     try {
       await fetcher<ExperimentsIdDeleteSignature>({

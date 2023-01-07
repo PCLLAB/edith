@@ -1,14 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 
 import {
-  Box,
   Button,
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle,
   TextField,
-  Typography,
 } from "@mui/material";
 
 import { FileType } from "../../lib/client/context/FileSelectionProvider";
@@ -47,9 +44,10 @@ export const DeleteFileDialog = ({ type, onClose, id }: Props) => {
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const directories = useBoundStore((state) => state.directoryMap);
-  const experiments = useBoundStore((state) => state.experimentMap);
-  const file = type === FileType.DIR ? directories[id] : experiments[id];
+  const dirMap = useBoundStore((state) => state.directoryMap);
+  const expMap = useBoundStore((state) => state.experimentMap);
+
+  const file = type === FileType.DIR ? dirMap[id] : expMap[id];
 
   const [fileName, setFileName] = useState("");
 

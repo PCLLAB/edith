@@ -24,7 +24,7 @@ const get: TypedApiHandlerWithAuth<UsersGetSignature> = async (req, res) => {
 export type UsersPostSignature = {
   url: typeof ENDPOINT;
   method: "POST";
-  body: { email: string; password: string; name: string; superuser: boolean };
+  body: { email: string; superuser: boolean };
   data: UserJson;
 };
 
@@ -32,22 +32,18 @@ const post: TypedApiHandlerWithAuth<UsersPostSignature> = async (req, res) => {
   if (!req.auth.superuser) {
     throw new UserPermissionError();
   }
-  const { email, password, name, superuser } = req.body;
+  const { email, superuser } = req.body;
 
-  if (!email || !password || !name) {
+  if (email == null || superuser == null) {
     throw new MissingArgsError(
       // @ts-ignore: filter out falsy
-      [!email && "email", !password && "password", !name && "name"].filter(
-        Boolean
-      )
+      [!email && "email", !superuser && "superuser"].filter(Boolean)
     );
   }
 
   const NEW_RAW_USER_WITH_PASSWORD = new User({
     email,
-    password,
-    name,
-    superuser: !!superuser,
+    superuser,
   });
 
   await NEW_RAW_USER_WITH_PASSWORD.save();

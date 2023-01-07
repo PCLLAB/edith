@@ -54,6 +54,13 @@ export type TreeItemData = {
   fileType: FileType;
   name: string;
 };
+// skip 0, because its falsey
+enum Dialogs {
+  CREATE_EXP = 1,
+  CREATE_DIR,
+  RENAME,
+  DELETE,
+}
 
 export const FileTree = ({ className }: Props) => {
   const directories = useBoundStore((state) => state.directoryMap);
@@ -75,13 +82,6 @@ export const FileTree = ({ className }: Props) => {
     getDirectoryContent(workspace.rootId);
   }, [workspace]);
 
-  // skip 0, because its falsey
-  enum Dialogs {
-    CREATE_EXP = 1,
-    CREATE_DIR,
-    RENAME,
-    DELETE,
-  }
   const [dialog, setDialog] = useState<Dialogs | null>(null);
   const onCloseDialog = () => setDialog(null);
 

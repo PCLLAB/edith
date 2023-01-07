@@ -1,6 +1,10 @@
 import { StateCreator } from "zustand";
-import { UsersGetSignature } from "../../../../pages/api/v2/users";
 import {
+  UsersGetSignature,
+  UsersPostSignature,
+} from "../../../../pages/api/v2/users";
+import {
+  UsersIdDeleteSignature,
   UsersIdGetSignature,
   UsersIdPutSignature,
 } from "../../../../pages/api/v2/users/[id]";
@@ -13,12 +17,40 @@ export type UserSlice = {
     id: string,
     update: UsersIdPutSignature["body"]
   ) => Promise<void>;
+  createUser: (body: UsersPostSignature["body"]) => Promise<UserJson>;
+  deleteUser: (id: string) => Promise<void>;
   getUser: (id: string) => Promise<void>;
   getUsers: () => Promise<void>;
 };
 
 export const createUserSlice: StateCreator<UserSlice> = (set, get) => ({
   userMap: {},
+  deleteUser: async (id) => {
+    const { [id]: original, ...rest } = get().userMap;
+
+    set({ userMap: rest });
+
+    try {
+      await fetcher<UsersIdDeleteSignature>({
+        url: "/api/v2/users/[id]",
+        method: "DELETE",
+        query: {
+          id,
+        },
+      });
+    } catch {
+      set((state) => ({ userMap: { ...state.userMap, [id]: original } }));
+    }
+  },
+  createUser: async (body) => {
+    const user = await fetcher<UsersPostSignature>({
+      body,
+      url: "/api/v2/users",
+      method: "POST",
+    });
+    set((state) => ({ userMap: { ...state.userMap, [user._id]: user } }));
+    return user;
+  },
   updateUser: async (id, update) => {
     const original = get().userMap[id];
 

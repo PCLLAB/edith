@@ -50,29 +50,18 @@ describe(`POST ${ENDPOINT}`, () => {
     expect(res.statusCode).toBe(403);
   });
 
-  it("returns 400 for if missing email or email or password", async () => {
+  it("returns 400 if missing email or superuser", async () => {
+    const email = "bendover@hotmail.com";
     const { req, res } = mockReqRes({ token: superToken });
 
-    await handler(req, res);
-    expect(res.statusCode).toBe(400);
-
     req.body = {
-      name: "bendover",
-      email: "bendover@hotmail.com",
+      email,
     };
     await handler(req, res);
     expect(res.statusCode).toBe(400);
 
     req.body = {
-      email: "bendover@hotmail.com",
-      password: "bendoveriscool",
-    };
-    await handler(req, res);
-    expect(res.statusCode).toBe(400);
-
-    req.body = {
-      name: "bendover",
-      password: "bendoveriscool",
+      superuser: true,
     };
     await handler(req, res);
     expect(res.statusCode).toBe(400);
@@ -80,13 +69,11 @@ describe(`POST ${ENDPOINT}`, () => {
 
   it("returns 200 and created user", async () => {
     const email = "bendover@hotmail.com";
-    const name = "bendover";
 
     const { req, res } = mockReqRes({
       body: {
-        name,
         email,
-        password: "bendoveriscool",
+        superuser: true,
       },
       token: superToken,
     });
@@ -94,7 +81,7 @@ describe(`POST ${ENDPOINT}`, () => {
     await handler(req, res);
 
     expect(res.statusCode).toBe(200);
-    expect(res._getJSONData()).toMatchObject({ name, email });
+    expect(res._getJSONData()).toMatchObject({ email });
     expect(res._getJSONData().password).toBeUndefined();
   });
 });

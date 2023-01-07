@@ -14,7 +14,7 @@ const UserSchema = new mongoose.Schema<RawUnsafeUserDoc>(
     },
     password: {
       type: String,
-      required: true,
+      // required: true,
       // exclude password from results by default
       // must specify to include e.g.
       // Users.findOne().select("+password")
@@ -22,7 +22,6 @@ const UserSchema = new mongoose.Schema<RawUnsafeUserDoc>(
     },
     name: {
       type: String,
-      required: true,
       trim: true,
     },
     superuser: {
