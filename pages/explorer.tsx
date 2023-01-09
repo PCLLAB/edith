@@ -10,6 +10,7 @@ import { WorkspaceContext } from "../lib/client/context/WorkspaceProvider";
 import { useBoundStore } from "../lib/client/hooks/stores/useBoundStore";
 
 import type { NextPage } from "next";
+
 const ExplorerBox = styled("div")({
   display: "flex",
   flexDirection: "row",
