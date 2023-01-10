@@ -35,6 +35,8 @@ import {
   CreateFileDialog,
 } from "../Dialog";
 import { ExpandedKeysContext } from "../../lib/client/context/ExpandedKeysProvider";
+import { useDialogContext } from "../../lib/client/context/DialogContext";
+import { ExplorerDialog } from "../../pages/explorer";
 
 const TreeBase = styled(Paper)({
   height: "100%",
@@ -54,13 +56,6 @@ export type TreeItemData = {
   fileType: FileType;
   name: string;
 };
-// skip 0, because its falsey
-enum Dialogs {
-  CREATE_EXP = 1,
-  CREATE_DIR,
-  RENAME,
-  DELETE,
-}
 
 export const FileTree = ({ className }: Props) => {
   const directories = useBoundStore((state) => state.directoryMap);
@@ -82,11 +77,10 @@ export const FileTree = ({ className }: Props) => {
     getDirectoryContent(workspace.rootId);
   }, [workspace]);
 
-  const [dialog, setDialog] = useState<Dialogs | null>(null);
-  const onCloseDialog = () => setDialog(null);
-
   const { fileSelection, setFileSelection } = useContext(FileSelectionContext);
   const { expandedKeys, setExpandedKeys } = useContext(ExpandedKeysContext);
+
+  const { openDialog } = useDialogContext<ExplorerDialog>();
 
   const newFilePrefixPath = fileSelection
     ? fileSelection.type === FileType.DIR
@@ -98,8 +92,18 @@ export const FileTree = ({ className }: Props) => {
     <>
       <TreeBase elevation={0} className={className}>
         <FileActionBar
-          onNewDirectory={() => setDialog(Dialogs.CREATE_DIR)}
-          onNewExperiment={() => setDialog(Dialogs.CREATE_EXP)}
+          onNewDirectory={() =>
+            openDialog("CREATE", {
+              fileType: FileType.DIR,
+              prefixPath: newFilePrefixPath,
+            })
+          }
+          onNewExperiment={() =>
+            openDialog("CREATE", {
+              fileType: FileType.EXP,
+              prefixPath: newFilePrefixPath,
+            })
+          }
           onRefresh={onRefresh}
         />
         <ContextMenu
@@ -107,7 +111,10 @@ export const FileTree = ({ className }: Props) => {
             <>
               <MenuItem
                 onClick={() => {
-                  setDialog(Dialogs.RENAME);
+                  openDialog("RENAME", {
+                    fileType: fileSelection!.type,
+                    id: fileSelection!.id,
+                  });
                   onClose();
                 }}
               >
@@ -118,7 +125,10 @@ export const FileTree = ({ className }: Props) => {
               </MenuItem>
               <MenuItem
                 onClick={() => {
-                  setDialog(Dialogs.DELETE);
+                  openDialog("DELETE", {
+                    fileType: fileSelection!.type,
+                    id: fileSelection!.id,
+                  });
                   onClose();
                 }}
               >
@@ -130,7 +140,10 @@ export const FileTree = ({ className }: Props) => {
               <Divider />
               <MenuItem
                 onClick={() => {
-                  setDialog(Dialogs.CREATE_DIR);
+                  openDialog("CREATE", {
+                    fileType: FileType.DIR,
+                    prefixPath: newFilePrefixPath,
+                  });
                   onClose();
                 }}
               >
@@ -141,7 +154,10 @@ export const FileTree = ({ className }: Props) => {
               </MenuItem>
               <MenuItem
                 onClick={() => {
-                  setDialog(Dialogs.CREATE_EXP);
+                  openDialog("CREATE", {
+                    fileType: FileType.EXP,
+                    prefixPath: newFilePrefixPath,
+                  });
                   onClose();
                 }}
               >
@@ -241,7 +257,10 @@ export const FileTree = ({ className }: Props) => {
             <>
               <MenuItem
                 onClick={() => {
-                  setDialog(Dialogs.CREATE_DIR);
+                  openDialog("CREATE", {
+                    fileType: FileType.DIR,
+                    prefixPath: newFilePrefixPath,
+                  });
                   onClose();
                 }}
               >
@@ -252,7 +271,10 @@ export const FileTree = ({ className }: Props) => {
               </MenuItem>
               <MenuItem
                 onClick={() => {
-                  setDialog(Dialogs.CREATE_EXP);
+                  openDialog("CREATE", {
+                    fileType: FileType.EXP,
+                    prefixPath: newFilePrefixPath,
+                  });
                   onClose();
                 }}
               >
@@ -265,38 +287,6 @@ export const FileTree = ({ className }: Props) => {
           )}
         />
       </TreeBase>
-      {/*
-      //@ts-ignore: enums are numbers */}
-      <Dialog open={!!dialog} onClose={onCloseDialog} fullWidth maxWidth="sm">
-        {fileSelection && dialog === Dialogs.RENAME && (
-          <RenameFileDialog
-            onClose={onCloseDialog}
-            id={fileSelection.id}
-            type={fileSelection.type}
-          />
-        )}
-        {fileSelection && dialog === Dialogs.DELETE && (
-          <DeleteFileDialog
-            onClose={onCloseDialog}
-            id={fileSelection.id}
-            type={fileSelection.type}
-          />
-        )}
-        {dialog === Dialogs.CREATE_EXP && (
-          <CreateFileDialog
-            onClose={onCloseDialog}
-            prefixPath={newFilePrefixPath}
-            type={FileType.EXP}
-          />
-        )}
-        {dialog === Dialogs.CREATE_DIR && (
-          <CreateFileDialog
-            onClose={onCloseDialog}
-            prefixPath={newFilePrefixPath}
-            type={FileType.DIR}
-          />
-        )}
-      </Dialog>
     </>
   );
 };

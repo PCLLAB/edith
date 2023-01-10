@@ -5,15 +5,15 @@ import { DeleteUserDialog, InviteUserDialog } from "../components/Dialog";
 import { SiteWideAppBar } from "../components/SiteWideAppBar";
 import { AuthContext } from "../lib/client/context/AuthProvider";
 import {
-  CreateDialogType,
+  DialogType,
   DialogContextProvider,
 } from "../lib/client/context/DialogContext";
 
 import type { NextPage } from "next";
 
-export type AdminDialog = CreateDialogType<typeof AdminRenderMap>;
+export type AdminDialog = DialogType<typeof AdminDialogRenderMap>;
 
-const AdminRenderMap = {
+const AdminDialogRenderMap = {
   Invite: InviteUserDialog,
   Delete: DeleteUserDialog,
 };
@@ -32,7 +32,7 @@ const Admin: NextPage = () => {
 
   return (
     <>
-      <DialogContextProvider<AdminDialog> rendererMap={AdminRenderMap}>
+      <DialogContextProvider rendererMap={AdminDialogRenderMap}>
         <SiteWideAppBar />
         <UserManagement />
       </DialogContextProvider>

@@ -11,6 +11,15 @@ import { useBoundStore } from "../lib/client/hooks/stores/useBoundStore";
 
 import type { NextPage } from "next";
 import { SiteWideAppBar } from "../components/SiteWideAppBar";
+import {
+  DialogType,
+  DialogContextProvider,
+} from "../lib/client/context/DialogContext";
+import {
+  CreateFileDialog,
+  DeleteFileDialog,
+  RenameFileDialog,
+} from "../components/Dialog";
 
 const ExplorerBox = styled("div")({
   display: "flex",
@@ -26,6 +35,14 @@ const StyledFileViewer = styled(FileViewer)((props) => ({
   margin: props.theme.spacing(3),
 }));
 
+export type ExplorerDialog = DialogType<typeof ExplorerDialogRenderMap>;
+
+const ExplorerDialogRenderMap = {
+  RENAME: RenameFileDialog,
+  DELETE: DeleteFileDialog,
+  CREATE: CreateFileDialog,
+};
+
 const Explorer: NextPage = () => {
   const { workspace, setWorkspace } = useContext(WorkspaceContext);
 
@@ -40,19 +57,21 @@ const Explorer: NextPage = () => {
   }, []);
 
   return (
-    <FileSelectionProvider>
-      <ExpandedKeysProvider>
-        <SiteWideAppBar />
-        <ExplorerBox>
-          {workspace.rootId && (
-            <>
-              <StyledFileTree />
-              <StyledFileViewer />
-            </>
-          )}
-        </ExplorerBox>
-      </ExpandedKeysProvider>
-    </FileSelectionProvider>
+    <DialogContextProvider rendererMap={ExplorerDialogRenderMap}>
+      <FileSelectionProvider>
+        <ExpandedKeysProvider>
+          <SiteWideAppBar />
+          <ExplorerBox>
+            {workspace.rootId && (
+              <>
+                <StyledFileTree />
+                <StyledFileViewer />
+              </>
+            )}
+          </ExplorerBox>
+        </ExpandedKeysProvider>
+      </FileSelectionProvider>
+    </DialogContextProvider>
   );
 };
 

@@ -19,7 +19,7 @@ import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
 import { CodeBlock } from "../Code/Code";
 import { DialogTitleWithClose } from "./DialogTitleWithClose";
 
-export type InviteUserProps = {
+type InviteUserProps = {
   id?: string;
   onClose: () => void;
 };

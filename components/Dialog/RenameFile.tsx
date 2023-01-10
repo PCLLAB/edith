@@ -14,12 +14,12 @@ const DialogInfo = {
 type Props = {
   id: string;
   onClose: () => void;
-  type: FileType;
+  fileType: FileType;
 };
 
-export const RenameFileDialog = ({ type, onClose, id }: Props) => {
+export const RenameFileDialog = ({ fileType, onClose, id }: Props) => {
   const updateFile = useBoundStore((state) => {
-    switch (type) {
+    switch (fileType) {
       case FileType.DIR:
         return state.updateDirectory;
       case FileType.EXP:
@@ -41,14 +41,14 @@ export const RenameFileDialog = ({ type, onClose, id }: Props) => {
 
   const directories = useBoundStore((state) => state.directoryMap);
   const experiments = useBoundStore((state) => state.experimentMap);
-  const file = type === FileType.DIR ? directories[id] : experiments[id];
+  const file = fileType === FileType.DIR ? directories[id] : experiments[id];
 
   const [fileName, setFileName] = useState(file.name);
 
   return (
     <>
       <DialogTitleWithClose onClose={onClose}>
-        Rename {DialogInfo[type].title}
+        Rename {DialogInfo[fileType].title}
       </DialogTitleWithClose>
       <DialogContent>
         <TextField

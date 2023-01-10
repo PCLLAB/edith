@@ -22,14 +22,14 @@ const DialogInfo = {
 type Props = {
   onClose: () => void;
   prefixPath: string;
-  type: FileType;
+  fileType: FileType;
 };
 
-export const CreateFileDialog = ({ type, onClose, prefixPath }: Props) => {
+export const CreateFileDialog = ({ fileType, onClose, prefixPath }: Props) => {
   const [fileName, setFileName] = useState("");
 
   const createFile = useBoundStore((state) => {
-    switch (type) {
+    switch (fileType) {
       case FileType.DIR:
         return state.createDirectory;
       case FileType.EXP:
@@ -65,7 +65,7 @@ export const CreateFileDialog = ({ type, onClose, prefixPath }: Props) => {
   return (
     <>
       <DialogTitleWithClose onClose={onClose}>
-        Create {DialogInfo[type].title}
+        Create {DialogInfo[fileType].title}
       </DialogTitleWithClose>
       <DialogContent sx={{ px: 2 }}>
         <TextField

@@ -20,12 +20,12 @@ const DialogInfo = {
 type Props = {
   id: string;
   onClose: () => void;
-  type: FileType;
+  fileType: FileType;
 };
 
-export const DeleteFileDialog = ({ type, onClose, id }: Props) => {
+export const DeleteFileDialog = ({ fileType, onClose, id }: Props) => {
   const deleteFile = useBoundStore((state) => {
-    switch (type) {
+    switch (fileType) {
       case FileType.DIR:
         return state.deleteDirectory;
       case FileType.EXP:
@@ -47,14 +47,14 @@ export const DeleteFileDialog = ({ type, onClose, id }: Props) => {
   const dirMap = useBoundStore((state) => state.directoryMap);
   const expMap = useBoundStore((state) => state.experimentMap);
 
-  const file = type === FileType.DIR ? dirMap[id] : expMap[id];
+  const file = fileType === FileType.DIR ? dirMap[id] : expMap[id];
 
   const [fileName, setFileName] = useState("");
 
   return (
     <>
       <DialogTitleWithClose onClose={onClose}>
-        Delete {DialogInfo[type].title}
+        Delete {DialogInfo[fileType].title}
       </DialogTitleWithClose>
       <DialogContent>
         <DialogContentText>

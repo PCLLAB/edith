@@ -9,64 +9,63 @@ import {
 
 import { Dialog, DialogProps } from "@mui/material";
 
-import { DistributiveOmit } from "../../common/tsUtils";
+export type DialogType<T extends Record<string, (props: any) => ReactNode>> = {
+  openDialog: (
+    ...args: {
+      [k in keyof T]: [
+        key: k,
+        props: Omit<Parameters<T[k]>[0], "onClose">,
+        dialogProps?: Partial<DialogProps>
+      ];
+    }[keyof T]
+  ) => void;
+  closeDialog: () => void;
+};
 
-export type CreateDialogType<
-  T extends Record<string, (props: any) => ReactNode>
-> = {
-  [k in keyof T]: Parameters<T[k]>[0] & { type: k };
-}[keyof T];
-
-type BaseDialog = {
-  type: string;
+type BaseDialogObj = {
+  key: string;
+  props: any;
   dialogProps?: Partial<DialogProps>;
 };
 
-type DialogWithInternalProps = BaseDialog & {
-  onClose: () => void;
-};
-
-type DialogContextValue<T extends BaseDialog> = {
+type BaseDialogVal = {
+  openDialog: (
+    key: any,
+    props: any,
+    dialogProps?: Partial<DialogProps>
+  ) => void;
   closeDialog: () => void;
-  openDialog: (dialog: T) => void;
-  dialog: T | null;
 };
 
-export const DialogContext = createContext<DialogContextValue<BaseDialog>>({
+type DialogContextValue<T extends BaseDialogVal> = {
+  closeDialog: T["closeDialog"];
+  openDialog: T["openDialog"];
+};
+
+export const DialogContext = createContext<DialogContextValue<BaseDialogVal>>({
   closeDialog: () => {},
   openDialog: () => {},
-  dialog: null,
 });
 
-type Props<T extends DialogWithInternalProps> = {
+type Props = {
   children: ReactNode;
-  /**
-   * T is a union of objects where each object is the intersection of
-   * the dialog props and a type field
-   *
-   * This uses the distributive conditional type to create a mapping
-   * between the type field and a component that takes the specific props
-   */
-  rendererMap: T extends any
-    ? {
-        [key in T["type"]]: (props: T) => JSX.Element;
-      }
-    : never;
+  rendererMap: Record<string, (props: any) => JSX.Element>;
 };
 
-export const DialogContextProvider = <T extends DialogWithInternalProps>({
-  children,
-  rendererMap,
-}: Props<T>) => {
-  const [dialog, setDialog] = useState<BaseDialog | null>(null);
+export const DialogContextProvider = ({ children, rendererMap }: Props) => {
+  const [dialog, setDialog] = useState<BaseDialogObj | null>(null);
   const closeDialog = () => setDialog(null);
+
+  // These types don't matter, since useDialogContext<T> will assert
+  // them to a tighter type.
+  const openDialog: BaseDialogVal["openDialog"] = (key, props, dialogProps) =>
+    setDialog({ key, props, dialogProps });
 
   return (
     <DialogContext.Provider
       value={{
         closeDialog,
-        openDialog: setDialog,
-        dialog,
+        openDialog,
       }}
     >
       {children}
@@ -74,12 +73,13 @@ export const DialogContextProvider = <T extends DialogWithInternalProps>({
       <Dialog
         open={!!dialog}
         fullWidth
-        maxWidth={dialog?.dialogProps?.maxWidth ?? "sm"}
+        maxWidth="sm"
+        {...dialog?.dialogProps}
         onClose={closeDialog}
       >
         {dialog &&
-          createElement(rendererMap[dialog.type], {
-            ...dialog,
+          createElement(rendererMap[dialog.key], {
+            ...dialog.props,
             onClose: closeDialog,
           })}
       </Dialog>
@@ -96,13 +96,9 @@ export const DialogContextProvider = <T extends DialogWithInternalProps>({
  *
  * @returns Tightly typed context values for DialogContext
  */
-export const useDialogContext = <T extends DialogWithInternalProps>() => {
-  const context = useContext<
-    DialogContextValue<DistributiveOmit<T, "onClose">>
-  >(
-    DialogContext as unknown as Context<
-      DialogContextValue<DistributiveOmit<T, "onClose">>
-    >
+export const useDialogContext = <T extends BaseDialogVal>() => {
+  const context = useContext<DialogContextValue<T>>(
+    DialogContext as unknown as Context<DialogContextValue<T>>
   );
 
   return context;

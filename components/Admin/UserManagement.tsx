@@ -25,7 +25,7 @@ export const UserManagement = () => {
 
   const users = Object.values(userMap);
 
-  const { dialog, openDialog, closeDialog } = useDialogContext<AdminDialog>();
+  const { openDialog, closeDialog } = useDialogContext<AdminDialog>();
 
   useEffect(() => {
     getUsers();
@@ -41,7 +41,7 @@ export const UserManagement = () => {
           components={{ Toolbar: CustomToolbar }}
           componentsProps={{
             toolbar: {
-              onInvite: () => openDialog({ type: "Invite", id: undefined }),
+              onInvite: () => openDialog("Invite", { id: undefined }),
             },
           }}
           getRowId={(user) => user._id}
@@ -56,9 +56,7 @@ export const UserManagement = () => {
               renderCell: (params) =>
                 !params.row.name && (
                   <Button
-                    onClick={() =>
-                      openDialog({ type: "Invite", id: params.row._id })
-                    }
+                    onClick={() => openDialog("Invite", { id: params.row._id })}
                   >
                     View Invite
                   </Button>
@@ -92,7 +90,7 @@ export const UserManagement = () => {
                   label="Delete"
                   onClick={() => {
                     console.log("delete", openDialog);
-                    openDialog({ type: "Delete", id: params.row._id });
+                    openDialog("Delete", { id: params.row._id });
                   }}
                 />,
               ],
