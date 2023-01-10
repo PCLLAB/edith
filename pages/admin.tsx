@@ -1,30 +1,25 @@
 import { useContext } from "react";
 
-import { Dialog } from "@mui/material";
-
 import { UserManagement } from "../components/Admin/UserManagement";
 import { DeleteUserDialog, InviteUserDialog } from "../components/Dialog";
+import { SiteWideAppBar } from "../components/SiteWideAppBar";
 import { AuthContext } from "../lib/client/context/AuthProvider";
 import {
+  CreateDialogType,
   DialogContextProvider,
-  useDialogContext,
 } from "../lib/client/context/DialogContext";
 
 import type { NextPage } from "next";
-export type AdminDialog =
-  | {
-      type: "Invite";
-      data?: string;
-    }
-  | {
-      type: "Delete";
-      data?: string;
-    };
+
+export type AdminDialog = CreateDialogType<typeof AdminRenderMap>;
+
+const AdminRenderMap = {
+  Invite: InviteUserDialog,
+  Delete: DeleteUserDialog,
+};
 
 const Admin: NextPage = () => {
   const { user } = useContext(AuthContext);
-
-  const { dialog, closeDialog } = useDialogContext<AdminDialog>();
 
   if (!user?.superuser) {
     return (
@@ -37,17 +32,9 @@ const Admin: NextPage = () => {
 
   return (
     <>
-      {/* Pass in all dialogs as prop, then spread dialog as props  */}
-      <DialogContextProvider>
+      <DialogContextProvider<AdminDialog> rendererMap={AdminRenderMap}>
+        <SiteWideAppBar />
         <UserManagement />
-        <Dialog open={!!dialog} fullWidth maxWidth="sm" onClose={closeDialog}>
-          {dialog?.type === "Invite" && (
-            <InviteUserDialog onClose={closeDialog} id={dialog?.data} />
-          )}
-          {dialog?.type === "Delete" && (
-            <DeleteUserDialog onClose={closeDialog} id={dialog.data!} />
-          )}
-        </Dialog>
       </DialogContextProvider>
     </>
   );

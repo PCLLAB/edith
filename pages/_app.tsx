@@ -26,7 +26,6 @@ export default function App({ Component, pageProps }: AppProps) {
       <CssBaseline />
       <AuthContextProvider>
         <WorkspaceProvider>
-          <SiteWideAppBar />
           <Component {...pageProps} />
         </WorkspaceProvider>
       </AuthContextProvider>

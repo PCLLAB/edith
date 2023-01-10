@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import DeleteIcon from "@mui/icons-material/Delete";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
@@ -12,8 +12,12 @@ import {
 } from "@mui/x-data-grid";
 
 import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
-import { useDialogContext } from "../../lib/client/context/DialogContext";
+import {
+  DialogContext,
+  useDialogContext,
+} from "../../lib/client/context/DialogContext";
 import { AdminDialog } from "../../pages/admin";
+import { InviteUserDialog, DeleteUserDialog } from "../Dialog";
 
 export const UserManagement = () => {
   const userMap = useBoundStore((state) => state.userMap);
@@ -21,7 +25,7 @@ export const UserManagement = () => {
 
   const users = Object.values(userMap);
 
-  const { openDialog } = useDialogContext<AdminDialog>();
+  const { dialog, openDialog, closeDialog } = useDialogContext<AdminDialog>();
 
   useEffect(() => {
     getUsers();
@@ -37,7 +41,7 @@ export const UserManagement = () => {
           components={{ Toolbar: CustomToolbar }}
           componentsProps={{
             toolbar: {
-              onInvite: () => openDialog({ type: "Invite", data: undefined }),
+              onInvite: () => openDialog({ type: "Invite", id: undefined }),
             },
           }}
           getRowId={(user) => user._id}
@@ -53,7 +57,7 @@ export const UserManagement = () => {
                 !params.row.name && (
                   <Button
                     onClick={() =>
-                      openDialog({ type: "Invite", data: params.row._id })
+                      openDialog({ type: "Invite", id: params.row._id })
                     }
                   >
                     View Invite
@@ -87,7 +91,8 @@ export const UserManagement = () => {
                   icon={<DeleteIcon />}
                   label="Delete"
                   onClick={() => {
-                    openDialog({ type: "Delete", data: params.row._id });
+                    console.log("delete", openDialog);
+                    openDialog({ type: "Delete", id: params.row._id });
                   }}
                 />,
               ],

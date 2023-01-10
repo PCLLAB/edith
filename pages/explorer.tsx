@@ -10,6 +10,7 @@ import { WorkspaceContext } from "../lib/client/context/WorkspaceProvider";
 import { useBoundStore } from "../lib/client/hooks/stores/useBoundStore";
 
 import type { NextPage } from "next";
+import { SiteWideAppBar } from "../components/SiteWideAppBar";
 
 const ExplorerBox = styled("div")({
   display: "flex",
@@ -41,6 +42,7 @@ const Explorer: NextPage = () => {
   return (
     <FileSelectionProvider>
       <ExpandedKeysProvider>
+        <SiteWideAppBar />
         <ExplorerBox>
           {workspace.rootId && (
             <>

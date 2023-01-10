@@ -11,14 +11,14 @@ import {
 import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
 import { DialogTitleWithClose } from "./DialogTitleWithClose";
 
-type Props = {
+export type DeleteUserProps = {
   id: string;
   onClose: () => void;
 };
 
-export const DeleteUserDialog = ({ onClose, id }: Props) => {
+export const DeleteUserDialog = ({ onClose, id }: DeleteUserProps) => {
   const deleteUser = useBoundStore((state) => state.deleteUser);
-
+  console.log("deleteuserdialog");
   const handleDelete = () => {
     deleteUser(id);
     onClose();

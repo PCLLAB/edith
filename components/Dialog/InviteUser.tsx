@@ -19,12 +19,12 @@ import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
 import { CodeBlock } from "../Code/Code";
 import { DialogTitleWithClose } from "./DialogTitleWithClose";
 
-type Props = {
-  onClose: () => void;
+export type InviteUserProps = {
   id?: string;
+  onClose: () => void;
 };
 
-export const InviteUserDialog = ({ onClose, id }: Props) => {
+export const InviteUserDialog = ({ onClose, id }: InviteUserProps) => {
   const [email, setEmail] = useState("");
   const [superuser, setSuperuser] = useState(false);
   const [loading, setLoading] = useState(false);
