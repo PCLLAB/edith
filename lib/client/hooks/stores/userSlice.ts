@@ -72,6 +72,7 @@ export const createUserSlice: StateCreator<UserSlice> = (set, get) => ({
       set((state) => ({ userMap: { ...state.userMap, [id]: user } }));
     } catch {
       set((state) => ({ userMap: { ...state.userMap, [id]: original } }));
+      throw "Failed to update user";
     }
   },
   getUser: async (id) => {
