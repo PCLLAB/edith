@@ -54,7 +54,9 @@ export const createUserSlice: StateCreator<UserSlice> = (set, get) => ({
   updateUser: async (id, update) => {
     const original = get().userMap[id];
 
-    const optimistic = { ...original, ...update };
+    const { oldPassword: _0, newPassword: _1, ...cleanUpdate } = update;
+
+    const optimistic = { ...original, ...cleanUpdate };
 
     set((state) => ({ userMap: { ...state.userMap, [id]: optimistic } }));
 

@@ -48,11 +48,9 @@ export const DeleteUserDialog = ({ onClose, id }: DeleteUserProps) => {
           error={!user.email.startsWith(userEmail)}
           onChange={(e) => setUserEmail(e.target.value)}
           autoFocus
-          margin="dense"
           id="name"
           type="text"
           fullWidth
-          variant="outlined"
         />
       </DialogContent>
       <DialogActions>

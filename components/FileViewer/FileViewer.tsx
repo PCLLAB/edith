@@ -14,20 +14,15 @@ type Props = {
 export const FileViewer = ({ sx }: Props) => {
   const { fileSelection } = useContext(FileSelectionContext);
   return (
-    <Box
-      sx={sx}
-      // sx={{
-      // overflowY: "scroll",
-      // flex: "1",
-
-      // }}
-    >
-      {fileSelection && fileSelection.type === FileType.EXP && (
-        <ExperimentViewer experimentId={fileSelection.id} />
-      )}
-      {fileSelection && fileSelection.type === FileType.DIR && (
-        <DirectoryViewer directoryId={fileSelection.id} />
-      )}
+    <Box sx={sx} overflow="scroll">
+      <>
+        {fileSelection && fileSelection.type === FileType.EXP && (
+          <ExperimentViewer experimentId={fileSelection.id} />
+        )}
+        {fileSelection && fileSelection.type === FileType.DIR && (
+          <DirectoryViewer directoryId={fileSelection.id} />
+        )}
+      </>
     </Box>
   );
 };

@@ -15,10 +15,9 @@ import {
 
 type Props = {
   experimentId: string;
-  className?: string;
 };
 
-export const ExperimentViewer = ({ experimentId, className }: Props) => {
+export const ExperimentViewer = ({ experimentId }: Props) => {
   const experiment = useBoundStore(
     (state) => state.experimentMap[experimentId]
   );
@@ -34,7 +33,8 @@ export const ExperimentViewer = ({ experimentId, className }: Props) => {
   }, [experimentId]);
 
   return (
-    <Grid container spacing={2}>
+    // Extra bottom padding is needed b/c browsers delete end padding when overflow scroll
+    <Grid container spacing={2} pb={6}>
       <Grid
         xs={12}
         display="flex"

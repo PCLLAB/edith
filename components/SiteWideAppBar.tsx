@@ -86,12 +86,14 @@ export const SiteWideAppBar = () => {
               </ListItemIcon>
               <ListItemText>Manage Account</ListItemText>
             </MenuItem>
-            <MenuItem onClick={onAdminPage}>
-              <ListItemIcon>
-                <SettingsIcon />
-              </ListItemIcon>
-              <ListItemText>Admin Panel</ListItemText>
-            </MenuItem>
+            {user?.superuser && (
+              <MenuItem onClick={onAdminPage}>
+                <ListItemIcon>
+                  <SettingsIcon />
+                </ListItemIcon>
+                <ListItemText>Admin Panel</ListItemText>
+              </MenuItem>
+            )}
             <Divider />
             <MenuItem onClick={onLogout}>
               <ListItemIcon>

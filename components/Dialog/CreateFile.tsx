@@ -73,12 +73,10 @@ export const CreateFileDialog = ({ fileType, onClose, prefixPath }: Props) => {
           value={fileName}
           onChange={(e) => setFileName(e.target.value)}
           autoFocus
-          margin="dense"
           id="name"
           label={filePath}
           type="text"
           fullWidth
-          variant="outlined"
         />
       </DialogContent>
       <DialogActions>

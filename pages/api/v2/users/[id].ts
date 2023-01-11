@@ -1,4 +1,10 @@
-import { UserJson } from "../../../../lib/common/types/models";
+import bcrypt from "bcrypt";
+import { UnauthorizedError } from "express-jwt";
+
+import {
+  RawUnsafeUserDoc,
+  UserJson,
+} from "../../../../lib/common/types/models";
 import {
   ModelNotFoundError,
   UserPermissionError,
@@ -32,7 +38,8 @@ export type UsersIdPutSignature = {
   };
   body: {
     email?: string;
-    password?: string;
+    oldPassword?: string;
+    newPassword?: string;
     name?: string;
     superuser?: boolean;
   };
@@ -46,7 +53,29 @@ const put: TypedApiHandlerWithAuth<UsersIdPutSignature> = async (req, res) => {
     throw new UserPermissionError();
   }
 
-  const { email, password, name, superuser } = req.body;
+  const { email, oldPassword, newPassword, name, superuser } = req.body;
+
+  if (!req.auth.superuser && newPassword != null) {
+    if (oldPassword == null) {
+      throw new UnauthorizedError("credentials_required", {
+        message: "Wrong password.",
+      });
+    }
+
+    const UNSAFE_USER_WITH_PASSWORD: RawUnsafeUserDoc = await User.findById(id)
+      .select("+password")
+      .lean();
+
+    const { password: passwordHash, ...user } = UNSAFE_USER_WITH_PASSWORD;
+
+    const passwordMatch = await bcrypt.compare(oldPassword, passwordHash);
+
+    if (!passwordMatch) {
+      throw new UnauthorizedError("credentials_required", {
+        message: "Wrong password.",
+      });
+    }
+  }
 
   if (superuser && !req.auth.superuser) {
     throw new UserPermissionError();
@@ -56,7 +85,7 @@ const put: TypedApiHandlerWithAuth<UsersIdPutSignature> = async (req, res) => {
     id,
     {
       email,
-      password,
+      password: newPassword,
       name,
       superuser,
     },

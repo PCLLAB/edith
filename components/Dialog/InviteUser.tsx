@@ -72,12 +72,10 @@ export const InviteUserDialog = ({ onClose, id }: InviteUserProps) => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               autoFocus
-              margin="normal"
               id="name"
               type="text"
               label="Email"
               fullWidth
-              variant="outlined"
             />
             <FormLabel component="legend">
               Enable admin role for new user?

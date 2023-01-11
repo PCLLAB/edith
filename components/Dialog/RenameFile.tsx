@@ -56,12 +56,10 @@ export const RenameFileDialog = ({ fileType, onClose, id }: Props) => {
           value={fileName}
           onChange={(e) => setFileName(e.target.value)}
           autoFocus
-          margin="dense"
           id="name"
           label={file.name}
           type="text"
           fullWidth
-          variant="outlined"
         />
       </DialogContent>
       <DialogActions>
