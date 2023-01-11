@@ -1,13 +1,7 @@
 import NewDirectoryIcon from "@mui/icons-material/CreateNewFolder";
 import NewExperimentIcon from "@mui/icons-material/NoteAdd";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { IconButton, Paper, styled, Tooltip } from "@mui/material";
-
-const ActionBar = styled(Paper)({
-  display: "flex",
-  justifyContent: "end",
-  borderRadius: 0,
-});
+import { IconButton, Paper, Tooltip } from "@mui/material";
 
 type Props = {
   onNewExperiment: () => void;
@@ -21,7 +15,10 @@ export const FileActionBar = ({
   onRefresh,
 }: Props) => {
   return (
-    <ActionBar elevation={1}>
+    <Paper
+      elevation={1}
+      sx={{ display: "flex", justifyContent: "end", borderRadius: 0 }}
+    >
       <Tooltip title="New Experiment">
         <IconButton size="small" onClick={onNewExperiment}>
           <NewExperimentIcon fontSize="inherit" />
@@ -37,6 +34,6 @@ export const FileActionBar = ({
           <RefreshIcon fontSize="inherit" />
         </IconButton>
       </Tooltip>
-    </ActionBar>
+    </Paper>
   );
 };

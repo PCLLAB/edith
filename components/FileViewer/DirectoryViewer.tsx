@@ -36,8 +36,8 @@ export const DirectoryViewer = ({ directoryId }: Props) => {
     }));
 
   return (
-    <Box p={1} display="flex" flexDirection="column" height="100%">
-      <Grid container spacing={2} m={0}>
+    <Box display="flex" flexDirection="column" height="100%" gap={2}>
+      <Grid container spacing={2}>
         <Grid
           xs={12}
           display="flex"
@@ -58,7 +58,7 @@ export const DirectoryViewer = ({ directoryId }: Props) => {
           </Card>
         </Grid>
       </Grid>
-      <Paper sx={{ flex: 1, m: 1 }}>
+      <Paper sx={{ flex: 1 }}>
         <DataGrid
           columns={[
             { field: "name", headerName: "Experiment", flex: 2 },

@@ -34,7 +34,7 @@ export const ExperimentViewer = ({ experimentId, className }: Props) => {
   }, [experimentId]);
 
   return (
-    <Grid container spacing={2} m={1}>
+    <Grid container spacing={2}>
       <Grid
         xs={12}
         display="flex"

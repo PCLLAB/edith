@@ -1,9 +1,9 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import DeleteIcon from "@mui/icons-material/Delete";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import { Button, Dialog, Paper, Typography } from "@mui/material";
-import { Box } from "@mui/system";
+import { Button, Paper, Typography } from "@mui/material";
+import { Box, SxProps } from "@mui/system";
 import {
   DataGrid,
   GridActionsCellItem,
@@ -11,15 +11,15 @@ import {
   GridToolbarQuickFilter,
 } from "@mui/x-data-grid";
 
+import { useDialogContext } from "../../lib/client/context/DialogContext";
 import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
-import {
-  DialogContext,
-  useDialogContext,
-} from "../../lib/client/context/DialogContext";
 import { AdminDialog } from "../../pages/admin";
-import { InviteUserDialog, DeleteUserDialog } from "../Dialog";
 
-export const UserManagement = () => {
+type Props = {
+  sx?: SxProps;
+};
+
+export const UserManagement = ({ sx }: Props) => {
   const userMap = useBoundStore((state) => state.userMap);
   const getUsers = useBoundStore((state) => state.getUsers);
 
@@ -32,7 +32,7 @@ export const UserManagement = () => {
   }, []);
 
   return (
-    <Box sx={{ height: "100%" }} display="flex" flexDirection="column">
+    <Box sx={sx} display="flex" flexDirection="column" height="100%" gap={2}>
       <Typography variant="h4" component="h2">
         User Management
       </Typography>

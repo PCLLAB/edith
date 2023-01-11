@@ -1,6 +1,6 @@
 import { ReactNode, useState } from "react";
 
-import { Menu } from "@mui/material";
+import { Box, Menu, SxProps } from "@mui/material";
 
 type ItemProps = {
   onClose: () => void;
@@ -8,10 +8,10 @@ type ItemProps = {
 type Props = {
   renderItems: ({ onClose }: ItemProps) => ReactNode;
   children?: ReactNode;
-  className?: string;
+  sx?: SxProps;
 };
 
-export const ContextMenu = ({ renderItems, children, className }: Props) => {
+export const ContextMenu = ({ renderItems, children, sx }: Props) => {
   const [contextMenu, setContextMenu] = useState<{
     left: number;
     top: number;
@@ -29,7 +29,7 @@ export const ContextMenu = ({ renderItems, children, className }: Props) => {
   const items = renderItems({ onClose });
 
   return (
-    <div onContextMenu={onContextMenu} className={className}>
+    <Box onContextMenu={onContextMenu} sx={sx}>
       {children}
       <Menu
         open={!!contextMenu}
@@ -40,6 +40,6 @@ export const ContextMenu = ({ renderItems, children, className }: Props) => {
         {/* @ts-ignore <Menu/> only accepts arrays, so use children */}
         {Array.isArray(items) ? items : items.props.children}
       </Menu>
-    </div>
+    </Box>
   );
 };

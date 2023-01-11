@@ -8,8 +8,16 @@ import {
   DialogType,
   DialogContextProvider,
 } from "../lib/client/context/DialogContext";
-
+import PeopleIcon from "@mui/icons-material/People";
 import type { NextPage } from "next";
+import {
+  Box,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Paper,
+} from "@mui/material";
 
 export type AdminDialog = DialogType<typeof AdminDialogRenderMap>;
 
@@ -34,7 +42,19 @@ const Admin: NextPage = () => {
     <>
       <DialogContextProvider rendererMap={AdminDialogRenderMap}>
         <SiteWideAppBar />
-        <UserManagement />
+        <Box display="flex" height="100%">
+          <Paper elevation={0} sx={{ flexBasis: 320 }}>
+            <List>
+              <ListItemButton>
+                <ListItemIcon>
+                  <PeopleIcon />
+                </ListItemIcon>
+                <ListItemText primary="User Management" />
+              </ListItemButton>
+            </List>
+          </Paper>
+          <UserManagement sx={{ flex: 1, p: 3 }} />
+        </Box>
       </DialogContextProvider>
     </>
   );

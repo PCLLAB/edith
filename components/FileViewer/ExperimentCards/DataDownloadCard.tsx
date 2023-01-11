@@ -9,7 +9,6 @@ import {
   CardActions,
   CardContent,
   ClickAwayListener,
-  Dialog,
   MenuItem,
   MenuList,
   Paper,
@@ -21,9 +20,10 @@ import { Box } from "@mui/system";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
+import { useDialogContext } from "../../../lib/client/context/DialogContext";
 import { useBoundStore } from "../../../lib/client/hooks/stores/useBoundStore";
 import { ExperimentJson } from "../../../lib/common/types/models";
-import { DataGridDialog } from "../../Dialog/DataGrid";
+import { ExplorerDialog } from "../../../pages/explorer";
 
 type CardProps = {
   exp: ExperimentJson;
@@ -43,9 +43,6 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
   const [dropOpen, setDropOpen] = useState(false);
   const onToggleDrop = () => setDropOpen((prev) => !prev);
 
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const onToggleDialog = () => setDialogOpen((prev) => !prev);
-
   const anchorRef = useRef(null);
   const [startDate, setStartDate] = useState<Dayjs | null>(dayjs("2022-04-07"));
   const [endDate, setEndDate] = useState<Dayjs | null>(dayjs());
@@ -57,6 +54,8 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
   const activityLog = expMeta?.activityLog ?? {};
 
   const numEntries = Object.keys(activityLog).length;
+
+  const { openDialog } = useDialogContext<ExplorerDialog>();
 
   return (
     <>
@@ -98,7 +97,10 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
           </Box>
         </CardContent>
         <CardActions sx={{ p: 2 }}>
-          <Button onClick={onToggleDialog} variant="contained">
+          <Button
+            onClick={() => openDialog("DATA", {}, { maxWidth: "xl" })}
+            variant="contained"
+          >
             View data
           </Button>
           <ButtonGroup
@@ -131,14 +133,6 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
           </Popper>
         </CardActions>
       </Card>
-      <Dialog
-        open={dialogOpen}
-        maxWidth="xl"
-        fullWidth
-        onClose={onToggleDialog}
-      >
-        <DataGridDialog onClose={onToggleDialog} />
-      </Dialog>
     </>
   );
 };

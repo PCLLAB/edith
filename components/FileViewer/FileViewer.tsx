@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, SxProps } from "@mui/material";
 import { useContext } from "react";
 import {
   FileSelectionContext,
@@ -7,14 +7,20 @@ import {
 import { DirectoryViewer } from "./DirectoryViewer";
 import { ExperimentViewer } from "./ExperimentViewer";
 
-export const FileViewer = () => {
+type Props = {
+  sx?: SxProps;
+};
+
+export const FileViewer = ({ sx }: Props) => {
   const { fileSelection } = useContext(FileSelectionContext);
   return (
     <Box
-      sx={{
-        overflowY: "scroll",
-        flex: "1",
-      }}
+      sx={sx}
+      // sx={{
+      // overflowY: "scroll",
+      // flex: "1",
+
+      // }}
     >
       {fileSelection && fileSelection.type === FileType.EXP && (
         <ExperimentViewer experimentId={fileSelection.id} />

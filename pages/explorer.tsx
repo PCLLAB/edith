@@ -1,46 +1,33 @@
 import { useContext, useEffect } from "react";
 
-import { styled } from "@mui/material";
+import { Box } from "@mui/material";
 
+import {
+  CreateFileDialog,
+  DataGridDialog,
+  DeleteFileDialog,
+  RenameFileDialog,
+} from "../components/Dialog";
 import { FileTree } from "../components/FileTree";
 import { FileViewer } from "../components/FileViewer";
+import { SiteWideAppBar } from "../components/SiteWideAppBar";
+import {
+  DialogContextProvider,
+  DialogType,
+} from "../lib/client/context/DialogContext";
 import { ExpandedKeysProvider } from "../lib/client/context/ExpandedKeysProvider";
 import { FileSelectionProvider } from "../lib/client/context/FileSelectionProvider";
 import { WorkspaceContext } from "../lib/client/context/WorkspaceProvider";
 import { useBoundStore } from "../lib/client/hooks/stores/useBoundStore";
 
 import type { NextPage } from "next";
-import { SiteWideAppBar } from "../components/SiteWideAppBar";
-import {
-  DialogType,
-  DialogContextProvider,
-} from "../lib/client/context/DialogContext";
-import {
-  CreateFileDialog,
-  DeleteFileDialog,
-  RenameFileDialog,
-} from "../components/Dialog";
-
-const ExplorerBox = styled("div")({
-  display: "flex",
-  flexDirection: "row",
-  height: "100%",
-});
-
-const StyledFileTree = styled(FileTree)({
-  flexBasis: 320,
-});
-const StyledFileViewer = styled(FileViewer)((props) => ({
-  flex: 1,
-  margin: props.theme.spacing(3),
-}));
-
 export type ExplorerDialog = DialogType<typeof ExplorerDialogRenderMap>;
 
 const ExplorerDialogRenderMap = {
   RENAME: RenameFileDialog,
   DELETE: DeleteFileDialog,
   CREATE: CreateFileDialog,
+  DATA: DataGridDialog,
 };
 
 const Explorer: NextPage = () => {
@@ -61,14 +48,21 @@ const Explorer: NextPage = () => {
       <FileSelectionProvider>
         <ExpandedKeysProvider>
           <SiteWideAppBar />
-          <ExplorerBox>
+          <Box display="flex" height="100%">
             {workspace.rootId && (
               <>
-                <StyledFileTree />
-                <StyledFileViewer />
+                <FileTree
+                  sx={{
+                    flexBasis: 320,
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                />
+                <FileViewer sx={{ flex: 1, m: 3 }} />
               </>
             )}
-          </ExplorerBox>
+          </Box>
         </ExpandedKeysProvider>
       </FileSelectionProvider>
     </DialogContextProvider>

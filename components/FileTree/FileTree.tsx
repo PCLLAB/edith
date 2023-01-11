@@ -1,55 +1,39 @@
 import Tree from "rc-tree";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import NewDirectoryIcon from "@mui/icons-material/CreateNewFolder";
+import DeleteIcon from "@mui/icons-material/Delete";
 import RenameIcon from "@mui/icons-material/DriveFileRenameOutline";
 import FolderIcon from "@mui/icons-material/Folder";
 import NewExperimentIcon from "@mui/icons-material/NoteAdd";
 import ScienceIcon from "@mui/icons-material/Science";
-import DeleteIcon from "@mui/icons-material/Delete";
 import {
-  Dialog,
   Divider,
   List,
   ListItemIcon,
   ListItemText,
   MenuItem,
   Paper,
-  styled,
+  SxProps,
 } from "@mui/material";
 
+import { useDialogContext } from "../../lib/client/context/DialogContext";
+import { ExpandedKeysContext } from "../../lib/client/context/ExpandedKeysProvider";
 import {
   FileSelectionContext,
   FileType,
 } from "../../lib/client/context/FileSelectionProvider";
+import { WorkspaceContext } from "../../lib/client/context/WorkspaceProvider";
+import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
 import { getIdFromPath, getPath } from "../../lib/common/utils";
+import { ExplorerDialog } from "../../pages/explorer";
 import { ContextMenu } from "../ContextMenu/ContextMenu";
 import { FileActionBar } from "./FileActionBar";
 import { buildTree } from "./utils";
-import { WorkspaceContext } from "../../lib/client/context/WorkspaceProvider";
-import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
-import {
-  RenameFileDialog,
-  DeleteFileDialog,
-  CreateFileDialog,
-} from "../Dialog";
-import { ExpandedKeysContext } from "../../lib/client/context/ExpandedKeysProvider";
-import { useDialogContext } from "../../lib/client/context/DialogContext";
-import { ExplorerDialog } from "../../pages/explorer";
-
-const TreeBase = styled(Paper)({
-  height: "100%",
-  display: "flex",
-  flexDirection: "column",
-});
-
-const FillSpaceContextMenu = styled(ContextMenu)({
-  flex: 1,
-});
 
 type Props = {
-  className?: string;
+  sx?: SxProps;
 };
 
 export type TreeItemData = {
@@ -57,7 +41,7 @@ export type TreeItemData = {
   name: string;
 };
 
-export const FileTree = ({ className }: Props) => {
+export const FileTree = ({ sx }: Props) => {
   const directories = useBoundStore((state) => state.directoryMap);
   const experiments = useBoundStore((state) => state.experimentMap);
   const getDirectoryContent = useBoundStore(
@@ -90,7 +74,7 @@ export const FileTree = ({ className }: Props) => {
 
   return (
     <>
-      <TreeBase elevation={0} className={className}>
+      <Paper elevation={0} sx={sx}>
         <FileActionBar
           onNewDirectory={() =>
             openDialog("CREATE", {
@@ -252,7 +236,8 @@ export const FileTree = ({ className }: Props) => {
             />
           </List>
         </ContextMenu>
-        <FillSpaceContextMenu
+        <ContextMenu
+          sx={{ flex: 1 }}
           renderItems={({ onClose }) => (
             <>
               <MenuItem
@@ -286,7 +271,7 @@ export const FileTree = ({ className }: Props) => {
             </>
           )}
         />
-      </TreeBase>
+      </Paper>
     </>
   );
 };
