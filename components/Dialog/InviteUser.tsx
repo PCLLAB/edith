@@ -76,6 +76,7 @@ export const InviteUserDialog = ({ onClose, id }: InviteUserProps) => {
               type="text"
               label="Email"
               fullWidth
+              margin="normal"
             />
             <FormLabel component="legend">
               Enable admin role for new user?
@@ -108,7 +109,7 @@ export const InviteUserDialog = ({ onClose, id }: InviteUserProps) => {
               below to manually send a prefilled email.
             </DialogContentText>
             <CodeBlock>
-              {`https://jarvis.psych.purdue.edu/setup/${createdUserId}`}
+              {`https://jarvis.psych.purdue.edu/setup?id=${createdUserId}`}
             </CodeBlock>
           </>
         )}
@@ -122,7 +123,7 @@ export const InviteUserDialog = ({ onClose, id }: InviteUserProps) => {
         )}
         {step === 1 && (
           <Button
-            href={`mailto:${email}?subject=Jarvis%20Account%20Setup&body=Welcome%20to%20Jarvis!%0D%0A%0D%0AUse%20the%20following%20link%20to%20create%20your%20password.%0D%0A%0D%0Ahttps%3A%2F%2Fjarvis.psych.purdue.edu%2Fsetup%2F${createdUserId}%0D%0A%0D%0AThis%20link%20can%20only%20be%20used%20to%20create%20a%20password%20once.`}
+            href={`mailto:${email}?subject=Jarvis%20Account%20Setup&body=Welcome%20to%20Jarvis!%0D%0A%0D%0AUse%20the%20following%20link%20to%20create%20your%20password.%0D%0A%0D%0Ahttps%3A%2F%2Fjarvis.psych.purdue.edu%2Fsetup%3Fid%3D${createdUserId}%0D%0A%0D%0AThis%20link%20can%20only%20be%20used%20to%20create%20a%20password%20once.`}
           >
             Open email client
           </Button>

@@ -41,14 +41,12 @@ const post: TypedApiHandlerWithAuth<UsersPostSignature> = async (req, res) => {
     );
   }
 
-  const NEW_RAW_USER_WITH_PASSWORD = new User({
+  const user = new User({
     email,
     superuser,
   });
 
-  await NEW_RAW_USER_WITH_PASSWORD.save();
-
-  const { password: _, ...user } = NEW_RAW_USER_WITH_PASSWORD.toObject();
+  await user.save();
 
   return res.json(user);
 };

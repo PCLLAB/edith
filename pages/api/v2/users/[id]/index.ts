@@ -4,15 +4,15 @@ import { UnauthorizedError } from "express-jwt";
 import {
   RawUnsafeUserDoc,
   UserJson,
-} from "../../../../lib/common/types/models";
+} from "../../../../../lib/common/types/models";
 import {
   ModelNotFoundError,
   UserPermissionError,
-} from "../../../../lib/server/errors";
+} from "../../../../../lib/server/errors";
 import initHandler, {
   TypedApiHandlerWithAuth,
-} from "../../../../lib/server/initHandler";
-import User from "../../../../models/User";
+} from "../../../../../lib/server/initHandler";
+import User from "../../../../../models/User";
 
 export const ENDPOINT = "/api/v2/users/[id]";
 

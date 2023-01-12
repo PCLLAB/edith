@@ -3,13 +3,10 @@ import { useContext } from "react";
 import { useForm } from "react-hook-form";
 
 import PersonIcon from "@mui/icons-material/Person";
+import LoadingButton from "@mui/lab/LoadingButton";
 import {
-  Button,
   Card,
-  CardActionArea,
-  CardActions,
   CardContent,
-  DialogActions,
   List,
   ListItemButton,
   ListItemIcon,
@@ -20,7 +17,6 @@ import {
 } from "@mui/material";
 import { Box } from "@mui/system";
 
-import LoadingButton from "@mui/lab/LoadingButton";
 import { SiteWideAppBar } from "../components/SiteWideAppBar";
 import { AuthContext } from "../lib/client/context/AuthProvider";
 import { DialogContextProvider } from "../lib/client/context/DialogContext";

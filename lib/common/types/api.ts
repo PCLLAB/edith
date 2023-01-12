@@ -46,6 +46,7 @@ import {
   CounterbalancesIdGetSignature,
   CounterbalancesIdPutSignature,
 } from "../../../pages/api/v2/counterbalances/[id]";
+import { UsersIdSetupPostSignature } from "../../../pages/api/v2/users/[id]/setup";
 
 /** Each unioned type represents a single URL endpoint */
 export type ApiSignature =
@@ -69,7 +70,8 @@ type UsersAuth = UsersAuthGetSignature | UsersAuthPostSignature;
 type UsersId =
   | UsersIdGetSignature
   | UsersIdPutSignature
-  | UsersIdDeleteSignature;
+  | UsersIdDeleteSignature
+  | UsersIdSetupPostSignature;
 
 type Experiments = ExperimentsGetSignature | ExperimentsPostSignature;
 type ExperimentsId =
