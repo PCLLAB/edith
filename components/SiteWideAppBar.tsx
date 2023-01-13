@@ -21,9 +21,10 @@ import {
 import { AuthContext } from "../lib/client/context/AuthProvider";
 import { useRouter } from "next/router";
 import config from "../lib/config";
+import Link from "next/link";
 
 export const SiteWideAppBar = () => {
-  const { user } = useContext(AuthContext);
+  const { me } = useContext(AuthContext);
 
   const router = useRouter();
 
@@ -31,17 +32,11 @@ export const SiteWideAppBar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const onToggleMenu = () => setMenuOpen((prev) => !prev);
 
-  const initials = user?.name
+  const initials = me?.name
     .split(" ")
     .map((w) => w.at(0))
     .join("");
 
-  const onAccountPage = () => {
-    router.push("/account");
-  };
-  const onAdminPage = () => {
-    router.push("/admin");
-  };
   const onLogout = () => {
     // TODO actually clear credentials
     router.push("/login");
@@ -81,19 +76,23 @@ export const SiteWideAppBar = () => {
               horizontal: "right",
             }}
           >
-            <MenuItem onClick={onAccountPage}>
-              <ListItemIcon>
-                <PersonIcon />
-              </ListItemIcon>
-              <ListItemText>Manage Account</ListItemText>
-            </MenuItem>
-            {user?.superuser && (
-              <MenuItem onClick={onAdminPage}>
+            <Link href="/account">
+              <MenuItem>
                 <ListItemIcon>
-                  <SettingsIcon />
+                  <PersonIcon />
                 </ListItemIcon>
-                <ListItemText>Admin Panel</ListItemText>
+                <ListItemText>Manage Account</ListItemText>
               </MenuItem>
+            </Link>
+            {me?.superuser && (
+              <Link href="/admin">
+                <MenuItem>
+                  <ListItemIcon>
+                    <SettingsIcon />
+                  </ListItemIcon>
+                  <ListItemText>Admin Panel</ListItemText>
+                </MenuItem>
+              </Link>
             )}
             <Divider />
             <MenuItem onClick={onLogout}>

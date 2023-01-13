@@ -24,9 +24,7 @@ import { useBoundStore } from "../lib/client/hooks/stores/useBoundStore";
 import { UsersIdPutSignature } from "./api/v2/users/[id]";
 
 const Account: NextPage = () => {
-  const { user: authUser } = useContext(AuthContext);
-
-  const user = useBoundStore((state) => state.userMap[authUser!._id]);
+  const { me } = useContext(AuthContext);
 
   const {
     register,
@@ -37,8 +35,8 @@ const Account: NextPage = () => {
   } = useForm({
     mode: "onBlur",
     defaultValues: {
-      name: user?.name,
-      email: user?.email,
+      name: me?.name,
+      email: me?.email,
       oldPassword: "",
       newPassword: "",
       retypePassword: "",
@@ -58,7 +56,7 @@ const Account: NextPage = () => {
       if (dirtyFields.newPassword) update.newPassword = newPassword;
 
       try {
-        await updateUser(user!._id, update);
+        await updateUser(me!._id, update);
         reset();
       } catch {}
     })();

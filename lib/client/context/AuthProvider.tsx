@@ -1,16 +1,15 @@
 import { useRouter } from "next/router";
 import { createContext, ReactNode, useEffect, useState } from "react";
 
-import { UsersAuthGetSignature } from "../../../pages/api/v2/users/auth";
 import { UserJson } from "../../common/types/models";
-import { fetcher } from "../fetcher";
+import { useBoundStore } from "../hooks/stores/useBoundStore";
 
 interface AuthInfo {
-  user: UserJson | null;
+  me: UserJson | null;
 }
 
 export const AuthContext = createContext<AuthInfo>({
-  user: null,
+  me: null,
 });
 
 type Props = {
@@ -20,7 +19,13 @@ type Props = {
 const NO_AUTH_ROUTES = ["/login", "/setup"];
 
 export const AuthContextProvider = ({ children }: Props) => {
-  const [user, setUser] = useState<AuthInfo["user"]>(null);
+  const [id, setId] = useState<string | null>(null);
+
+  // Storing id and then getting user from store causes an extra rerender
+  // however, this keeps the value of me up to date if changes are made
+  const me = useBoundStore((state) => (id ? state.userMap[id] : null));
+
+  const getMe = useBoundStore((state) => state.getMe);
 
   const router = useRouter();
 
@@ -28,22 +33,17 @@ export const AuthContextProvider = ({ children }: Props) => {
 
   useEffect(() => {
     if (noAuth) return;
-
-    fetcher<UsersAuthGetSignature>({
-      url: "/api/v2/users/auth",
-      method: "GET",
-    })
-      .then((user) => {
-        setUser(user);
-      })
+    console.log("useEffect");
+    getMe()
+      .then((me) => setId(me._id))
       .catch((e) => {
         if (e.status === 401) router.push("/login");
       });
   }, [noAuth]);
 
   return (
-    <AuthContext.Provider value={{ user }}>
-      {(user || noAuth) && children}
+    <AuthContext.Provider value={{ me }}>
+      {(me || noAuth) && children}
     </AuthContext.Provider>
   );
 };

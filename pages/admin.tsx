@@ -27,7 +27,7 @@ const AdminDialogRenderMap = {
 };
 
 const Admin: NextPage = () => {
-  const { user } = useContext(AuthContext);
+  const { me: user } = useContext(AuthContext);
 
   if (!user?.superuser) {
     return (

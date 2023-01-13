@@ -3,6 +3,7 @@ import {
   UsersGetSignature,
   UsersPostSignature,
 } from "../../../../pages/api/v2/users";
+import { UsersAuthGetSignature } from "../../../../pages/api/v2/users/auth";
 import {
   UsersIdDeleteSignature,
   UsersIdGetSignature,
@@ -20,6 +21,7 @@ export type UserSlice = {
   createUser: (body: UsersPostSignature["body"]) => Promise<UserJson>;
   deleteUser: (id: string) => Promise<void>;
   getUser: (id: string) => Promise<void>;
+  getMe: () => Promise<UserJson>;
   getUsers: () => Promise<void>;
 };
 
@@ -85,6 +87,14 @@ export const createUserSlice: StateCreator<UserSlice> = (set, get) => ({
     });
 
     set((state) => ({ userMap: { ...state.userMap, [id]: user } }));
+  },
+  getMe: async () => {
+    const me = await fetcher<UsersAuthGetSignature>({
+      url: "/api/v2/users/auth",
+      method: "GET",
+    });
+    set((state) => ({ userMap: { ...state.userMap, [me._id]: me } }));
+    return me;
   },
   getUsers: async () => {
     const users = await fetcher<UsersGetSignature>({
