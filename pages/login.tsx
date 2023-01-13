@@ -15,6 +15,7 @@ import Typography from "@mui/material/Typography";
 import { fetcher } from "../lib/client/fetcher";
 import betty from "../public/betty.png";
 import { UsersAuthPostSignature } from "./api/v2/users/auth";
+import { CardContent, Container } from "@mui/material";
 
 const UNAUTHORIZED_ALERT = "Incorrect email or password.";
 const SERVER_ERROR_ALERT = "Server error occured. 😓";
@@ -28,10 +29,11 @@ const Login: NextPage = () => {
   const {
     register,
     handleSubmit,
+    setFocus,
     formState: { errors },
   } = useForm<UsersAuthPostSignature["body"]>();
 
-  const onSubmit = useCallback(
+  const onSubmit = handleSubmit(
     async (formData: UsersAuthPostSignature["body"]) => {
       setLoading(true);
 
@@ -42,7 +44,7 @@ const Login: NextPage = () => {
           body: formData,
         });
         console.debug("login data", data);
-        router.push("/explorer");
+        // router.push("/explorer");
       } catch (e: any) {
         setLoading(false);
 
@@ -53,8 +55,7 @@ const Login: NextPage = () => {
 
         setShowAlert(SERVER_ERROR_ALERT);
       }
-    },
-    []
+    }
   );
 
   const onRequestAccess = useCallback(() => {
@@ -67,16 +68,21 @@ const Login: NextPage = () => {
     router.prefetch("/explorer");
   }, []);
 
+  useEffect(() => {
+    setFocus("email");
+  }, [setFocus]);
+
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      margin="auto"
-      alignItems="stretch"
-      textAlign="center"
-      maxWidth={320}
-      gap={2}
-      mt={8}
+    <Container
+      maxWidth="xs"
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "stretch",
+        textAlign: "center",
+        gap: 2,
+        mt: 8,
+      }}
     >
       <Box>
         <Box
@@ -97,49 +103,37 @@ const Login: NextPage = () => {
           {showAlert}
         </Alert>
       )}
-      <Card
-        component="form"
-        onSubmit={handleSubmit(onSubmit)}
-        variant="outlined"
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 2,
-          px: 2,
-          py: 3,
-          borderRadius: 2,
-        }}
-      >
-        <TextField
-          label="Email"
-          variant="outlined"
-          size="small"
-          error={!!errors.email}
-          {...register("email", { required: true, pattern: /^.+@.+$/ })}
-        />
-        <TextField
-          label="Password"
-          type="password"
-          variant="outlined"
-          size="small"
-          error={!!errors.password}
-          {...register("password", { required: true })}
-        />
-        <LoadingButton
-          variant="contained"
-          type="submit"
-          sx={{ textTransform: "none" }}
-          loading={loading}
-        >
-          Login
-        </LoadingButton>
+      <Card component="form" onSubmit={onSubmit} variant="outlined">
+        <CardContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <TextField
+            label="Email"
+            variant="outlined"
+            error={!!errors.email}
+            {...register("email", { required: true, pattern: /^.+@.+$/ })}
+          />
+          <TextField
+            label="Password"
+            type="password"
+            variant="outlined"
+            error={!!errors.password}
+            {...register("password", { required: true })}
+          />
+          <LoadingButton
+            variant="contained"
+            type="submit"
+            sx={{ textTransform: "none" }}
+            loading={loading}
+          >
+            Login
+          </LoadingButton>
+        </CardContent>
       </Card>
       <Box>
         <Button variant="text" onClick={onRequestAccess}>
           Request Access
         </Button>
       </Box>
-    </Box>
+    </Container>
   );
 };
 

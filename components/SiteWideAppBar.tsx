@@ -20,6 +20,7 @@ import {
 
 import { AuthContext } from "../lib/client/context/AuthProvider";
 import { useRouter } from "next/router";
+import config from "../lib/config";
 
 export const SiteWideAppBar = () => {
   const { user } = useContext(AuthContext);
@@ -49,7 +50,7 @@ export const SiteWideAppBar = () => {
   return (
     <AppBar position="static">
       <Toolbar variant="dense" sx={{ justifyContent: "space-between" }}>
-        <Typography>Jarvis</Typography>
+        <Typography>{config.NEXT_PUBLIC_SITE_NAME}</Typography>
         <Box>
           <Tooltip title="Settings">
             <IconButton onClick={onToggleMenu}>

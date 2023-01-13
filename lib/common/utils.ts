@@ -25,3 +25,15 @@ export const isExperiment = (file: DirectoryFile): file is ExperimentJson => {
 export const getLocalDayISO = (date: Date, timezone: string) => {
   return DateTime.fromJSDate(date).setZone(timezone).endOf("day").toISO();
 };
+
+/**
+ *
+ * @param to recipient email address
+ * @param subject subject
+ * @param body newlines must be `\r\n`
+ * @returns mailto link
+ */
+export const createMailtoLink = (to: string, subject: string, body: string) =>
+  `mailto:${to}?subject=${encodeURIComponent(
+    subject
+  )}&body=${encodeURIComponent(body)}`;

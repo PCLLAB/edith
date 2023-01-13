@@ -1,25 +1,24 @@
 import { GetServerSideProps, NextPage } from "next";
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 
-import PersonIcon from "@mui/icons-material/Person";
 import LoadingButton from "@mui/lab/LoadingButton";
 import {
+  Alert,
+  AlertTitle,
+  Box,
   Card,
   CardContent,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Paper,
+  Container,
   TextField,
   Typography,
 } from "@mui/material";
-import { Box } from "@mui/system";
 
 import { fetcher } from "../lib/client/fetcher";
 import { UserJson } from "../lib/common/types/models";
 import User from "../models/User";
 import { UsersIdSetupPostSignature } from "./api/v2/users/[id]/setup";
+import { useEffect } from "react";
 
 type Props = {
   user: UserJson | null;
@@ -57,6 +56,7 @@ const Setup: NextPage<Props> = ({ user }) => {
     register,
     handleSubmit,
     getValues,
+    setFocus,
     formState: { isDirty, isValid, errors, isSubmitting, isSubmitted },
   } = useForm({
     mode: "onBlur",
@@ -68,116 +68,124 @@ const Setup: NextPage<Props> = ({ user }) => {
     },
   });
 
-  const onSubmit = () => {
-    handleSubmit(async ({ name, newPassword: password }) => {
-      try {
-        await fetcher<UsersIdSetupPostSignature>({
-          body: {
-            name,
-            password,
-          },
-          method: "POST",
-          url: "/api/v2/users/[id]/setup",
-          query: {
-            id: user!._id,
-          },
-        });
-        // TODO reroute to login ?
-        // reset();
-      } catch {}
-    })();
-  };
+  const onSubmit = handleSubmit(async ({ name, newPassword: password }) => {
+    try {
+      await fetcher<UsersIdSetupPostSignature>({
+        body: {
+          name,
+          password,
+        },
+        method: "POST",
+        url: "/api/v2/users/[id]/setup",
+        query: {
+          id: user!._id,
+        },
+      });
+      // TODO reroute to login ?
+    } catch {}
+  });
+
+  useEffect(() => {
+    setFocus("name");
+  }, [setFocus]);
 
   if (!user) {
-    return null;
+    return (
+      <Typography>
+        This link is invalid or the account has already been setup. If you
+        believe this is an error, contact an admin.
+      </Typography>
+    );
   }
 
   return (
     <>
-      <Box display="flex" height="100%">
-        <Paper elevation={0} sx={{ flexBasis: 320 }}>
-          <List>
-            <ListItemButton>
-              <ListItemIcon>
-                <PersonIcon />
-              </ListItemIcon>
-              <ListItemText primary="Profile" />
-            </ListItemButton>
-          </List>
-        </Paper>
-        <Box
-          flex={1}
-          p={3}
-          display="flex"
-          flexDirection="column"
-          height="100%"
-          gap={2}
-        >
-          <Card>
-            <CardContent>
-              <TextField
-                label="Email"
-                fullWidth
-                sx={{ mb: 2 }}
-                {...register("email")}
-                disabled
-              />
-              <Typography variant="h5" component="h2">
-                Profile
-              </Typography>
-              <TextField
-                label="Name"
-                fullWidth
-                sx={{ mb: 2 }}
-                margin="normal"
-                {...register("name", { required: "A name is required" })}
-              />
+      <Container
+        maxWidth="xs"
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+          mt: 8,
+        }}
+      >
+        <Typography variant="h5" component="h1">
+          Account Setup
+        </Typography>
+        <Card component="form" onSubmit={onSubmit} variant="outlined">
+          <CardContent
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+            }}
+          >
+            <TextField
+              label="Email"
+              fullWidth
+              {...register("email")}
+              disabled
+              sx={{
+                mt: 1,
+                mb: 2,
+              }}
+            />
+            <TextField
+              autoFocus
+              label="Name"
+              fullWidth
+              {...register("name", { required: "A name is required" })}
+              disabled={isSubmitted}
+            />
 
-              <Typography variant="h5" component="h2">
-                Setup Password
-              </Typography>
-              <TextField
-                type="password"
-                label="New password"
-                fullWidth
-                sx={{ mb: 2 }}
-                {...register("newPassword", {
-                  required: "A password is required",
-                  minLength: {
-                    value: 4,
-                    message: "Password must be at least 4 characters.",
-                  },
-                })}
-                error={!!errors.newPassword}
-                helperText={errors.newPassword?.message}
-              />
-              <TextField
-                type="password"
-                label="Retype new password"
-                fullWidth
-                sx={{ mb: 2 }}
-                {...register("retypePassword", {
-                  validate: (v) =>
-                    v === getValues("newPassword") ||
-                    "Doesn't match new password",
-                })}
-                error={!!errors.retypePassword}
-                helperText={errors.retypePassword?.message}
-              />
+            <TextField
+              type="password"
+              label="New password"
+              fullWidth
+              {...register("newPassword", {
+                required: "A password is required",
+                minLength: {
+                  value: 4,
+                  message: "Password must be at least 4 characters.",
+                },
+              })}
+              error={!!errors.newPassword}
+              helperText={errors.newPassword?.message}
+              disabled={isSubmitted}
+            />
+            <TextField
+              type="password"
+              label="Retype new password"
+              fullWidth
+              {...register("retypePassword", {
+                validate: (v) =>
+                  v === getValues("newPassword") ||
+                  "Doesn't match new password",
+              })}
+              error={!!errors.retypePassword}
+              helperText={errors.retypePassword?.message}
+              disabled={isSubmitted}
+            />
+            {isSubmitted ? (
+              <Alert severity="success">
+                <AlertTitle>Setup complete!</AlertTitle>
+                <Link href="/login">Continue to the login page.</Link>
+              </Alert>
+            ) : (
               <Box display="flex" justifyContent="end">
                 <LoadingButton
                   variant="contained"
+                  type="submit"
                   disabled={!(isDirty && isValid)}
-                  onClick={onSubmit}
                   loading={isSubmitting}
                 >
-                  Save
+                  Finish
                 </LoadingButton>
               </Box>
-            </CardContent>
-          </Card>
-        </Box>
-      </Box>
+            )}
+          </CardContent>
+        </Card>
+      </Container>
     </>
   );
 };

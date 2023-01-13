@@ -16,6 +16,8 @@ import {
 } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
+import { createMailtoLink } from "../../lib/common/utils";
+import config from "../../lib/config";
 import { CodeBlock } from "../Code/Code";
 import { DialogTitleWithClose } from "./DialogTitleWithClose";
 
@@ -25,7 +27,10 @@ type InviteUserProps = {
 };
 
 export const InviteUserDialog = ({ onClose, id }: InviteUserProps) => {
-  const [email, setEmail] = useState("");
+  const user = useBoundStore((state) => (id ? state.userMap[id] : null));
+
+  const [email, setEmail] = useState(user?.email ?? "");
+
   const [superuser, setSuperuser] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -43,7 +48,6 @@ export const InviteUserDialog = ({ onClose, id }: InviteUserProps) => {
   };
 
   useEffect(() => {
-    console.log("mount dialog");
     if (!inputRef.current) return;
     inputRef.current.focus();
   }, []);
@@ -109,7 +113,7 @@ export const InviteUserDialog = ({ onClose, id }: InviteUserProps) => {
               below to manually send a prefilled email.
             </DialogContentText>
             <CodeBlock>
-              {`https://jarvis.psych.purdue.edu/setup?id=${createdUserId}`}
+              {`${config.NEXT_PUBLIC_SITE_URL}/setup?id=${createdUserId}`}
             </CodeBlock>
           </>
         )}
@@ -123,7 +127,11 @@ export const InviteUserDialog = ({ onClose, id }: InviteUserProps) => {
         )}
         {step === 1 && (
           <Button
-            href={`mailto:${email}?subject=Jarvis%20Account%20Setup&body=Welcome%20to%20Jarvis!%0D%0A%0D%0AUse%20the%20following%20link%20to%20create%20your%20password.%0D%0A%0D%0Ahttps%3A%2F%2Fjarvis.psych.purdue.edu%2Fsetup%3Fid%3D${createdUserId}%0D%0A%0D%0AThis%20link%20can%20only%20be%20used%20to%20create%20a%20password%20once.`}
+            href={createMailtoLink(
+              email,
+              `${config.NEXT_PUBLIC_SITE_NAME} Account Setup`,
+              `Welcome to ${config.NEXT_PUBLIC_SITE_NAME}!\r\n\r\nUse the following link to create your password.\r\n\r\n${config.NEXT_PUBLIC_SITE_URL}/setup?id=${createdUserId}\r\n\r\nOnce setup is complete, the link will no longer work.`
+            )}
           >
             Open email client
           </Button>

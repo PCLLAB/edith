@@ -1,5 +1,6 @@
 import { Card, CardContent, Typography } from "@mui/material";
 import { ExperimentJson } from "../../../lib/common/types/models";
+import config from "../../../lib/config";
 import { CodeBlock } from "../../Code/Code";
 
 type CardProps = {
@@ -23,7 +24,7 @@ export const PostSnippetCard = ({ exp }: CardProps) => {
         </Typography>
         <CodeBlock language="javascript">
           {`const data = jsPsych.data.getData();
-fetch("https://jarvis.psych.purdue.edu/api/v1/experiments/data/${exp._id}", {
+fetch("${config.NEXT_PUBLIC_SITE_URL}/api/v2/experiments/data/${exp._id}", {
   method: "POST",
   headers: {
     'Content-Type': 'application/json'
