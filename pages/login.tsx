@@ -44,7 +44,7 @@ const Login: NextPage = () => {
           body: formData,
         });
         console.debug("login data", data);
-        // router.push("/explorer");
+        router.push("/explorer");
       } catch (e: any) {
         setLoading(false);
 

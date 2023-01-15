@@ -14,14 +14,18 @@ const jwtMiddleware = expressjwt({
   getToken: (req) => req.cookies[JWT_COOKIE_KEY],
   //  Deleted and privilege modified users should have token revoked
   isRevoked: async (_, token) => {
-    const { _id, superuser } = token?.payload as JwtPayload;
+    const { _id, superuser, email, name } = token?.payload as JwtPayload;
 
     if (!_id) return true;
 
     //TODO this throws if user doesn't exist, is that right?
     try {
       const user = await User.findById(_id).lean();
+
+      // Revoke on any modification
       if (superuser !== user.superuser) return true;
+      if (email !== user.email) return true;
+      if (name !== user.name) return true;
     } catch (e) {
       return true;
     }
