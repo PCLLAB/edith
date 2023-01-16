@@ -19,6 +19,7 @@ import {
 import { Box } from "@mui/system";
 
 import { useBoundStore } from "../../../../lib/client/hooks/stores/useBoundStore";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 type ParamOptionsProps = {
   expId: string;
@@ -26,6 +27,9 @@ type ParamOptionsProps = {
 
 export const ParamOptions = ({ expId }: ParamOptionsProps) => {
   const cb = useBoundStore((state) => state.counterbalanceMap[expId]);
+  const updateCounterbalance = useBoundStore(
+    (state) => state.updateCounterbalance
+  );
 
   // Transform to format required for form
   const paramOptions = Object.entries(cb?.paramOptions ?? {}).map(
@@ -41,7 +45,8 @@ export const ParamOptions = ({ expId }: ParamOptionsProps) => {
   const {
     control,
     register,
-    formState: { isDirty, isValid },
+    formState: { isDirty, isValid, isSubmitting },
+    handleSubmit,
   } = useForm({
     defaultValues: {
       paramOptions,
@@ -51,6 +56,16 @@ export const ParamOptions = ({ expId }: ParamOptionsProps) => {
   const { fields, append, remove } = useFieldArray({
     name: "paramOptions",
     control,
+  });
+
+  const onSubmit = handleSubmit(async ({ paramOptions: formPo }) => {
+    const paramOptions = Object.fromEntries(
+      formPo.map((po) => [po.param, po.options.map((option) => option.value)])
+    );
+
+    try {
+      await updateCounterbalance(expId, { paramOptions });
+    } catch {}
   });
 
   return (
@@ -70,17 +85,19 @@ export const ParamOptions = ({ expId }: ParamOptionsProps) => {
               *Invalid changes
             </Typography>
           )}
-          <Button
-            sx={{
-              ml: 1,
-            }}
-            variant="contained"
-            disabled={!(isDirty && isValid)}
-            size="small"
-          >
-            Save
-          </Button>
         </Box>
+        <LoadingButton
+          sx={{
+            ml: 1,
+          }}
+          variant="contained"
+          disabled={!(isDirty && isValid)}
+          size="small"
+          loading={isSubmitting}
+          onClick={onSubmit}
+        >
+          Save
+        </LoadingButton>
       </Box>
       <Typography variant="body2" color="text.secondary">
         One option from each parameter will be passed to the base experiment

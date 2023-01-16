@@ -45,9 +45,8 @@ const Account: NextPage = () => {
 
   const updateUser = useBoundStore((state) => state.updateUser);
 
-  const onSubmit = () => {
-    console.log("submit");
-    handleSubmit(async ({ name, email, oldPassword, newPassword }) => {
+  const onSubmit = handleSubmit(
+    async ({ name, email, oldPassword, newPassword }) => {
       const update: UsersIdPutSignature["body"] = {};
 
       if (dirtyFields.name) update.name = name;
@@ -59,8 +58,8 @@ const Account: NextPage = () => {
         await updateUser(me!._id, update);
         reset();
       } catch {}
-    })();
-  };
+    }
+  );
 
   return (
     <>
