@@ -1,5 +1,9 @@
 import { StateCreator } from "zustand";
-import { CounterbalancesIdGetSignature } from "../../../../pages/api/v2/counterbalances/[id]";
+import { CounterbalancesPostSignature } from "../../../../pages/api/v2/counterbalances";
+import {
+  CounterbalancesIdGetSignature,
+  CounterbalancesIdPutSignature,
+} from "../../../../pages/api/v2/counterbalances/[id]";
 import { ExperimentsPostSignature } from "../../../../pages/api/v2/experiments";
 import {
   ExperimentsIdDeleteSignature,
@@ -26,6 +30,13 @@ export type ExperimentSlice = {
   getExperimentMeta: (id: string) => Promise<void>;
   counterbalanceMap: Record<string, CounterbalanceJson>;
   getCounterbalance: (expId: string) => Promise<void>;
+  createCounterbalance: (
+    body: CounterbalancesPostSignature["body"]
+  ) => Promise<CounterbalanceJson>;
+  updateCounterbalance: (
+    expId: string,
+    body: CounterbalancesIdPutSignature["body"]
+  ) => Promise<void>;
 };
 
 export const createExperimentSlice: StateCreator<ExperimentSlice> = (
@@ -127,5 +138,32 @@ export const createExperimentSlice: StateCreator<ExperimentSlice> = (
         };
       });
     }
+  },
+  createCounterbalance: async (body) => {
+    const cb = await fetcher<CounterbalancesPostSignature>({
+      body,
+      url: "/api/v2/counterbalances",
+      method: "POST",
+    });
+
+    set((state) => ({
+      counterbalanceMap: { ...state.counterbalanceMap, [cb.experiment]: cb },
+    }));
+
+    return cb;
+  },
+  updateCounterbalance: async (expId, body) => {
+    const cb = await fetcher<CounterbalancesIdPutSignature>({
+      url: "/api/v2/counterbalances/[id]",
+      method: "PUT",
+      query: {
+        id: expId,
+      },
+      body,
+    });
+
+    set((state) => ({
+      counterbalanceMap: { ...state.counterbalanceMap, [cb.experiment]: cb },
+    }));
   },
 });

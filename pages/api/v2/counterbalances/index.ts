@@ -15,6 +15,7 @@ export type CounterbalancesPostSignature = {
   method: "POST";
   body: {
     experiment: string;
+    url: string;
   };
   data: CounterbalanceJson;
 };
@@ -23,14 +24,18 @@ const post: TypedApiHandlerWithAuth<CounterbalancesPostSignature> = async (
   req,
   res
 ) => {
-  const { experiment } = req.body;
+  const { experiment, url } = req.body;
 
-  if (experiment == null) {
-    throw new MissingArgsError(["experiment"]);
+  if (experiment == null || url == null) {
+    throw new MissingArgsError(
+      // @ts-ignore filter falsy
+      [!experiment && "experiment", !url && "url"].filter(Boolean)
+    );
   }
 
   const cb = new Counterbalance({
     experiment,
+    url,
   });
 
   await cb.save();

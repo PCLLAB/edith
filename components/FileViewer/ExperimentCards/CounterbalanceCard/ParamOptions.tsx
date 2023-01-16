@@ -36,7 +36,7 @@ export const ParamOptions = ({ expId }: ParamOptionsProps) => {
       })),
     })
   );
-  console.log(cb);
+  console.log("paramOptions render", cb);
 
   const {
     control,

@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { FocusEvent, useState } from "react";
 
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
@@ -6,6 +6,7 @@ import {
   Button,
   Card,
   CardContent,
+  CircularProgress,
   IconButton,
   List,
   ListItem,
@@ -23,34 +24,50 @@ type CardProps = {
   exp: ExperimentJson;
 };
 export const CounterbalanceCard = ({ exp }: CardProps) => {
-  const cb = useBoundStore((state) => state.counterbalanceMap[exp._id]) ?? {
-    url: "",
+  const cb = useBoundStore((state) => state.counterbalanceMap[exp._id]);
+  const updateCounterbalance = useBoundStore(
+    (state) => state.updateCounterbalance
+  );
+  const createCounterbalance = useBoundStore(
+    (state) => state.createCounterbalance
+  );
+
+  const [loading, setLoading] = useState(false);
+
+  const onBlur = async (event: FocusEvent<HTMLInputElement>) => {
+    const url = event.target.value;
+
+    if (url === "") return;
+    if (url === cb?.url) return;
+
+    setLoading(true);
+
+    if (cb || loading) {
+      await updateCounterbalance(exp._id, { url });
+    } else {
+      await createCounterbalance({ experiment: exp._id, url });
+    }
+
+    setLoading(false);
   };
-
-  const { control, register, watch } = useForm({
-    defaultValues: {
-      url: cb.url,
-    },
-  });
-
-  console.log(watch());
-
-  // const {
-  //   fields: quotaFields,
-  //   append: quotaAppend,
-  //   remove: quotaRemove,
-  // } = useFieldArray({
-  //   name: "quotas",
-  //   control,
-  // });
 
   return (
     <Card>
       <CardContent sx={{ gap: 2, display: "flex", flexDirection: "column" }}>
         <Box>
-          <Typography variant="h6" component="h2">
-            Counterbalance
-          </Typography>
+          <Box display="flex" justifyContent="space-between" flexWrap="wrap">
+            <Typography variant="h6" component="h2">
+              Counterbalance
+            </Typography>
+            {loading && (
+              <Box marginLeft="auto" display="flex" alignItems="center" gap={1}>
+                <Typography variant="caption" color="warning.light">
+                  *Saving url
+                </Typography>
+                <CircularProgress size={16} />
+              </Box>
+            )}
+          </Box>
           <Typography variant="body2" color="text.secondary">
             The assignment URL will redirect to the base experiment URL with
             automatically assigned parameters.
@@ -60,8 +77,14 @@ export const CounterbalanceCard = ({ exp }: CardProps) => {
             required
             fullWidth
             margin="normal"
+            defaultValue={cb?.url}
+            // Use key to force rerender, b/c defaultValue isn't set when expId/cb changes
+            key={cb?.url}
+            onBlur={onBlur}
           />
-          <CodeBlock>{`${config.NEXT_PUBLIC_SITE_URL}/api/v2/assign/${cb.experiment}`}</CodeBlock>
+          {cb && (
+            <CodeBlock>{`${config.NEXT_PUBLIC_SITE_URL}/api/v2/assign/${cb.experiment}`}</CodeBlock>
+          )}
         </Box>
         <ParamOptions expId={exp._id} />
         <Typography variant="h6" component="h2">
