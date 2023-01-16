@@ -69,6 +69,8 @@ export const fetcher = async <T extends ApiSignature>(
     method: signature.method,
     headers,
     body,
+    // Default timeout is waaaaaay too long, especially for doomed auth requests
+    signal: AbortSignal.timeout(5000),
   });
 
   inFlightRequests.delete(requestKey);
