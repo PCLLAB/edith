@@ -6,13 +6,13 @@ import { Box } from "@mui/system";
 import { useBoundStore } from "../../../../lib/client/hooks/stores/useBoundStore";
 import { CodeBlock } from "../../../Code/Code";
 import config from "../../../../lib/config";
+import { CounterbalanceJson } from "../../../../lib/common/types/models";
 
 type Props = {
   expId: string;
+  cb?: CounterbalanceJson;
 };
-export const AssignLink = ({ expId }: Props) => {
-  const cb = useBoundStore((state) => state.counterbalanceMap[expId]);
-
+export const AssignLink = ({ expId, cb }: Props) => {
   const updateCounterbalance = useBoundStore(
     (state) => state.updateCounterbalance
   );
@@ -63,8 +63,6 @@ export const AssignLink = ({ expId }: Props) => {
         fullWidth
         margin="normal"
         defaultValue={cb?.url}
-        // Use key to force rerender, b/c defaultValue isn't set when expId/cb changes
-        key={cb?.url}
         onBlur={onBlur}
       />
       {cb && (

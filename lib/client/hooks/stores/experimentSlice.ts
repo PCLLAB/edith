@@ -36,7 +36,7 @@ export type ExperimentSlice = {
   updateCounterbalance: (
     expId: string,
     body: CounterbalancesIdPutSignature["body"]
-  ) => Promise<void>;
+  ) => Promise<CounterbalanceJson>;
 };
 
 export const createExperimentSlice: StateCreator<ExperimentSlice> = (
@@ -165,5 +165,7 @@ export const createExperimentSlice: StateCreator<ExperimentSlice> = (
     set((state) => ({
       counterbalanceMap: { ...state.counterbalanceMap, [cb.experiment]: cb },
     }));
+
+    return cb;
   },
 });

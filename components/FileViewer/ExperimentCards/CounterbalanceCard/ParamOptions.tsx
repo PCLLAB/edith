@@ -20,36 +20,37 @@ import { Box } from "@mui/system";
 
 import { useBoundStore } from "../../../../lib/client/hooks/stores/useBoundStore";
 import LoadingButton from "@mui/lab/LoadingButton";
+import { CounterbalanceJson } from "../../../../lib/common/types/models";
+import { useEffect } from "react";
 
 type ParamOptionsProps = {
-  expId: string;
+  cb?: CounterbalanceJson;
 };
 
-export const ParamOptions = ({ expId }: ParamOptionsProps) => {
-  const cb = useBoundStore((state) => state.counterbalanceMap[expId]);
+// Transform to format required for form
+const getFormParamOptions = (paramOptions: Record<string, string[]>) =>
+  Object.entries(paramOptions).map(([param, options]) => ({
+    param,
+    options: options.map((value) => ({
+      value,
+    })),
+  }));
+
+export const ParamOptions = ({ cb }: ParamOptionsProps) => {
   const updateCounterbalance = useBoundStore(
     (state) => state.updateCounterbalance
   );
 
-  // Transform to format required for form
-  const paramOptions = Object.entries(cb?.paramOptions ?? {}).map(
-    ([param, options]) => ({
-      param,
-      options: options.map((value) => ({
-        value,
-      })),
-    })
-  );
-  console.log("paramOptions render", cb);
-
   const {
     control,
     register,
-    formState: { isDirty, isValid, isSubmitting },
+    formState: { isDirty, isValid, isSubmitting, isSubmitSuccessful },
     handleSubmit,
+    reset,
+    getValues,
   } = useForm({
     defaultValues: {
-      paramOptions,
+      paramOptions: getFormParamOptions(cb?.paramOptions ?? {}),
     },
     // mode: "onBlur",
   });
@@ -58,15 +59,25 @@ export const ParamOptions = ({ expId }: ParamOptionsProps) => {
     control,
   });
 
-  const onSubmit = handleSubmit(async ({ paramOptions: formPo }) => {
+  const onSubmit = handleSubmit(async ({ paramOptions: formParamOptions }) => {
     const paramOptions = Object.fromEntries(
-      formPo.map((po) => [po.param, po.options.map((option) => option.value)])
+      formParamOptions.map((po) => [
+        po.param,
+        po.options.map((option) => option.value),
+      ])
     );
 
     try {
-      await updateCounterbalance(expId, { paramOptions });
+      await updateCounterbalance(cb!.experiment, {
+        paramOptions,
+      });
+      // reset({ paramOptions: getFormParamOptions(updatedCb.paramOptions) });
     } catch {}
   });
+
+  useEffect(() => {
+    reset(getValues());
+  }, [isSubmitSuccessful]);
 
   return (
     <Box>
