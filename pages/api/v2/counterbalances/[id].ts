@@ -1,4 +1,8 @@
-import type { CounterbalanceJson } from "../../../../lib/common/types/models";
+import type {
+  CounterbalanceJson,
+  ParamOption,
+  Quota,
+} from "../../../../lib/common/types/models";
 import { InvalidArgsError } from "../../../../lib/server/errors";
 import initHandler, {
   TypedApiHandlerWithAuth,
@@ -36,7 +40,12 @@ export type CounterbalancesIdPutSignature = {
   query: {
     id: string;
   };
-  body: Partial<CounterbalanceJson>;
+  body: {
+    shuffleStack?: boolean;
+    url?: string;
+    paramOptions?: ParamOption;
+    quotas?: Omit<Quota, "progress">[];
+  };
   data: CounterbalanceJson;
 };
 

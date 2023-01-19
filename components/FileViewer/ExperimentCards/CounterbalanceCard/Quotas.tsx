@@ -25,11 +25,19 @@ import {
 } from "@mui/material";
 
 import { CounterbalanceJson } from "../../../../lib/common/types/models";
+import LoadingButton from "@mui/lab/LoadingButton";
+import { useEffect } from "react";
+import { useBoundStore } from "../../../../lib/client/hooks/stores/useBoundStore";
 
 type Props = {
   cb: CounterbalanceJson;
 };
+
 export const Quotas = ({ cb }: Props) => {
+  const updateCounterbalance = useBoundStore(
+    (state) => state.updateCounterbalance
+  );
+
   const quotas = (cb?.quotas ?? []).map((quota) => ({
     amount: quota.amount,
     progress: quota.progress,
@@ -40,7 +48,16 @@ export const Quotas = ({ cb }: Props) => {
     })),
   }));
 
-  const { control, register, getValues, setValue, watch } = useForm({
+  const {
+    control,
+    register,
+    getValues,
+    setValue,
+    watch,
+    reset,
+    handleSubmit,
+    formState: { isDirty, isValid, isSubmitting, isSubmitSuccessful },
+  } = useForm({
     defaultValues: {
       quotas,
     },
@@ -50,11 +67,54 @@ export const Quotas = ({ cb }: Props) => {
     name: "quotas",
   });
 
+  const onSubmit = handleSubmit(async ({ quotas: formQuotas }) => {
+    const quotas = formQuotas.map((fq) => ({
+      amount: fq.amount,
+      params: Object.fromEntries(fq.params.map((pv) => [pv.param, pv.value])),
+    }));
+
+    try {
+      await updateCounterbalance(cb!.experiment, {
+        quotas,
+      });
+    } catch {}
+  });
+
+  useEffect(() => {
+    reset(getValues());
+  }, [isSubmitSuccessful]);
+
   return (
     <Box>
-      <Typography variant="h6" component="h2">
-        Parameter Quotas
-      </Typography>
+      <Box display="flex" justifyContent="space-between" flexWrap="wrap">
+        <Typography variant="h6" component="h2">
+          Parameter Quotas
+        </Typography>
+        <Box marginLeft="auto">
+          {isDirty && isValid && (
+            <Typography variant="caption" color="warning.light">
+              *Unsaved changes
+            </Typography>
+          )}
+          {isDirty && !isValid && (
+            <Typography variant="caption" color="error.light">
+              *Invalid changes
+            </Typography>
+          )}
+        </Box>
+        <LoadingButton
+          sx={{
+            ml: 1,
+          }}
+          variant="contained"
+          disabled={!(isDirty && isValid)}
+          size="small"
+          loading={isSubmitting}
+          onClick={onSubmit}
+        >
+          Save
+        </LoadingButton>
+      </Box>
       <Typography variant="body2" color="text.secondary">
         The assignment link will prioritize filling remaining quotas. Once all
         quotas are filled, assignment will continue without priority.
