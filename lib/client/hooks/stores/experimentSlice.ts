@@ -1,9 +1,9 @@
 import { StateCreator } from "zustand";
 import { CounterbalancesPostSignature } from "../../../../pages/api/v2/counterbalances";
 import {
-  CounterbalancesIdGetSignature,
-  CounterbalancesIdPutSignature,
-} from "../../../../pages/api/v2/counterbalances/[id]";
+  CounterbalancesExpIdGetSignature,
+  CounterbalancesExpIdPutSignature,
+} from "../../../../pages/api/v2/counterbalances/[expId]";
 import { ExperimentsPostSignature } from "../../../../pages/api/v2/experiments";
 import {
   ExperimentsIdDeleteSignature,
@@ -35,7 +35,7 @@ export type ExperimentSlice = {
   ) => Promise<CounterbalanceJson>;
   updateCounterbalance: (
     expId: string,
-    body: CounterbalancesIdPutSignature["body"]
+    body: CounterbalancesExpIdPutSignature["body"]
   ) => Promise<CounterbalanceJson>;
 };
 
@@ -118,7 +118,7 @@ export const createExperimentSlice: StateCreator<ExperimentSlice> = (
   counterbalanceMap: {},
   getCounterbalance: async (expId) => {
     try {
-      const cb = await fetcher<CounterbalancesIdGetSignature>({
+      const cb = await fetcher<CounterbalancesExpIdGetSignature>({
         url: "/api/v2/counterbalances/[id]" as const,
         method: "GET" as const,
         query: { id: expId },
@@ -153,7 +153,7 @@ export const createExperimentSlice: StateCreator<ExperimentSlice> = (
     return cb;
   },
   updateCounterbalance: async (expId, body) => {
-    const cb = await fetcher<CounterbalancesIdPutSignature>({
+    const cb = await fetcher<CounterbalancesExpIdPutSignature>({
       url: "/api/v2/counterbalances/[id]",
       method: "PUT",
       query: {

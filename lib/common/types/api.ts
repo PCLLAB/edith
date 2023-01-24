@@ -43,10 +43,11 @@ import {
   UsersAuthPostSignature,
 } from "../../../pages/api/v2/users/auth";
 import {
-  CounterbalancesIdGetSignature,
-  CounterbalancesIdPutSignature,
-} from "../../../pages/api/v2/counterbalances/[id]";
+  CounterbalancesExpIdGetSignature,
+  CounterbalancesExpIdPutSignature,
+} from "../../../pages/api/v2/counterbalances/[expId]";
 import { UsersIdSetupPostSignature } from "../../../pages/api/v2/users/[id]/setup";
+import { AssignExpIdGetSignature } from "../../../pages/api/v2/assign/[expId]";
 
 /** Each unioned type represents a single URL endpoint */
 export type ApiSignature =
@@ -63,7 +64,8 @@ export type ApiSignature =
   | DirectoriesIdChildren
   | DirectoriesRoots
   | Counterbalances
-  | CounterbalancesId;
+  | CounterbalancesExpId
+  | AssignExpId;
 
 type Users = UsersGetSignature | UsersPostSignature;
 type UsersAuth = UsersAuthGetSignature | UsersAuthPostSignature;
@@ -96,8 +98,10 @@ type DirectoriesIdChildren = DirectoriesIdChildrenGetSignature;
 type DirectoriesRoots = DirectoriesRootsGetSignature;
 
 type Counterbalances = CounterbalancesPostSignature;
-type CounterbalancesId =
-  | CounterbalancesIdGetSignature
-  | CounterbalancesIdPutSignature;
+type CounterbalancesExpId =
+  | CounterbalancesExpIdGetSignature
+  | CounterbalancesExpIdPutSignature;
+
+type AssignExpId = AssignExpIdGetSignature;
 
 export type HTTP_METHOD = "GET" | "POST" | "PUT" | "DELETE";

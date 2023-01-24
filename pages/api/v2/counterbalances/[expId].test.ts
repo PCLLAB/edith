@@ -9,7 +9,7 @@ import {
   ReqResMocker,
 } from "../../../../lib/testUtils";
 import Counterbalance from "../../../../models/Counterbalance";
-import handler from "./[id]";
+import handler from "./[expId]";
 
 const ENDPOINT = "/api/v2/counterbalances/[id]";
 
