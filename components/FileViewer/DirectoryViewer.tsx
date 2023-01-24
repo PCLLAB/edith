@@ -13,6 +13,8 @@ import {
 } from "../../lib/client/context/FileSelectionProvider";
 import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
 import { getAncestorsMinusRoot } from "../../lib/common/utils";
+import { ExplorerDialog } from "../../pages/explorer";
+import { useDialogContext } from "../../lib/client/context/DialogContext";
 
 type Props = {
   directoryId: string;
@@ -35,6 +37,8 @@ export const DirectoryViewer = ({ directoryId }: Props) => {
       updatedAt: new Date(exp.updatedAt),
     }));
 
+  const { openDialog } = useDialogContext<ExplorerDialog>();
+
   return (
     <Box display="flex" flexDirection="column" height="100%" gap={2}>
       <Grid container spacing={2}>
@@ -49,10 +53,24 @@ export const DirectoryViewer = ({ directoryId }: Props) => {
             {directory.name}
           </Typography>
           <Card sx={{ ml: "auto" }}>
-            <IconButton>
+            <IconButton
+              onClick={() =>
+                openDialog("RENAME", {
+                  fileType: FileType.DIR,
+                  id: directoryId,
+                })
+              }
+            >
               <EditIcon />
             </IconButton>
-            <IconButton>
+            <IconButton
+              onClick={() =>
+                openDialog("DELETE", {
+                  fileType: FileType.DIR,
+                  id: directoryId,
+                })
+              }
+            >
               <DeleteIcon />
             </IconButton>
           </Card>

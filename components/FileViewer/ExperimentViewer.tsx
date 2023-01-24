@@ -3,8 +3,11 @@ import EditIcon from "@mui/icons-material/Edit";
 import { Card, IconButton, Typography } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 import { useEffect } from "react";
+import { useDialogContext } from "../../lib/client/context/DialogContext";
+import { FileType } from "../../lib/client/context/FileSelectionProvider";
 
 import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
+import { ExplorerDialog } from "../../pages/explorer";
 import {
   CollectionModeCard,
   DataDownloadCard,
@@ -24,6 +27,8 @@ export const ExperimentViewer = ({ experimentId }: Props) => {
 
   const getExperimentMeta = useBoundStore((state) => state.getExperimentMeta);
   const getCounterbalance = useBoundStore((state) => state.getCounterbalance);
+
+  const { openDialog } = useDialogContext<ExplorerDialog>();
 
   useEffect(() => {
     console.log("running exp view fetches");
@@ -46,10 +51,18 @@ export const ExperimentViewer = ({ experimentId }: Props) => {
           {experiment.name}
         </Typography>
         <Card sx={{ ml: "auto" }}>
-          <IconButton>
+          <IconButton
+            onClick={() =>
+              openDialog("RENAME", { fileType: FileType.EXP, id: experimentId })
+            }
+          >
             <EditIcon />
           </IconButton>
-          <IconButton>
+          <IconButton
+            onClick={() =>
+              openDialog("DELETE", { fileType: FileType.EXP, id: experimentId })
+            }
+          >
             <DeleteIcon />
           </IconButton>
         </Card>
