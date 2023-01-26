@@ -43,6 +43,8 @@ export const fetcher = async <T extends ApiSignature>(
 
   if ("query" in signature) {
     Object.entries(signature.query).forEach(([param, value]) => {
+      if (value == null) return;
+
       const token = `[${param}]`;
       if (finalUrl.includes(token)) {
         finalUrl = finalUrl.replaceAll(token, value.toString());

@@ -5,7 +5,7 @@ export interface DataEntryDoc<IdType = Types.ObjectId, DateType = Date> {
   _id: IdType;
   data: Types.Array<{}>;
   /** Managed by mongoose using timestamp option */
-  createdAt: Date;
+  createdAt: DateType;
 }
 
 export interface DataEntryJson

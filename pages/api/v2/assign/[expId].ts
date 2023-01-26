@@ -12,6 +12,7 @@ export type AssignExpIdGetSignature = {
   query: {
     id: string;
   };
+  data: void;
 };
 
 const get: TypedApiHandlerWithAuth<AssignExpIdGetSignature> = async (

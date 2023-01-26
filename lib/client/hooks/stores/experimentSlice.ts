@@ -119,7 +119,7 @@ export const createExperimentSlice: StateCreator<ExperimentSlice> = (
   getCounterbalance: async (expId) => {
     try {
       const cb = await fetcher<CounterbalancesExpIdGetSignature>({
-        url: "/api/v2/counterbalances/[id]" as const,
+        url: "/api/v2/counterbalances/[expId]" as const,
         method: "GET" as const,
         query: { id: expId },
       });
@@ -154,7 +154,7 @@ export const createExperimentSlice: StateCreator<ExperimentSlice> = (
   },
   updateCounterbalance: async (expId, body) => {
     const cb = await fetcher<CounterbalancesExpIdPutSignature>({
-      url: "/api/v2/counterbalances/[id]",
+      url: "/api/v2/counterbalances/[expId]",
       method: "PUT",
       query: {
         id: expId,

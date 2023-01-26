@@ -18,13 +18,13 @@ export const PostSnippetCard = ({ exp }: CardProps) => {
         <Typography variant="h6" component="h2">
           Data endpoint
         </Typography>
-        <CodeBlock>{`https://jarvis.psych.purdue.edu/api/v1/experiments/data/${exp._id}`}</CodeBlock>
+        <CodeBlock>{`${config.NEXT_PUBLIC_SITE_URL}/api/v2/experiments/${exp._id}/data`}</CodeBlock>
         <Typography variant="h6" component="h2">
           Code snippet
         </Typography>
         <CodeBlock language="javascript">
           {`const data = jsPsych.data.getData();
-fetch("${config.NEXT_PUBLIC_SITE_URL}/api/v2/experiments/data/${exp._id}", {
+fetch("${config.NEXT_PUBLIC_SITE_URL}/api/v2/experiments/${exp._id}/data", {
   method: "POST",
   headers: {
     'Content-Type': 'application/json'

@@ -47,13 +47,7 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
   const [startDate, setStartDate] = useState<Dayjs | null>(dayjs("2022-04-07"));
   const [endDate, setEndDate] = useState<Dayjs | null>(dayjs());
 
-  const expMeta = useBoundStore((state) => state.metadataMap[exp._id]);
-
-  console.log("expmeta in DD", expMeta);
-
-  const activityLog = expMeta?.activityLog ?? {};
-
-  const numEntries = Object.keys(activityLog).length;
+  const getData = useBoundStore((state) => state.getData);
 
   const { openDialog } = useDialogContext<ExplorerDialog>();
 
@@ -68,10 +62,10 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
             Select entries within range (inclusive).
           </Typography>
           <Box display="flex" flexWrap="wrap" sx={{ gap: 2, mt: 2 }}>
-            <TextField label="First" defaultValue={Math.min(1, numEntries)} />
+            <TextField label="Skip" defaultValue={0} />
             <TextField
-              label="Last"
-              defaultValue={numEntries}
+              label="Limit"
+              defaultValue={19}
               inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
             />
           </Box>
@@ -98,7 +92,10 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
         </CardContent>
         <CardActions sx={{ p: 2 }}>
           <Button
-            onClick={() => openDialog("DATA", {}, { maxWidth: "xl" })}
+            onClick={() => {
+              getData(exp._id, {});
+              openDialog("DATA", { id: exp._id }, { maxWidth: "xl" });
+            }}
             variant="contained"
           >
             View data

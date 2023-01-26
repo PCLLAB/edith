@@ -20,6 +20,10 @@ export type ExperimentsIdDataGetSignature = {
   method: "GET";
   query: {
     id: string;
+    skip?: number;
+    limit?: number;
+    startDate?: string;
+    endDate?: string;
   };
   data: DataEntryJson[];
 };
@@ -28,13 +32,21 @@ const get: TypedApiHandlerWithAuth<ExperimentsIdDataGetSignature> = async (
   req,
   res
 ) => {
-  const id = req.query.id;
+  const { id, skip, limit, startDate, endDate } = req.query;
 
   const expObj = await Experiment.findById(id).lean();
   const meta = await MongoDBData.findById(expObj.mongoDBData).lean();
 
   const DataModel = modelForCollection(meta.dataCollection);
-  const data = await DataModel.find();
+
+  let query = DataModel.find().sort({ createdAt: "asc" });
+
+  if (skip) query = query.skip(skip);
+  if (limit) query = query.limit(limit);
+  if (startDate) query = query.where("createdAt").gte(startDate);
+  if (endDate) query = query.where("createdAt").lte(endDate);
+
+  const data = await query.lean();
 
   res.json(data);
 };

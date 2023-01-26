@@ -1,20 +1,35 @@
-import { DialogTitle, DialogContent } from "@mui/material";
+import { DialogContent } from "@mui/material";
 import {
   DataGrid,
-  GridToolbarContainer,
   GridToolbarColumnsButton,
-  GridToolbarFilterButton,
+  GridToolbarContainer,
   GridToolbarDensitySelector,
   GridToolbarExport,
+  GridToolbarFilterButton,
   gridVisibleSortedRowIdsSelector,
 } from "@mui/x-data-grid";
+
+import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
 import { DialogTitleWithClose } from "./DialogTitleWithClose";
 
 type Props = {
   onClose: () => void;
+  id: string;
 };
 
-export const DataGridDialog = ({ onClose }: Props) => {
+export const DataGridDialog = ({ onClose, id }: Props) => {
+  const entries = useBoundStore((state) => state.dataMap[id]?.entries ?? []);
+
+  // add unique row id to each row
+  const rows: Record<string, any>[] = entries.flatMap((entry) => entry.data);
+
+  const columns = Array.from(
+    rows.reduce<Set<string>>((set, row) => {
+      Object.keys(row).forEach((key) => set.add(key));
+      return set;
+    }, new Set())
+  ).map((field) => ({ field }));
+
   return (
     <>
       <DialogTitleWithClose onClose={onClose}>Title</DialogTitleWithClose>
@@ -22,6 +37,7 @@ export const DataGridDialog = ({ onClose }: Props) => {
         <DataGrid
           columns={columns}
           rows={rows}
+          getRowId={(r) => r._id}
           components={{ Toolbar: CustomToolbar }}
         />
       </DialogContent>
@@ -54,13 +70,4 @@ const CustomToolbar = () => {
   );
 };
 
-const rows = [
-  { id: 1, col1: "Hello", col2: "World" },
-  { id: 2, col1: "DataGridPro", col2: "is Awesome" },
-  { id: 3, col1: "MUI", col2: "is Amazing" },
-];
-
-const columns = [
-  { field: "col1", headerName: "Column 1", width: 150 },
-  { field: "col2", headerName: "Column 2", width: 150 },
-];
+const columns = [{ field: "col1" }, { field: "col2", width: 150 }];

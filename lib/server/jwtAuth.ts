@@ -37,6 +37,7 @@ const jwtMiddleware = expressjwt({
   path: [
     { url: "/api/v2/users/auth", method: "POST" },
     { url: /\/api\/v2\/users\/[a-f0-9]{24}\/setup/, method: "POST" },
+    { url: /\/api\/v2\/experiments\/[a-f0-9]{24}\/data/, method: "POST" },
   ],
 });
 
