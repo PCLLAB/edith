@@ -1,7 +1,8 @@
-import dayjs, { Dayjs } from "dayjs";
 import { useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import LoadingButton from "@mui/lab/LoadingButton";
 import {
   Button,
   ButtonGroup,
@@ -44,13 +45,39 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
   const onToggleDrop = () => setDropOpen((prev) => !prev);
 
   const anchorRef = useRef(null);
-  const [startDate, setStartDate] = useState<Dayjs | null>(dayjs("2022-04-07"));
-  const [endDate, setEndDate] = useState<Dayjs | null>(dayjs());
+
+  const [loading, setLoading] = useState(false);
+
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { dirtyFields, isValid },
+  } = useForm({
+    defaultValues: {
+      skip: "",
+      limit: "",
+      startDate: null,
+      endDate: null,
+    },
+  });
+
+  const onSubmit = handleSubmit(async ({ skip, limit, startDate, endDate }) => {
+    setLoading(true);
+    await getData(exp._id, {
+      skip: dirtyFields.skip ? parseInt(skip) : undefined,
+      limit: dirtyFields.limit ? parseInt(limit) : undefined,
+      startDate: dirtyFields.startDate ? startDate.toISOString() : undefined,
+      endDate: dirtyFields.endDate ? endDate.toISOString() : undefined,
+    });
+    setLoading(false);
+    openDialog("DATA", { id: exp._id }, { maxWidth: "xl" });
+  });
 
   const getData = useBoundStore((state) => state.getData);
 
   const { openDialog } = useDialogContext<ExplorerDialog>();
-
+  console.log("isvalid", isValid);
   return (
     <>
       <Card>
@@ -62,11 +89,21 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
             Select entries within range (inclusive).
           </Typography>
           <Box display="flex" flexWrap="wrap" sx={{ gap: 2, mt: 2 }}>
-            <TextField label="Skip" defaultValue={0} />
+            <TextField
+              label="Skip"
+              inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+              {...register("skip", {
+                min: 0,
+                validate: (v) => v === "" || !isNaN(parseInt(v)),
+              })}
+            />
             <TextField
               label="Limit"
-              defaultValue={19}
               inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+              {...register("limit", {
+                min: 0,
+                validate: (v) => v === "" || !isNaN(parseInt(v)),
+              })}
             />
           </Box>
 
@@ -75,31 +112,45 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
           </Typography>
           <Box display="flex" flexWrap="wrap" sx={{ gap: 2, mt: 2 }}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DateTimePicker
-                label="Start"
-                value={startDate}
-                onChange={(date) => setStartDate(date)}
-                renderInput={(props) => <TextField {...props} />}
+              <Controller
+                name="startDate"
+                control={control}
+                rules={{
+                  validate: (v) => v == null || v.isValid(),
+                }}
+                render={({ field }) => (
+                  <DateTimePicker
+                    label="Start"
+                    renderInput={(props) => <TextField {...props} />}
+                    {...field}
+                  />
+                )}
               />
-              <DateTimePicker
-                label="End"
-                value={endDate}
-                onChange={(date) => setEndDate(date)}
-                renderInput={(props) => <TextField {...props} />}
+              <Controller
+                name="endDate"
+                control={control}
+                rules={{
+                  validate: (v) => v == null || v.isValid(),
+                }}
+                render={({ field }) => (
+                  <DateTimePicker
+                    label="End"
+                    renderInput={(props) => <TextField {...props} />}
+                    {...field}
+                  />
+                )}
               />
             </LocalizationProvider>
           </Box>
         </CardContent>
         <CardActions sx={{ p: 2 }}>
-          <Button
-            onClick={() => {
-              getData(exp._id, {});
-              openDialog("DATA", { id: exp._id }, { maxWidth: "xl" });
-            }}
+          <LoadingButton
+            onClick={onSubmit}
             variant="contained"
+            loading={loading}
           >
             View data
-          </Button>
+          </LoadingButton>
           <ButtonGroup
             variant="outlined"
             ref={anchorRef}

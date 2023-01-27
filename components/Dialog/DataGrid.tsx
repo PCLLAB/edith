@@ -21,14 +21,17 @@ export const DataGridDialog = ({ onClose, id }: Props) => {
   const entries = useBoundStore((state) => state.dataMap[id]?.entries ?? []);
 
   // add unique row id to each row
-  const rows: Record<string, any>[] = entries.flatMap((entry) => entry.data);
+  const rows: Record<string, any>[] = entries
+    .flatMap((entry) => entry.data)
+    .map((row, index) => ({ ...row, _id: index }));
 
-  const columns = Array.from(
-    rows.reduce<Set<string>>((set, row) => {
-      Object.keys(row).forEach((key) => set.add(key));
-      return set;
-    }, new Set())
-  ).map((field) => ({ field }));
+  const uniqueKeys = rows.reduce<Set<string>>((set, row) => {
+    Object.keys(row).forEach((key) => set.add(key));
+    return set;
+  }, new Set());
+  uniqueKeys.delete("_id");
+
+  const columns = Array.from(uniqueKeys).map((field) => ({ field }));
 
   return (
     <>
@@ -69,5 +72,3 @@ const CustomToolbar = () => {
     </GridToolbarContainer>
   );
 };
-
-const columns = [{ field: "col1" }, { field: "col2", width: 150 }];

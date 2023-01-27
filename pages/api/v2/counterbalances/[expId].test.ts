@@ -36,7 +36,7 @@ describe(`GET ${ENDPOINT}`, () => {
   it("returns 404 if experiment missing", async () => {
     const { req, res } = mockGetReqRes({
       query: {
-        id: getValidObjectId(),
+        expId: getValidObjectId(),
       },
     });
 
@@ -53,7 +53,7 @@ describe(`GET ${ENDPOINT}`, () => {
 
     const { req, res } = mockGetReqRes({
       query: {
-        id: cbInfo.experiment,
+        expId: cbInfo.experiment,
       },
     });
 
@@ -66,7 +66,7 @@ describe(`GET ${ENDPOINT}`, () => {
   });
 });
 
-describe.skip(`PUT ${ENDPOINT}`, () => {
+describe(`PUT ${ENDPOINT}`, () => {
   it("returns 200 and updates counterbalance", async () => {
     const cbInfo = {
       experiment: getValidObjectId(),
@@ -80,17 +80,18 @@ describe.skip(`PUT ${ENDPOINT}`, () => {
         first: ["1", "2", "3"],
         second: ["ABC", "CDE", "EFG"],
       },
-      quotas: [
-        { params: { first: "1" }, amount: 1 },
-        { params: { second: "CDE" }, amount: 2 },
-        { params: { first: "1", second: "ABC" }, amount: 3 },
-        { params: { first: "2", second: "EFG" }, amount: 4 },
-      ],
+      // TODO this requires mocking experiment and data
+      // quotas: [
+      //   { params: { first: "1" }, amount: 1 },
+      //   { params: { second: "CDE" }, amount: 2 },
+      //   { params: { first: "1", second: "ABC" }, amount: 3 },
+      //   { params: { first: "2", second: "EFG" }, amount: 4 },
+      // ],
     };
 
     const { req, res } = mockPutReqRes({
       query: {
-        id: cbInfo.experiment,
+        expId: cbInfo.experiment,
       },
       body: updates,
     });

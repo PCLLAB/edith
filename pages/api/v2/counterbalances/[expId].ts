@@ -18,7 +18,7 @@ export type CounterbalancesExpIdGetSignature = {
   url: typeof ENDPOINT;
   method: "GET";
   query: {
-    id: string;
+    expId: string;
   };
   data: CounterbalanceJson;
 };
@@ -38,7 +38,7 @@ export type CounterbalancesExpIdPutSignature = {
   url: typeof ENDPOINT;
   method: "PUT";
   query: {
-    id: string;
+    expId: string;
   };
   body: {
     shuffleStack?: boolean;
