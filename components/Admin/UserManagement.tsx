@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import DeleteIcon from "@mui/icons-material/Delete";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
@@ -7,6 +7,8 @@ import { Box, SxProps } from "@mui/system";
 import {
   DataGrid,
   GridActionsCellItem,
+  GridCellModes,
+  GridCellModesModel,
   GridToolbarContainer,
   GridToolbarQuickFilter,
 } from "@mui/x-data-grid";
@@ -22,14 +24,17 @@ type Props = {
 export const UserManagement = ({ sx }: Props) => {
   const userMap = useBoundStore((state) => state.userMap);
   const getUsers = useBoundStore((state) => state.getUsers);
+  const updateUser = useBoundStore((state) => state.updateUser);
 
   const users = Object.values(userMap);
 
-  const { openDialog, closeDialog } = useDialogContext<AdminDialog>();
+  const { openDialog } = useDialogContext<AdminDialog>();
 
   useEffect(() => {
     getUsers();
   }, []);
+
+  const [model, setModel] = useState<GridCellModesModel>({});
 
   return (
     <Box sx={sx} display="flex" flexDirection="column" height="100%" gap={2}>
@@ -38,6 +43,7 @@ export const UserManagement = ({ sx }: Props) => {
       </Typography>
       <Paper sx={{ flex: 1 }}>
         <DataGrid
+          experimentalFeatures={{ newEditingApi: true }}
           components={{ Toolbar: CustomToolbar }}
           componentsProps={{
             toolbar: {
@@ -45,6 +51,34 @@ export const UserManagement = ({ sx }: Props) => {
             },
           }}
           getRowId={(user) => user._id}
+          processRowUpdate={async (newRow, oldRow) => {
+            if (newRow.superuser === oldRow.superuser) return newRow;
+            console.log(newRow);
+
+            try {
+              const user = await updateUser(newRow._id, {
+                superuser: newRow.superuser,
+              });
+              return user;
+            } catch {
+              throw newRow._id;
+            }
+          }}
+          onProcessRowUpdateError={(id) => {
+            setModel((model) => ({
+              ...model,
+              [id]: {
+                superuser: {
+                  mode: GridCellModes.View,
+                  ignoreModifications: true,
+                },
+              },
+            }));
+          }}
+          cellModesModel={model}
+          onCellModesModelChange={(cellModesModel) => {
+            setModel(cellModesModel);
+          }}
           rows={users}
           columns={[
             {
@@ -74,7 +108,7 @@ export const UserManagement = ({ sx }: Props) => {
                 { label: "Admin", value: true },
                 { label: "User", value: false },
               ],
-              flex: 1,
+              flex: 2,
             },
             {
               field: "actions",
@@ -89,7 +123,6 @@ export const UserManagement = ({ sx }: Props) => {
                   icon={<DeleteIcon />}
                   label="Delete"
                   onClick={() => {
-                    console.log("delete", openDialog);
                     openDialog("Delete", { id: params.row._id });
                   }}
                 />,

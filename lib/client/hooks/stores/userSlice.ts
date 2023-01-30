@@ -17,7 +17,7 @@ export type UserSlice = {
   updateUser: (
     id: string,
     update: UsersIdPutSignature["body"]
-  ) => Promise<void>;
+  ) => Promise<UserJson>;
   createUser: (body: UsersPostSignature["body"]) => Promise<UserJson>;
   deleteUser: (id: string) => Promise<void>;
   getUser: (id: string) => Promise<void>;
@@ -60,22 +60,25 @@ export const createUserSlice: StateCreator<UserSlice> = (set, get) => ({
 
     const optimistic = { ...original, ...cleanUpdate };
 
-    set((state) => ({ userMap: { ...state.userMap, [id]: optimistic } }));
+    // set((state) => ({ userMap: { ...state.userMap, [id]: optimistic } }));
 
-    try {
-      const user = await fetcher<UsersIdPutSignature>({
-        url: "/api/v2/users/[id]",
-        method: "PUT",
-        query: {
-          id,
-        },
-        body: update,
-      });
-      set((state) => ({ userMap: { ...state.userMap, [id]: user } }));
-    } catch {
-      set((state) => ({ userMap: { ...state.userMap, [id]: original } }));
-      throw "Failed to update user";
-    }
+    // return original;
+    // try {
+    const user = await fetcher<UsersIdPutSignature>({
+      url: "/api/v2/users/[id]",
+      method: "PUT",
+      query: {
+        id,
+      },
+      body: update,
+    });
+    set((state) => ({ userMap: { ...state.userMap, [id]: user } }));
+
+    return user;
+    // } catch {
+    //   set((state) => ({ userMap: { ...state.userMap, [id]: original } }));
+    //   throw "Failed to update user";
+    // }
   },
   getUser: async (id) => {
     const user = await fetcher<UsersIdGetSignature>({

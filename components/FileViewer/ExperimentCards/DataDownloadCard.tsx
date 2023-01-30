@@ -30,17 +30,7 @@ type CardProps = {
   exp: ExperimentJson;
 };
 
-const DownloadOptions = [
-  {
-    name: "Download as CSV",
-  },
-  {
-    name: "Download as JSON",
-  },
-];
-
 export const DataDownloadCard = ({ exp }: CardProps) => {
-  console.log("DD card render");
   const [dropOpen, setDropOpen] = useState(false);
   const onToggleDrop = () => setDropOpen((prev) => !prev);
 
@@ -52,7 +42,7 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
     register,
     control,
     handleSubmit,
-    formState: { dirtyFields, isValid },
+    formState: { dirtyFields },
   } = useForm({
     defaultValues: {
       skip: "",
@@ -74,10 +64,51 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
     openDialog("DATA", { id: exp._id }, { maxWidth: "xl" });
   });
 
+  const DownloadOptions = [
+    {
+      name: "Download as CSV",
+      onClick: handleSubmit(async ({ skip, limit, startDate, endDate }) => {
+        const entries = await getData(exp._id, {
+          skip: dirtyFields.skip ? parseInt(skip) : undefined,
+          limit: dirtyFields.limit ? parseInt(limit) : undefined,
+          startDate: dirtyFields.startDate
+            ? startDate.toISOString()
+            : undefined,
+          endDate: dirtyFields.endDate ? endDate.toISOString() : undefined,
+        });
+
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(
+          new Blob([JSON.stringify(entries)], { type: "text/csv" })
+        );
+        a.download = "test_title.csv";
+        a.click();
+      }),
+    },
+    {
+      name: "Download as JSON",
+      onClick: handleSubmit(async ({ skip, limit, startDate, endDate }) => {
+        const entries = await getData(exp._id, {
+          skip: dirtyFields.skip ? parseInt(skip) : undefined,
+          limit: dirtyFields.limit ? parseInt(limit) : undefined,
+          startDate: dirtyFields.startDate
+            ? startDate.toISOString()
+            : undefined,
+          endDate: dirtyFields.endDate ? endDate.toISOString() : undefined,
+        });
+
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(
+          new Blob([JSON.stringify(entries)], { type: "application/json" })
+        );
+        a.download = "test_title.json";
+        a.click();
+      }),
+    },
+  ];
   const getData = useBoundStore((state) => state.getData);
 
   const { openDialog } = useDialogContext<ExplorerDialog>();
-  console.log("isvalid", isValid);
   return (
     <>
       <Card>
@@ -86,7 +117,8 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
             Collected Data
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Select entries within range (inclusive).
+            Select # of entries to skip and/or only show the first `limit`
+            entries.
           </Typography>
           <Box display="flex" flexWrap="wrap" sx={{ gap: 2, mt: 2 }}>
             <TextField
@@ -156,14 +188,17 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
             ref={anchorRef}
             sx={{ ml: 1, flex: "right" }}
           >
-            <Button>{DownloadOptions[0].name}</Button>
+            <Button onClick={DownloadOptions[0].onClick}>
+              {DownloadOptions[0].name}
+            </Button>
             <Button size="small" onClick={onToggleDrop}>
               <ArrowDropDownIcon />
             </Button>
           </ButtonGroup>
           <Popper
+            sx={{ zIndex: 1 }}
             open={dropOpen}
-            disablePortal
+            // disablePortal
             anchorEl={anchorRef.current}
             nonce={undefined}
             onResize={undefined}
@@ -173,7 +208,9 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
               <ClickAwayListener onClickAway={onToggleDrop}>
                 <MenuList autoFocusItem>
                   {DownloadOptions.map((option) => (
-                    <MenuItem key={option.name}>{option.name}</MenuItem>
+                    <MenuItem key={option.name} onClick={option.onClick}>
+                      {option.name}
+                    </MenuItem>
                   ))}
                 </MenuList>
               </ClickAwayListener>
