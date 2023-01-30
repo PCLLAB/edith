@@ -25,6 +25,7 @@ import { useDialogContext } from "../../../lib/client/context/DialogContext";
 import { useBoundStore } from "../../../lib/client/hooks/stores/useBoundStore";
 import { ExperimentJson } from "../../../lib/common/types/models";
 import { ExplorerDialog } from "../../../pages/explorer";
+import dayjs from "dayjs";
 
 type CardProps = {
   exp: ExperimentJson;
@@ -52,14 +53,27 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
     },
   });
 
-  const onSubmit = handleSubmit(async ({ skip, limit, startDate, endDate }) => {
-    setLoading(true);
-    await getData(exp._id, {
+  const queryData = ({
+    skip,
+    limit,
+    startDate,
+    endDate,
+  }: {
+    skip: string;
+    limit: string;
+    startDate: dayjs.Dayjs | null;
+    endDate: dayjs.Dayjs | null;
+  }) => {
+    return getData(exp._id, {
       skip: dirtyFields.skip ? parseInt(skip) : undefined,
       limit: dirtyFields.limit ? parseInt(limit) : undefined,
       startDate: dirtyFields.startDate ? startDate.toISOString() : undefined,
       endDate: dirtyFields.endDate ? endDate.toISOString() : undefined,
     });
+  };
+
+  const onSubmit = handleSubmit(async () => {
+    setLoading(true);
     setLoading(false);
     openDialog("DATA", { id: exp._id }, { maxWidth: "xl" });
   });
@@ -67,35 +81,33 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
   const DownloadOptions = [
     {
       name: "Download as CSV",
-      onClick: handleSubmit(async ({ skip, limit, startDate, endDate }) => {
-        const entries = await getData(exp._id, {
-          skip: dirtyFields.skip ? parseInt(skip) : undefined,
-          limit: dirtyFields.limit ? parseInt(limit) : undefined,
-          startDate: dirtyFields.startDate
-            ? startDate.toISOString()
-            : undefined,
-          endDate: dirtyFields.endDate ? endDate.toISOString() : undefined,
+      onClick: handleSubmit(async (options) => {
+        const entries = await queryData(options);
+
+        const rows = entries.flatMap((entry) => entry.data);
+
+        const colSet = new Set<string>();
+        rows.forEach((row) => {
+          Object.keys(row).forEach((key) => colSet.add(key));
         });
+        const cols = Array.from(colSet);
+
+        const csvList = rows.map((row) =>
+          cols.map((col) => (col in row ? row[col] : "")).join(",")
+        );
+        csvList.unshift(cols.join(","));
+        const csv = csvList.join("\r\n");
 
         const a = document.createElement("a");
-        a.href = URL.createObjectURL(
-          new Blob([JSON.stringify(entries)], { type: "text/csv" })
-        );
+        a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
         a.download = "test_title.csv";
         a.click();
       }),
     },
     {
       name: "Download as JSON",
-      onClick: handleSubmit(async ({ skip, limit, startDate, endDate }) => {
-        const entries = await getData(exp._id, {
-          skip: dirtyFields.skip ? parseInt(skip) : undefined,
-          limit: dirtyFields.limit ? parseInt(limit) : undefined,
-          startDate: dirtyFields.startDate
-            ? startDate.toISOString()
-            : undefined,
-          endDate: dirtyFields.endDate ? endDate.toISOString() : undefined,
-        });
+      onClick: handleSubmit(async (options) => {
+        const entries = await queryData(options);
 
         const a = document.createElement("a");
         a.href = URL.createObjectURL(
