@@ -31,12 +31,8 @@ I opted to combine implement the backend using Next.js's API routes, because it 
 First, run the development server:
 
 ```bash
-yarn dev
+pnpm dev
 ```
-
-## NextJs API Routes
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
 ### Testing
 

@@ -67,12 +67,9 @@ export const ParamOptions = ({ cb }: ParamOptionsProps) => {
       ])
     );
 
-    try {
-      await updateCounterbalance(cb!.experiment, {
-        paramOptions,
-      });
-      // reset({ paramOptions: getFormParamOptions(updatedCb.paramOptions) });
-    } catch {}
+    await updateCounterbalance(cb!.experiment, {
+      paramOptions,
+    });
   });
 
   useEffect(() => {

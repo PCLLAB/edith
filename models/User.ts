@@ -54,9 +54,3 @@ UserSchema.post(
 // UserSchema.plugin(throwIfNull("User"));
 
 export default mongoose.models.User || mongoose.model("User", UserSchema);
-
-// User.prototype.cleanObject = function () {
-//   const tempUser = this.toObject();
-//   delete tempUser.password;
-//   return tempUser;
-// };

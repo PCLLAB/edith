@@ -72,8 +72,9 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
     });
   };
 
-  const onSubmit = handleSubmit(async () => {
+  const onSubmit = handleSubmit(async (options) => {
     setLoading(true);
+    await queryData(options);
     setLoading(false);
     openDialog("DATA", { id: exp._id }, { maxWidth: "xl" });
   });
@@ -129,10 +130,11 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
             Collected Data
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Select # of entries to skip and/or only show the first `limit`
-            entries.
+            (Optional) Set number of entries to skip and/or limit the number of
+            entries loaded. Skip and limit occurs after entries are filtered by
+            date range if applied.
           </Typography>
-          <Box display="flex" flexWrap="wrap" sx={{ gap: 2, mt: 2 }}>
+          <Box display="flex" flexWrap="wrap" sx={{ gap: 2, my: 2 }}>
             <TextField
               label="Skip"
               inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
@@ -150,9 +152,8 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
               })}
             />
           </Box>
-
           <Typography variant="body2" color="text.secondary">
-            Select data between start and end (inclusive).
+            (Optional) Select data between start and end (inclusive).
           </Typography>
           <Box display="flex" flexWrap="wrap" sx={{ gap: 2, mt: 2 }}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>

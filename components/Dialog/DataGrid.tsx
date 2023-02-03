@@ -19,6 +19,7 @@ type Props = {
 
 export const DataGridDialog = ({ onClose, id }: Props) => {
   const entries = useBoundStore((state) => state.dataMap[id]?.entries ?? []);
+  const exp = useBoundStore((state) => state.experimentMap[id]);
 
   // add unique row id to each row
   const rows: Record<string, any>[] = entries
@@ -35,7 +36,7 @@ export const DataGridDialog = ({ onClose, id }: Props) => {
 
   return (
     <>
-      <DialogTitleWithClose onClose={onClose}>Title</DialogTitleWithClose>
+      <DialogTitleWithClose onClose={onClose}>{exp.name}</DialogTitleWithClose>
       <DialogContent sx={{ height: "100vh" }}>
         <DataGrid
           columns={columns}

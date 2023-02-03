@@ -12,6 +12,7 @@ type CardProps = {
 
 export const CounterbalanceCard = ({ exp }: CardProps) => {
   const cb = useBoundStore((state) => state.counterbalanceMap[exp._id]);
+  console.log("cb", cb);
 
   return (
     <Card>
