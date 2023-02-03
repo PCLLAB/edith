@@ -8,13 +8,28 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ### Progress
 
-| Progress        |                                          |
-| --------------- | ---------------------------------------- |
-| Login Page      | ![Login page](./readme/login.png)        |
-| File Tree       | ![File Tree page](./readme/fileTree.png) |
-| Experiment View | ![Experiment view](./readme/expView.png) |
-| Folder View     | wip                                      |
-| Admin Page      | wip                                      |
+| Progress                  |                                                                        |
+| ------------------------- | ---------------------------------------------------------------------- |
+| Login Page                | ![Login page](../assets/login.png?raw=true)                            |
+| Folder View               | ![Folder view](../assets/folder.png?raw=true)                          |
+| Experiment View           | ![Experiment view](../assets/expData.png?raw=true)                     |
+| Experiment Data View      | ![Experiment data view](../assets/dataView.png?raw=true)               |
+| Experiment Code Snippet   | ![Experiment code snippet](../assets/expSnippet.png?raw=true)          |
+| Experiment Counterbalance | ![Experiment counterbalance](../assets/expCounterbalance.png?raw=true) |
+| Account Page              | ![Account page](../assets/account.png?raw=true)                        |
+| Admin Page                | ![Admin page](../assets/admin.png?raw=true)                            |
+| Invite Users              | ![Invite users](../assets/invite.png?raw=true)                         |
+| New User Setup            | ![New user setup](../assets/setup.png?raw=true)                        |
+
+### TODO
+
+- implement request access?
+
+- no file selected background image?
+
+- enter submit on dialog textfields
+
+- show error toast on failure
 
 ## Motivation
 
