@@ -4,8 +4,6 @@
 
 better experiment data interface
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-
 ### Progress
 
 | Progress                  |                                                                        |
@@ -30,6 +28,8 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 - enter submit on dialog textfields
 
 - show error toast on failure
+
+- logout endpoint to delete cookie
 
 ## Motivation
 

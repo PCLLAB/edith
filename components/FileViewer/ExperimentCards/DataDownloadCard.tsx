@@ -25,7 +25,7 @@ import { useDialogContext } from "../../../lib/client/context/DialogContext";
 import { useBoundStore } from "../../../lib/client/hooks/stores/useBoundStore";
 import { ExperimentJson } from "../../../lib/common/types/models";
 import { ExplorerDialog } from "../../../pages/explorer";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 
 type CardProps = {
   exp: ExperimentJson;
@@ -67,8 +67,8 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
     return getData(exp._id, {
       skip: dirtyFields.skip ? parseInt(skip) : undefined,
       limit: dirtyFields.limit ? parseInt(limit) : undefined,
-      startDate: dirtyFields.startDate ? startDate.toISOString() : undefined,
-      endDate: dirtyFields.endDate ? endDate.toISOString() : undefined,
+      startDate: dirtyFields.startDate ? startDate!.toISOString() : undefined,
+      endDate: dirtyFields.endDate ? endDate!.toISOString() : undefined,
     });
   };
 
@@ -161,7 +161,7 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
                 name="startDate"
                 control={control}
                 rules={{
-                  validate: (v) => v == null || v.isValid(),
+                  validate: (v: Dayjs | null) => v == null || v.isValid(),
                 }}
                 render={({ field }) => (
                   <DateTimePicker
@@ -175,7 +175,7 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
                 name="endDate"
                 control={control}
                 rules={{
-                  validate: (v) => v == null || v.isValid(),
+                  validate: (v: Dayjs | null) => v == null || v.isValid(),
                 }}
                 render={({ field }) => (
                   <DateTimePicker

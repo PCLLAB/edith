@@ -43,7 +43,9 @@ const get: TypedApiHandlerWithAuth<ExperimentsIdDataGetSignature> = async (
 
   if (skip) query = query.skip(skip);
   if (limit) query = query.limit(limit);
+  // @ts-ignore gte() works with date strings
   if (startDate) query = query.where("createdAt").gte(startDate);
+  // @ts-ignore gte() works with date strings
   if (endDate) query = query.where("createdAt").lte(endDate);
 
   const data = await query.lean();

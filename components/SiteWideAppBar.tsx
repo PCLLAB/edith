@@ -76,7 +76,7 @@ export const SiteWideAppBar = () => {
               horizontal: "right",
             }}
           >
-            <Link href="/account">
+            <Link href="/account" prefetch>
               <MenuItem>
                 <ListItemIcon>
                   <PersonIcon />
@@ -85,7 +85,7 @@ export const SiteWideAppBar = () => {
               </MenuItem>
             </Link>
             {me?.superuser && (
-              <Link href="/admin">
+              <Link href="/admin" prefetch>
                 <MenuItem>
                   <ListItemIcon>
                     <SettingsIcon />

@@ -1,9 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  experimental: {
-    outputStandalone: true,
-  },
-}
+  output: "standalone",
+  experimental: {},
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
