@@ -76,7 +76,7 @@ const post: TypedApiHandler<UsersAuthPostSignature> = async (req, res) => {
 
   res.setHeader(
     "Set-Cookie",
-    `${JWT_COOKIE_KEY}=${token}; Secure; HttpOnly; SameSite=Lax; Path=/api/v2`
+    `${JWT_COOKIE_KEY}=${token}; Secure; HttpOnly; SameSite=Lax; Path=${config.NEXT_PUBLIC_BASE_PATH}/api/v2`
   );
 
   res.json({
@@ -85,7 +85,25 @@ const post: TypedApiHandler<UsersAuthPostSignature> = async (req, res) => {
   });
 };
 
+export type UsersAuthDeleteSignature = {
+  url: typeof ENDPOINT;
+  method: "DELETE";
+  data: void;
+};
+
+const del: TypedApiHandlerWithAuth<UsersAuthDeleteSignature> = async (
+  req,
+  res
+) => {
+  res.setHeader(
+    "Set-Cookie",
+    `${JWT_COOKIE_KEY}=; Secure; HttpOnly; SameSite=Lax; Path=${config.NEXT_PUBLIC_BASE_PATH}/api/v2; Max-Age=0`
+  );
+  res.status(204).send();
+};
+
 export default initHandler({
   GET: get,
   POST: post,
+  DELETE: del,
 });

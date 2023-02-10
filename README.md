@@ -100,3 +100,8 @@ I patched in the following fixes
 - https://github.com/kevinsqi/react-calendar-heatmap/issues/146
 
 - https://github.com/kevinsqi/react-calendar-heatmap/pull/128
+
+## Deploying under a subdomain is broken
+
+- set `NEXT_PUBLIC_BASE_PATH` to path of subdomain
+- this is then applied to the next config and the `fetcher()` function

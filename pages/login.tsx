@@ -64,7 +64,6 @@ const Login: NextPage = () => {
   }, []);
 
   useEffect(() => {
-    // Prefetch the explorer page
     router.prefetch("/explorer");
   }, []);
 

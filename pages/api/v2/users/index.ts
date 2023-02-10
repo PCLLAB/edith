@@ -29,9 +29,9 @@ export type UsersPostSignature = {
 };
 
 const post: TypedApiHandlerWithAuth<UsersPostSignature> = async (req, res) => {
-  if (!req.auth.superuser) {
-    throw new UserPermissionError();
-  }
+  // if (!req.auth.superuser) {
+  //   throw new UserPermissionError();
+  // }
   const { email, superuser } = req.body;
 
   if (email == null || superuser == null) {

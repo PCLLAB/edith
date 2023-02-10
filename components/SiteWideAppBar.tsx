@@ -22,6 +22,8 @@ import { AuthContext } from "../lib/client/context/AuthProvider";
 import { useRouter } from "next/router";
 import config from "../lib/config";
 import Link from "next/link";
+import { fetcher } from "../lib/client/fetcher";
+import { UsersAuthDeleteSignature } from "../pages/api/v2/users/auth";
 
 export const SiteWideAppBar = () => {
   const { me } = useContext(AuthContext);
@@ -38,8 +40,12 @@ export const SiteWideAppBar = () => {
     .join("");
 
   const onLogout = () => {
-    // TODO actually clear credentials
-    router.push("/login");
+    fetcher<UsersAuthDeleteSignature>({
+      method: "DELETE",
+      url: "/api/v2/users/auth",
+    }).then(() => {
+      router.push("/login");
+    });
   };
 
   return (
@@ -76,7 +82,7 @@ export const SiteWideAppBar = () => {
               horizontal: "right",
             }}
           >
-            <Link href="/account" prefetch>
+            <Link href="/account">
               <MenuItem>
                 <ListItemIcon>
                   <PersonIcon />
@@ -85,7 +91,7 @@ export const SiteWideAppBar = () => {
               </MenuItem>
             </Link>
             {me?.superuser && (
-              <Link href="/admin" prefetch>
+              <Link href="/admin">
                 <MenuItem>
                   <ListItemIcon>
                     <SettingsIcon />

@@ -39,6 +39,7 @@ import {
   UsersIdPutSignature,
 } from "../../../pages/api/v2/users/[id]";
 import {
+  UsersAuthDeleteSignature,
   UsersAuthGetSignature,
   UsersAuthPostSignature,
 } from "../../../pages/api/v2/users/auth";
@@ -68,7 +69,10 @@ export type ApiSignature =
   | AssignExpId;
 
 type Users = UsersGetSignature | UsersPostSignature;
-type UsersAuth = UsersAuthGetSignature | UsersAuthPostSignature;
+type UsersAuth =
+  | UsersAuthGetSignature
+  | UsersAuthPostSignature
+  | UsersAuthDeleteSignature;
 type UsersId =
   | UsersIdGetSignature
   | UsersIdPutSignature

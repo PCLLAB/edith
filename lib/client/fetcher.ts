@@ -1,5 +1,6 @@
 import { DistributiveOmit } from "../common/tsUtils";
 import { ApiSignature } from "../common/types/api";
+import config from "../config";
 
 export type Fetcher<T extends ApiSignature> = (
   s: DistributiveOmit<T, "data">
@@ -38,7 +39,7 @@ export const fetcher = async <T extends ApiSignature>(
     });
   }
 
-  let finalUrl: string = signature.url;
+  let finalUrl: string = config.NEXT_PUBLIC_BASE_PATH + signature.url;
   let firstQuery = true;
 
   if ("query" in signature) {
@@ -90,7 +91,15 @@ export const fetcher = async <T extends ApiSignature>(
     return Promise.reject(rejection);
   }
 
-  const data = (await res.json()) as T["data"];
+  let data: T["data"] = undefined;
+
+  // Avoid erroring on 204 No Content
+  try {
+    data = (await res.json()) as T["data"];
+  } catch {
+    // TODO
+  }
+
   duplicates!.forEach((handler) => {
     handler.resolve(data);
   });
