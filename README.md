@@ -29,8 +29,6 @@ better experiment data interface
 
 - show error toast on failure
 
-- logout endpoint to delete cookie
-
 ## Motivation
 
 The goal is to create a type-safe, maintainable, and easily deployable application to manage experiments data.
