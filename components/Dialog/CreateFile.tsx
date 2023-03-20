@@ -5,7 +5,6 @@ import {
   Button,
   DialogActions,
   DialogContent,
-  DialogTitle,
   TextField,
 } from "@mui/material";
 
@@ -67,7 +66,9 @@ export const CreateFileDialog = ({ fileType, onClose, prefixPath }: Props) => {
       <DialogTitleWithClose onClose={onClose}>
         Create {DialogInfo[fileType].title}
       </DialogTitleWithClose>
-      <DialogContent sx={{ px: 2 }}>
+      <DialogContent>
+        {/* This tomfoolery b/c DialogContent has inline styles which cover TextField label  */}
+        <Box sx={{ pt: 2 }} />
         <TextField
           inputRef={inputRef}
           value={fileName}

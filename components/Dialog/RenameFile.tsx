@@ -1,6 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 
-import { Button, DialogActions, DialogContent, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  DialogActions,
+  DialogContent,
+  TextField,
+} from "@mui/material";
 
 import { FileType } from "../../lib/client/context/FileSelectionProvider";
 import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
@@ -51,6 +57,8 @@ export const RenameFileDialog = ({ fileType, onClose, id }: Props) => {
         Rename {DialogInfo[fileType].title}
       </DialogTitleWithClose>
       <DialogContent>
+        {/* This tomfoolery b/c DialogContent has inline styles which cover TextField label  */}
+        <Box sx={{ pt: 2 }} />
         <TextField
           inputRef={inputRef}
           value={fileName}
