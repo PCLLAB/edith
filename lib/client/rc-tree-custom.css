@@ -1,7 +1,7 @@
 .rc-tree {
-  --bedi-yellow: #F6E27F;
-  --bedi-yellow-50: #f6e27f42;
-  --bedi-yellow-25: #f6e27f1a;
+  --edith-yellow: #f6e27f;
+  --edith-yellow-50: #f6e27f42;
+  --edith-yellow-25: #f6e27f1a;
 }
 
 .rc-tree .rc-tree-treenode {
@@ -16,15 +16,15 @@
 }
 
 .rc-tree .rc-tree-treenode:hover {
-  background-color: var(--bedi-yellow-25);
+  background-color: var(--edith-yellow-25);
 }
 
 .rc-tree .rc-tree-treenode.dragging {
-  background-color: var(--bedi-yellow-25);
+  background-color: var(--edith-yellow-25);
 }
 
 .rc-tree .rc-tree-treenode.drop-target {
-  background-color: var(--bedi-yellow-50);
+  background-color: var(--edith-yellow-50);
 }
 
 .rc-tree .rc-tree-treenode .rc-tree-node-content-wrapper {
@@ -55,13 +55,13 @@
 }
 
 .rc-tree.rc-tree-show-line .rc-tree-indent-unit:before {
-  position:absolute;
-  top:0;
-  right:13px;
-  bottom:0px;
-  border-right:1px solid #d9d9d967;
-  content:""
- }
+  position: absolute;
+  top: 0;
+  right: 13px;
+  bottom: 0px;
+  border-right: 1px solid #d9d9d967;
+  content: "";
+}
 
 .rc-tree-child-tree {
   display: none;
@@ -71,12 +71,12 @@
 }
 
 .rc-tree-treenode-selected {
-  background-color: var(--bedi-yellow-50);
-  box-shadow: inset 0 0 0 1px var(--bedi-yellow);
+  background-color: var(--edith-yellow-50);
+  box-shadow: inset 0 0 0 1px var(--edith-yellow);
   opacity: 0.8;
 }
 .rc-tree .rc-tree-treenode-selected:hover {
-  background-color: var(--bedi-yellow-50);
+  background-color: var(--edith-yellow-50);
 }
 
 .rc-tree-title {

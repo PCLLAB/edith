@@ -16,6 +16,7 @@ import { fetcher } from "../lib/client/fetcher";
 import betty from "../public/betty.png";
 import { UsersAuthPostSignature } from "./api/v2/users/auth";
 import { CardContent, Container } from "@mui/material";
+import config from "../lib/config";
 
 const UNAUTHORIZED_ALERT = "Incorrect email or password.";
 const SERVER_ERROR_ALERT = "Server error occured. 😓";
@@ -94,7 +95,7 @@ const Login: NextPage = () => {
           <Image src={betty} alt="Betty White" />
         </Box>
         <Typography variant="h5" component="h1">
-          Login to BEDI
+          Login to {config.NEXT_PUBLIC_SITE_NAME}
         </Typography>
       </Box>
       {showAlert && (

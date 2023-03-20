@@ -1,8 +1,8 @@
-# bedi
+# edith
 
 ![Test Workflow](https://github.com/zhengkyl/bedi/actions/workflows/test.yml/badge.svg)
 
-better experiment data interface
+experiment data in the house
 
 ### Progress
 
@@ -89,7 +89,7 @@ For some reason this just needs to happen
 
 To connect to default uri
 
-`mongosh --user USERNAMEHERE --authenticationDatabase bedi`
+`mongosh --user USERNAMEHERE --authenticationDatabase edith`
 
 Patching `react-calendar-heatmap`
 

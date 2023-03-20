@@ -1,5 +1,5 @@
 {
-  "name": "bedi",
+  "name": "edith",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -40,6 +40,7 @@
     "react-calendar-heatmap": "^1.9.0",
     "react-dom": "18.0.0",
     "react-hook-form": "^7.34.0",
+    "tiged": "^2.12.4",
     "zustand": "^4.1.1"
   },
   "devDependencies": {
