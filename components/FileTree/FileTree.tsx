@@ -174,11 +174,17 @@ export const FileTree = ({ sx }: Props) => {
                 )}
                 allowDrop={(s) => !s.dropNode.isLeaf}
                 onDrop={({ dragNode, node, dropPosition }) => {
-                  // If drop above, move to same directory instead of inside
+                  // https://tree-react-component.vercel.app/demo/draggable-allow-drop
+                  const nodePos = node.pos.split("-");
+                  const relDropPos =
+                    dropPosition - Number(nodePos[nodePos.length - 1]);
+
+                  // If drop above or below, move to same directory instead of inside
+                  console.log(node.pos, dropPosition);
                   const destPrefixPath =
-                    dropPosition < 0
-                      ? directories[node.key].prefixPath
-                      : getPath(directories[node.key]);
+                    relDropPos === 0
+                      ? getPath(directories[node.key])
+                      : directories[node.key].prefixPath;
 
                   if (dragNode.isLeaf) {
                     const destDirectory = getIdFromPath(destPrefixPath);
