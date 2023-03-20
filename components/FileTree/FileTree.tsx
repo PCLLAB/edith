@@ -109,6 +109,7 @@ export const FileTree = ({ sx }: Props) => {
               </MenuItem>
               <MenuItem
                 onClick={() => {
+                  setFileSelection(null);
                   openDialog("DELETE", {
                     fileType: fileSelection!.type,
                     id: fileSelection!.id,
@@ -238,6 +239,8 @@ export const FileTree = ({ sx }: Props) => {
         </ContextMenu>
         <ContextMenu
           sx={{ flex: 1 }}
+          onClick={() => setFileSelection(null)}
+          onContextMenu={() => setFileSelection(null)}
           renderItems={({ onClose }) => (
             <>
               <MenuItem

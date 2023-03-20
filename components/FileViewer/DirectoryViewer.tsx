@@ -64,12 +64,13 @@ export const DirectoryViewer = ({ directoryId }: Props) => {
               <EditIcon />
             </IconButton>
             <IconButton
-              onClick={() =>
+              onClick={() => {
+                setFileSelection(null);
                 openDialog("DELETE", {
                   fileType: FileType.DIR,
                   id: directoryId,
-                })
-              }
+                });
+              }}
             >
               <DeleteIcon />
             </IconButton>

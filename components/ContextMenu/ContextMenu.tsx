@@ -9,19 +9,20 @@ type Props = {
   renderItems: ({ onClose }: ItemProps) => ReactNode;
   children?: ReactNode;
   sx?: SxProps;
-};
+} & React.ComponentPropsWithoutRef<"div">;
 
-export const ContextMenu = ({ renderItems, children, sx }: Props) => {
+export const ContextMenu = ({ renderItems, children, sx, ...other }: Props) => {
   const [contextMenu, setContextMenu] = useState<{
     left: number;
     top: number;
   } | null>(null);
 
-  const onContextMenu = (event: React.MouseEvent) => {
+  const onContextMenu = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
     setContextMenu(
       !!contextMenu ? null : { left: event.clientX, top: event.clientY }
     );
+    if (other.onContextMenu != null) other.onContextMenu(event);
   };
 
   const onClose = () => setContextMenu(null);
@@ -29,7 +30,7 @@ export const ContextMenu = ({ renderItems, children, sx }: Props) => {
   const items = renderItems({ onClose });
 
   return (
-    <Box onContextMenu={onContextMenu} sx={sx}>
+    <Box sx={sx} {...other} onContextMenu={onContextMenu}>
       {children}
       <Menu
         open={!!contextMenu}

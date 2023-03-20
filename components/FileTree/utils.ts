@@ -50,6 +50,11 @@ export const buildTree = (
 
     if (!parentId) return;
 
+    if (!dirMap[parentId]) {
+      console.error("Orphaned directory", dir);
+      return;
+    }
+
     dirMap[parentId].children.push(node);
   });
 
@@ -64,6 +69,11 @@ export const buildTree = (
        */
       isLeaf: true as const,
     };
+
+    if (!dirMap[exp.directory]) {
+      console.error("Orphaned experiment", exp);
+      return;
+    }
 
     dirMap[exp.directory].children.push(node);
   });

@@ -2,9 +2,12 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { Card, IconButton, Typography } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { useDialogContext } from "../../lib/client/context/DialogContext";
-import { FileType } from "../../lib/client/context/FileSelectionProvider";
+import {
+  FileSelectionContext,
+  FileType,
+} from "../../lib/client/context/FileSelectionProvider";
 
 import { useBoundStore } from "../../lib/client/hooks/stores/useBoundStore";
 import { ExplorerDialog } from "../../pages/explorer";
@@ -27,6 +30,7 @@ export const ExperimentViewer = ({ experimentId }: Props) => {
 
   const getExperimentMeta = useBoundStore((state) => state.getExperimentMeta);
   const getCounterbalance = useBoundStore((state) => state.getCounterbalance);
+  const { setFileSelection } = useContext(FileSelectionContext);
 
   const { openDialog } = useDialogContext<ExplorerDialog>();
 
@@ -59,9 +63,13 @@ export const ExperimentViewer = ({ experimentId }: Props) => {
             <EditIcon />
           </IconButton>
           <IconButton
-            onClick={() =>
-              openDialog("DELETE", { fileType: FileType.EXP, id: experimentId })
-            }
+            onClick={() => {
+              setFileSelection(null);
+              openDialog("DELETE", {
+                fileType: FileType.EXP,
+                id: experimentId,
+              });
+            }}
           >
             <DeleteIcon />
           </IconButton>

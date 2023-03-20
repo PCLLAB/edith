@@ -140,12 +140,12 @@ export const createDirectorySlice: StateCreator<
   },
   deleteDirectory: async (id) => {
     const optimisticDirMap = get().directoryMap;
+
     const dirList = Object.values(optimisticDirMap);
+    const subtreePrefix = getPath(optimisticDirMap[id]);
 
     const deleteQueue = [optimisticDirMap[id]];
     delete optimisticDirMap[id];
-
-    const subtreePrefix = getPath(optimisticDirMap[id]);
 
     dirList.forEach((dir) => {
       if (!dir.prefixPath.startsWith(subtreePrefix)) {

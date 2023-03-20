@@ -12,7 +12,7 @@ type Selection = {
 
 interface FileSelection {
   fileSelection: Selection | null;
-  setFileSelection: (sel: Selection) => void;
+  setFileSelection: (sel: Selection | null) => void;
 }
 
 export const FileSelectionContext = createContext<FileSelection>({
