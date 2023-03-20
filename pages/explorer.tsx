@@ -55,8 +55,6 @@ const Explorer: NextPage = () => {
                   sx={{
                     flexBasis: 320,
                     height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
                   }}
                 />
                 <FileViewer sx={{ flex: 1, p: 3, overflowY: "scroll" }} />

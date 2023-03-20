@@ -3,6 +3,7 @@ import { useContext, useRef, useState } from "react";
 import LogoutIcon from "@mui/icons-material/Logout";
 import PersonIcon from "@mui/icons-material/Person";
 import SettingsIcon from "@mui/icons-material/Settings";
+import DatasetIcon from "@mui/icons-material/Dataset";
 import {
   AppBar,
   Avatar,
@@ -82,6 +83,14 @@ export const SiteWideAppBar = () => {
               horizontal: "right",
             }}
           >
+            <Link href="/explorer">
+              <MenuItem>
+                <ListItemIcon>
+                  <DatasetIcon />
+                </ListItemIcon>
+                <ListItemText>Experiments</ListItemText>
+              </MenuItem>
+            </Link>
             <Link href="/account">
               <MenuItem>
                 <ListItemIcon>

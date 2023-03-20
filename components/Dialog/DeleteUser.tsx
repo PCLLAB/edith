@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import {
+  Box,
   Button,
   DialogActions,
   DialogContent,
@@ -42,16 +43,24 @@ export const DeleteUserDialog = ({ onClose, id }: DeleteUserProps) => {
         <DialogContentText>
           Type <b>{user.email}</b> to confirm.
         </DialogContentText>
-        <TextField
-          inputRef={inputRef}
-          value={userEmail}
-          error={!user.email.startsWith(userEmail)}
-          onChange={(e) => setUserEmail(e.target.value)}
-          autoFocus
-          id="name"
-          type="text"
-          fullWidth
-        />
+        <Box
+          component="form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleDelete();
+          }}
+        >
+          <TextField
+            inputRef={inputRef}
+            value={userEmail}
+            error={!user.email.startsWith(userEmail)}
+            onChange={(e) => setUserEmail(e.target.value)}
+            autoFocus
+            id="name"
+            type="text"
+            fullWidth
+          />
+        </Box>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleDelete} disabled={userEmail != user.email}>

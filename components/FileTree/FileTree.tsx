@@ -9,6 +9,7 @@ import FolderIcon from "@mui/icons-material/Folder";
 import NewExperimentIcon from "@mui/icons-material/NoteAdd";
 import ScienceIcon from "@mui/icons-material/Science";
 import {
+  Box,
   Divider,
   List,
   ListItemIcon,
@@ -90,190 +91,205 @@ export const FileTree = ({ sx }: Props) => {
           }
           onRefresh={onRefresh}
         />
-        <ContextMenu
-          renderItems={({ onClose }) => (
-            <>
-              <MenuItem
-                onClick={() => {
-                  openDialog("RENAME", {
-                    fileType: fileSelection!.type,
-                    id: fileSelection!.id,
-                  });
-                  onClose();
-                }}
-              >
-                <ListItemIcon>
-                  <RenameIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>Rename</ListItemText>
-              </MenuItem>
-              <MenuItem
-                onClick={() => {
-                  setFileSelection(null);
-                  openDialog("DELETE", {
-                    fileType: fileSelection!.type,
-                    id: fileSelection!.id,
-                  });
-                  onClose();
-                }}
-              >
-                <ListItemIcon>
-                  <DeleteIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>Delete</ListItemText>
-              </MenuItem>
-              <Divider />
-              <MenuItem
-                onClick={() => {
-                  openDialog("CREATE", {
-                    fileType: FileType.DIR,
-                    prefixPath: newFilePrefixPath,
-                  });
-                  onClose();
-                }}
-              >
-                <ListItemIcon>
-                  <NewDirectoryIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>New Folder</ListItemText>
-              </MenuItem>
-              <MenuItem
-                onClick={() => {
-                  openDialog("CREATE", {
-                    fileType: FileType.EXP,
-                    prefixPath: newFilePrefixPath,
-                  });
-                  onClose();
-                }}
-              >
-                <ListItemIcon>
-                  <NewExperimentIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>New Experiment</ListItemText>
-              </MenuItem>
-            </>
-          )}
+        <Box
+          sx={{
+            overflow: "scroll",
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+          }}
         >
-          <List dense disablePadding>
-            <Tree
-              showLine
-              draggable
-              treeData={buildTree(
-                workspace.rootId,
-                Object.values(experiments),
-                Object.values(directories)
-              )}
-              allowDrop={(s) => !s.dropNode.isLeaf}
-              onDrop={({ dragNode, node, dropPosition }) => {
-                // If drop above, move to same directory instead of inside
-                const destPrefixPath =
-                  dropPosition < 0
-                    ? directories[node.key].prefixPath
-                    : getPath(directories[node.key]);
+          <ContextMenu
+            renderItems={({ onClose }) => (
+              <>
+                <MenuItem
+                  onClick={() => {
+                    openDialog("RENAME", {
+                      fileType: fileSelection!.type,
+                      id: fileSelection!.id,
+                    });
+                    onClose();
+                  }}
+                >
+                  <ListItemIcon>
+                    <RenameIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText>Rename</ListItemText>
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    setFileSelection(null);
+                    openDialog("DELETE", {
+                      fileType: fileSelection!.type,
+                      id: fileSelection!.id,
+                    });
+                    onClose();
+                  }}
+                >
+                  <ListItemIcon>
+                    <DeleteIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText>Delete</ListItemText>
+                </MenuItem>
+                <Divider />
+                <MenuItem
+                  onClick={() => {
+                    openDialog("CREATE", {
+                      fileType: FileType.DIR,
+                      prefixPath: newFilePrefixPath,
+                    });
+                    onClose();
+                  }}
+                >
+                  <ListItemIcon>
+                    <NewDirectoryIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText>New Folder</ListItemText>
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    openDialog("CREATE", {
+                      fileType: FileType.EXP,
+                      prefixPath: newFilePrefixPath,
+                    });
+                    onClose();
+                  }}
+                >
+                  <ListItemIcon>
+                    <NewExperimentIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText>New Experiment</ListItemText>
+                </MenuItem>
+              </>
+            )}
+          >
+            <List dense disablePadding>
+              <Tree
+                showLine
+                draggable
+                treeData={buildTree(
+                  workspace.rootId,
+                  Object.values(experiments),
+                  Object.values(directories)
+                )}
+                allowDrop={(s) => !s.dropNode.isLeaf}
+                onDrop={({ dragNode, node, dropPosition }) => {
+                  // If drop above, move to same directory instead of inside
+                  const destPrefixPath =
+                    dropPosition < 0
+                      ? directories[node.key].prefixPath
+                      : getPath(directories[node.key]);
 
-                if (dragNode.isLeaf) {
-                  const destDirectory = getIdFromPath(destPrefixPath);
-                  if (experiments[dragNode.key].directory === destDirectory) {
-                    return;
+                  if (dragNode.isLeaf) {
+                    const destDirectory = getIdFromPath(destPrefixPath);
+                    if (experiments[dragNode.key].directory === destDirectory) {
+                      return;
+                    }
+                    updateExperiment(dragNode.key, {
+                      directory: destDirectory,
+                    });
+                  } else {
+                    if (
+                      directories[dragNode.key].prefixPath == destPrefixPath
+                    ) {
+                      return;
+                    }
+                    updateDirectory(dragNode.key, {
+                      prefixPath: destPrefixPath,
+                    });
                   }
-                  updateExperiment(dragNode.key, { directory: destDirectory });
-                } else {
-                  if (directories[dragNode.key].prefixPath == destPrefixPath) {
-                    return;
-                  }
-                  updateDirectory(dragNode.key, { prefixPath: destPrefixPath });
-                }
-              }}
-              onRightClick={({ node }) => {
-                const fileId = node.key;
-                setFileSelection({
-                  id: fileId,
-                  type: fileId in directories ? FileType.DIR : FileType.EXP,
-                });
-              }}
-              // Prevent deselecting files by ignoring empty selection
-              onSelect={(s) => {
-                if (!s.length) return;
+                }}
+                onRightClick={({ node }) => {
+                  const fileId = node.key;
+                  setFileSelection({
+                    id: fileId,
+                    type: fileId in directories ? FileType.DIR : FileType.EXP,
+                  });
+                }}
+                // Prevent deselecting files by ignoring empty selection
+                onSelect={(s) => {
+                  if (!s.length) return;
 
-                const fileId = s[0] as string;
-                setFileSelection({
-                  id: fileId,
-                  type: fileId in directories ? FileType.DIR : FileType.EXP,
-                });
-              }}
-              selectedKeys={fileSelection ? [fileSelection.id] : undefined}
-              onExpand={(_, info) => {
-                if (info.node.expanded) {
-                  setExpandedKeys((prev) =>
-                    prev.filter((key) => key !== info.node.key)
-                  );
-                } else {
-                  setExpandedKeys((prev) => [...prev, info.node.key]);
+                  const fileId = s[0] as string;
+                  setFileSelection({
+                    id: fileId,
+                    type: fileId in directories ? FileType.DIR : FileType.EXP,
+                  });
+                }}
+                selectedKeys={fileSelection ? [fileSelection.id] : undefined}
+                onExpand={(_, info) => {
+                  if (info.node.expanded) {
+                    setExpandedKeys((prev) =>
+                      prev.filter((key) => key !== info.node.key)
+                    );
+                  } else {
+                    setExpandedKeys((prev) => [...prev, info.node.key]);
+                  }
+                }}
+                expandedKeys={expandedKeys}
+                icon={(node) =>
+                  node.isLeaf ? (
+                    <ScienceIcon fontSize="small" color="primary" />
+                  ) : (
+                    <FolderIcon fontSize="small" color="secondary" />
+                  )
                 }
-              }}
-              expandedKeys={expandedKeys}
-              icon={(node) =>
-                node.isLeaf ? (
-                  <ScienceIcon fontSize="small" color="primary" />
-                ) : (
-                  <FolderIcon fontSize="small" color="secondary" />
-                )
-              }
-              /**
-               * For all above props, directories will not have isLeaf, and
-               * it seems to match what we input for treeData
-               * however, leaf directories will have isLeaf: true here
-               */
-              switcherIcon={(node) =>
-                node.isLeaf ? null : (
-                  <ArrowRightIcon
-                    sx={{
-                      rotate: node.expanded ? "90deg" : null,
-                      transition: "100ms",
-                    }}
-                  />
-                )
-              }
-            />
-          </List>
-        </ContextMenu>
-        <ContextMenu
-          sx={{ flex: 1 }}
-          onClick={() => setFileSelection(null)}
-          onContextMenu={() => setFileSelection(null)}
-          renderItems={({ onClose }) => (
-            <>
-              <MenuItem
-                onClick={() => {
-                  openDialog("CREATE", {
-                    fileType: FileType.DIR,
-                    prefixPath: newFilePrefixPath,
-                  });
-                  onClose();
-                }}
-              >
-                <ListItemIcon>
-                  <NewDirectoryIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>New Folder</ListItemText>
-              </MenuItem>
-              <MenuItem
-                onClick={() => {
-                  openDialog("CREATE", {
-                    fileType: FileType.EXP,
-                    prefixPath: newFilePrefixPath,
-                  });
-                  onClose();
-                }}
-              >
-                <ListItemIcon>
-                  <NewExperimentIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText>New Experiment</ListItemText>
-              </MenuItem>
-            </>
-          )}
-        />
+                /**
+                 * For all above props, directories will not have isLeaf, and
+                 * it seems to match what we input for treeData
+                 * however, leaf directories will have isLeaf: true here
+                 */
+                switcherIcon={(node) =>
+                  node.isLeaf ? null : (
+                    <ArrowRightIcon
+                      sx={{
+                        rotate: node.expanded ? "90deg" : null,
+                        transition: "100ms",
+                      }}
+                    />
+                  )
+                }
+              />
+            </List>
+          </ContextMenu>
+          <ContextMenu
+            sx={{ flex: 1, minHeight: 200 }}
+            onClick={() => setFileSelection(null)}
+            onContextMenu={() => setFileSelection(null)}
+            renderItems={({ onClose }) => (
+              <>
+                <MenuItem
+                  onClick={() => {
+                    openDialog("CREATE", {
+                      fileType: FileType.DIR,
+                      prefixPath: newFilePrefixPath,
+                    });
+                    onClose();
+                  }}
+                >
+                  <ListItemIcon>
+                    <NewDirectoryIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText>New Folder</ListItemText>
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    openDialog("CREATE", {
+                      fileType: FileType.EXP,
+                      prefixPath: newFilePrefixPath,
+                    });
+                    onClose();
+                  }}
+                >
+                  <ListItemIcon>
+                    <NewExperimentIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText>New Experiment</ListItemText>
+                </MenuItem>
+              </>
+            )}
+          />
+        </Box>
       </Paper>
     </>
   );

@@ -67,18 +67,25 @@ export const CreateFileDialog = ({ fileType, onClose, prefixPath }: Props) => {
         Create {DialogInfo[fileType].title}
       </DialogTitleWithClose>
       <DialogContent>
-        {/* This tomfoolery b/c DialogContent has inline styles which cover TextField label  */}
-        <Box sx={{ pt: 2 }} />
-        <TextField
-          inputRef={inputRef}
-          value={fileName}
-          onChange={(e) => setFileName(e.target.value)}
-          autoFocus
-          id="name"
-          label={filePath}
-          type="text"
-          fullWidth
-        />
+        <Box
+          sx={{ pt: 2 }}
+          component="form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleCreate();
+          }}
+        >
+          <TextField
+            inputRef={inputRef}
+            value={fileName}
+            onChange={(e) => setFileName(e.target.value)}
+            autoFocus
+            id="name"
+            label={filePath}
+            type="text"
+            fullWidth
+          />
+        </Box>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleCreate}>Create</Button>

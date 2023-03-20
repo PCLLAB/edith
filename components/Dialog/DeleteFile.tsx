@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import {
+  Box,
   Button,
   DialogActions,
   DialogContent,
@@ -60,16 +61,24 @@ export const DeleteFileDialog = ({ fileType, onClose, id }: Props) => {
         <DialogContentText>
           Type <b>{file.name}</b> to confirm.
         </DialogContentText>
-        <TextField
-          inputRef={inputRef}
-          value={fileName}
-          error={!file.name.startsWith(fileName)}
-          onChange={(e) => setFileName(e.target.value)}
-          autoFocus
-          id="name"
-          type="text"
-          fullWidth
-        />
+        <Box
+          component="form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleDelete();
+          }}
+        >
+          <TextField
+            inputRef={inputRef}
+            value={fileName}
+            error={!file.name.startsWith(fileName)}
+            onChange={(e) => setFileName(e.target.value)}
+            autoFocus
+            id="name"
+            type="text"
+            fullWidth
+          />
+        </Box>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleDelete} disabled={fileName != file.name}>
