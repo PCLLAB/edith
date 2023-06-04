@@ -45,6 +45,9 @@ const get: TypedApiHandlerWithAuth<ExperimentsIdMetaGetSignature> = async (
     activityLog[localDateKey] = count + 1;
   });
 
+  // TODO refactor away mongoDBData
+  mongoDBData.numDocuments = dates.length;
+
   res.json({
     mongoDBData,
     activityLog,
