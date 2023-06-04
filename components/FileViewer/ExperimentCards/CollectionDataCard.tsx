@@ -62,7 +62,7 @@ export const CollectionDataCard = ({ exp }: CardProps) => {
       getDatesInRange(new Date(startDate), endDate).map((date) => {
         const localZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         const localDateKey = getLocalDayISO(date, localZone);
-        const count = expMeta?.activityLog[localDateKey] ?? 0;
+        const count = expMeta?.activityLog[localDateKey!] ?? 0;
         return {
           date,
           count,

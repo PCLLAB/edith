@@ -164,11 +164,7 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
                   validate: (v: Dayjs | null) => v == null || v.isValid(),
                 }}
                 render={({ field }) => (
-                  <DateTimePicker
-                    label="Start"
-                    renderInput={(props) => <TextField {...props} />}
-                    {...field}
-                  />
+                  <DateTimePicker label="Start" {...field} />
                 )}
               />
               <Controller
@@ -178,11 +174,7 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
                   validate: (v: Dayjs | null) => v == null || v.isValid(),
                 }}
                 render={({ field }) => (
-                  <DateTimePicker
-                    label="End"
-                    renderInput={(props) => <TextField {...props} />}
-                    {...field}
-                  />
+                  <DateTimePicker label="End" {...field} />
                 )}
               />
             </LocalizationProvider>
@@ -213,9 +205,6 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
             open={dropOpen}
             // disablePortal
             anchorEl={anchorRef.current}
-            nonce={undefined}
-            onResize={undefined}
-            onResizeCapture={undefined}
           >
             <Paper>
               <ClickAwayListener onClickAway={onToggleDrop}>

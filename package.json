@@ -26,7 +26,7 @@
     "@mui/material": "^5.13.3",
     "@mui/system": "^5.13.2",
     "@mui/x-data-grid": "^5.17.26",
-    "@mui/x-date-pickers": "^5.0.20",
+    "@mui/x-date-pickers": "^6.6.0",
     "bcrypt": "^5.1.0",
     "dayjs": "^1.11.8",
     "express-jwt": "^7.7.7",

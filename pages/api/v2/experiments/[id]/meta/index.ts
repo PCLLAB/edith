@@ -41,8 +41,8 @@ const get: TypedApiHandlerWithAuth<ExperimentsIdMetaGetSignature> = async (
 
   dates.forEach((doc) => {
     const localDateKey = getLocalDayISO(doc.createdAt, userTimezone);
-    const count = activityLog[localDateKey] ?? 0;
-    activityLog[localDateKey] = count + 1;
+    const count = activityLog[localDateKey!] ?? 0;
+    activityLog[localDateKey!] = count + 1;
   });
 
   // TODO refactor away mongoDBData
