@@ -73,7 +73,7 @@ const post: TypedApiHandlerWithAuth<ExperimentsIdDataPostSignature> = async (
 
   const data = req.body;
 
-  if (exp.enabled) {
+  if (!exp.enabled) {
     const entry = new CachedDataEntry({
       data,
       experiment: exp._id,
