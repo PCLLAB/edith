@@ -1,5 +1,5 @@
 import { DistributiveOmit } from "../common/tsUtils";
-import { ApiSignature } from "../common/types/api";
+import { ApiSignature } from "../server/initHandler";
 import config from "../config";
 
 export type Fetcher<T extends ApiSignature> = (
@@ -42,7 +42,7 @@ export const fetcher = async <T extends ApiSignature>(
   let finalUrl: string = config.NEXT_PUBLIC_BASE_PATH + signature.url;
   let firstQuery = true;
 
-  if ("query" in signature) {
+  if (signature.query != null) {
     Object.entries(signature.query).forEach(([param, value]) => {
       if (value == null) return;
 

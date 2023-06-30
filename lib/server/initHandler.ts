@@ -7,7 +7,7 @@ import jwtAuth from "./jwtAuth";
 
 export type HTTP_METHOD = "GET" | "POST" | "PUT" | "DELETE";
 
-type ApiSignature = {
+export type ApiSignature = {
   url: string;
   method: HTTP_METHOD;
   query?: {
