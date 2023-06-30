@@ -1,4 +1,4 @@
-import { HTTP_METHOD } from "../common/types/api";
+import { HTTP_METHOD } from "./initHandler";
 
 export type ModelType =
   | "Directory"

@@ -1,10 +1,23 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { UserJson } from "../common/types/models";
-import { ApiSignature, HTTP_METHOD } from "../common/types/api";
 import dbConnect from "./dbConnect";
 import { NotAllowedMethodError } from "./errors";
 import jwtAuth from "./jwtAuth";
+
+export type HTTP_METHOD = "GET" | "POST" | "PUT" | "DELETE";
+
+type ApiSignature = {
+  url: string;
+  method: HTTP_METHOD;
+  query?: {
+    [key: string]: string | number | boolean;
+  };
+  body?: {
+    [key: string]: string | number | boolean;
+  };
+  data?: any;
+};
 
 export type ApiHandler<T extends ApiSignature> = (
   /** Includes `auth` field as decoded jwt payload */
