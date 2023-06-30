@@ -33,12 +33,12 @@ export const AuthContextProvider = ({ children }: Props) => {
 
   useEffect(() => {
     if (noAuth) return;
-    console.log("useEffect");
     getMe()
       .then((me) => setId(me._id))
       .catch((e) => {
         if (e.status === 401) router.push("/login");
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [noAuth]);
 
   return (

@@ -30,19 +30,17 @@ const getDatesInRange = (start: Date, end: Date) => {
 };
 
 export const CollectionDataCard = ({ exp }: CardProps) => {
-  console.log("CC card render");
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
 
-  const endDate =
-    selectedYear == null ? new Date() : new Date(selectedYear, 11, 31);
+  const endDate = useMemo(
+    () => (selectedYear == null ? new Date() : new Date(selectedYear, 11, 31)),
+    [selectedYear]
+  );
   const startDate = getMinusYear(endDate);
 
   const expMeta = useBoundStore((store) => store.metadataMap[exp._id]);
 
-  console.log("expmeta in cc card", expMeta);
-
   const years = (() => {
-    // return [2020, 2021, 2022];
     const years = [new Date().getFullYear()];
 
     const log = expMeta?.activityLog;

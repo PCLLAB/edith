@@ -41,6 +41,7 @@ const Explorer: NextPage = () => {
         rootId: dirs[0]._id,
       })
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

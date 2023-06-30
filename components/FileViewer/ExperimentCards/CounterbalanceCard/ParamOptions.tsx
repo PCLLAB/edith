@@ -74,6 +74,7 @@ export const ParamOptions = ({ cb }: ParamOptionsProps) => {
 
   useEffect(() => {
     reset(getValues());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSubmitSuccessful]);
 
   return (

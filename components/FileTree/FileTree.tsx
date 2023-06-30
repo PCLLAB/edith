@@ -60,6 +60,7 @@ export const FileTree = ({ sx }: Props) => {
 
   useEffect(() => {
     getDirectoryContent(workspace.rootId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workspace]);
 
   const { fileSelection, setFileSelection } = useContext(FileSelectionContext);

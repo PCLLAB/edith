@@ -1,4 +1,4 @@
-import create from "zustand";
+import { create } from "zustand";
 import { createDataSlice, DataSlice } from "./dataSlice";
 
 import { createDirectorySlice, DirectorySlice } from "./directorySlice";

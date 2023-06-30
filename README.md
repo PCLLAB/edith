@@ -2,7 +2,7 @@
 
 ![Test Workflow](https://github.com/zhengkyl/bedi/actions/workflows/test.yml/badge.svg)
 
-experiment data in the house
+<b>E</b>xperiment <b>D</b>ata <b>I</b>nterface <b>TH</b>ree
 
 ### Progress
 

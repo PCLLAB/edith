@@ -7,14 +7,21 @@ import jwtAuth from "./jwtAuth";
 
 export type HTTP_METHOD = "GET" | "POST" | "PUT" | "DELETE";
 
+type JsonValue =
+  | string
+  | number
+  | boolean
+  | JsonValue[]
+  | { [key: string]: JsonValue };
+
 export type ApiSignature = {
   url: string;
   method: HTTP_METHOD;
   query?: {
-    [key: string]: string | number | boolean;
+    [key: string]: JsonValue;
   };
   body?: {
-    [key: string]: string | number | boolean;
+    [key: string]: JsonValue;
   };
   data?: any;
 };

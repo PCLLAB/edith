@@ -82,6 +82,7 @@ export const Quotas = ({ cb }: Props) => {
 
   useEffect(() => {
     reset(getValues());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSubmitSuccessful]);
 
   return (

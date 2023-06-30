@@ -83,7 +83,7 @@ export const SiteWideAppBar = () => {
               horizontal: "right",
             }}
           >
-            <Link href="/explorer">
+            <Link href="/explorer" passHref={undefined}>
               <MenuItem>
                 <ListItemIcon>
                   <DatasetIcon />
@@ -91,7 +91,7 @@ export const SiteWideAppBar = () => {
                 <ListItemText>Experiments</ListItemText>
               </MenuItem>
             </Link>
-            <Link href="/account">
+            <Link href="/account" passHref={undefined}>
               <MenuItem>
                 <ListItemIcon>
                   <PersonIcon />
@@ -100,7 +100,7 @@ export const SiteWideAppBar = () => {
               </MenuItem>
             </Link>
             {me?.superuser && (
-              <Link href="/admin">
+              <Link href="/admin" passHref={undefined}>
                 <MenuItem>
                   <ListItemIcon>
                     <SettingsIcon />

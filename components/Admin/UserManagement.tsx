@@ -32,6 +32,7 @@ export const UserManagement = ({ sx }: Props) => {
 
   useEffect(() => {
     getUsers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [model, setModel] = useState<GridCellModesModel>({});
