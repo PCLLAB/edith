@@ -1,8 +1,6 @@
 import { CachedDataEntryJson } from "../../../../../lib/common/types/models";
 import { ModelNotFoundError } from "../../../../../lib/server/errors";
-import initHandler, {
-  TypedApiHandlerWithAuth,
-} from "../../../../../lib/server/initHandler";
+import initHandler, { ApiHandler } from "../../../../../lib/server/initHandler";
 import { CachedDataEntry } from "../../../../../models/DataEntry";
 
 export const ENDPOINT = "/api/v2/experiments/[id]/cache";
@@ -16,10 +14,7 @@ export type GetExperimentsIdCache = {
   data: CachedDataEntryJson[];
 };
 
-const GET: TypedApiHandlerWithAuth<GetExperimentsIdCache> = async (
-  req,
-  res
-) => {
+const GET: ApiHandler<GetExperimentsIdCache> = async (req, res) => {
   const id = req.query.id;
   const data = await CachedDataEntry.find({ experiment: id });
 
@@ -38,10 +33,7 @@ export type DeleteExperimentsIdCache = {
   };
 };
 
-const DELETE: TypedApiHandlerWithAuth<DeleteExperimentsIdCache> = async (
-  req,
-  res
-) => {
+const DELETE: ApiHandler<DeleteExperimentsIdCache> = async (req, res) => {
   const id = req.query.id;
   const deleteResult = await CachedDataEntry.deleteMany({ experiment: id });
 

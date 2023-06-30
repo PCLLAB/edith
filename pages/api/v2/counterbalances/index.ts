@@ -3,9 +3,7 @@ import type {
   DirectoryJson,
 } from "../../../../lib/common/types/models";
 import { MissingArgsError } from "../../../../lib/server/errors";
-import initHandler, {
-  TypedApiHandlerWithAuth,
-} from "../../../../lib/server/initHandler";
+import initHandler, { ApiHandler } from "../../../../lib/server/initHandler";
 import Counterbalance from "../../../../models/Counterbalance";
 
 export const ENDPOINT = "/api/v2/counterbalances";
@@ -20,7 +18,7 @@ export type PostCounterbalances = {
   data: CounterbalanceJson;
 };
 
-const POST: TypedApiHandlerWithAuth<PostCounterbalances> = async (req, res) => {
+const POST: ApiHandler<PostCounterbalances> = async (req, res) => {
   const { experiment, url } = req.body;
 
   if (experiment == null || url == null) {

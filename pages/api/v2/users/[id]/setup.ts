@@ -1,6 +1,6 @@
 import { InvalidArgsError } from "../../../../../lib/server/errors";
 import initHandler, {
-  TypedApiHandler,
+  ApiHandlerNoAuth,
 } from "../../../../../lib/server/initHandler";
 import User from "../../../../../models/User";
 
@@ -19,7 +19,7 @@ export type PostUsersIdSetup = {
   data: void;
 };
 
-const POST: TypedApiHandler<PostUsersIdSetup> = async (req, res) => {
+const POST: ApiHandlerNoAuth<PostUsersIdSetup> = async (req, res) => {
   // USER MUST EXIST (created by admin via invite)
   const user = await User.findById(req.query.id);
 

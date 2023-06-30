@@ -3,9 +3,7 @@ import {
   MissingArgsError,
   UserPermissionError,
 } from "../../../../lib/server/errors";
-import initHandler, {
-  TypedApiHandlerWithAuth,
-} from "../../../../lib/server/initHandler";
+import initHandler, { ApiHandler } from "../../../../lib/server/initHandler";
 import User from "../../../../models/User";
 
 export const ENDPOINT = "/api/v2/users";
@@ -16,7 +14,7 @@ export type GetUsers = {
   data: UserJson[];
 };
 
-const GET: TypedApiHandlerWithAuth<GetUsers> = async (req, res) => {
+const GET: ApiHandler<GetUsers> = async (req, res) => {
   const users = await User.find().lean();
   return res.json(users);
 };
@@ -28,7 +26,7 @@ export type PostUsers = {
   data: UserJson;
 };
 
-const POST: TypedApiHandlerWithAuth<PostUsers> = async (req, res) => {
+const POST: ApiHandler<PostUsers> = async (req, res) => {
   if (!req.auth.superuser) {
     throw new UserPermissionError();
   }

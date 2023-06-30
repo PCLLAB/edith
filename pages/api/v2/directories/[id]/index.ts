@@ -1,8 +1,6 @@
 import type { DirectoryJson } from "../../../../../lib/common/types/models";
 import dbConnect from "../../../../../lib/server/dbConnect";
-import initHandler, {
-  TypedApiHandlerWithAuth,
-} from "../../../../../lib/server/initHandler";
+import initHandler, { ApiHandler } from "../../../../../lib/server/initHandler";
 import { moveDirectory } from "../../../../../lib/server/moveDirectory";
 import Directory from "../../../../../models/Directory";
 import Experiment from "../../../../../models/Experiment";
@@ -18,7 +16,7 @@ export type GetDirectoriesId = {
   data: DirectoryJson;
 };
 
-const GET: TypedApiHandlerWithAuth<GetDirectoriesId> = async (req, res) => {
+const GET: ApiHandler<GetDirectoriesId> = async (req, res) => {
   const id = req.query.id;
 
   const dir = await Directory.findById(id).lean();
@@ -40,7 +38,7 @@ export type PutDirectoriesId = {
   data: DirectoryJson;
 };
 
-const PUT: TypedApiHandlerWithAuth<PutDirectoriesId> = async (req, res) => {
+const PUT: ApiHandler<PutDirectoriesId> = async (req, res) => {
   const id = req.query.id;
 
   const dir = await Directory.findById(id);
@@ -73,10 +71,7 @@ export type DeleteDirectoriesId = {
   };
 };
 
-const DELETE: TypedApiHandlerWithAuth<DeleteDirectoriesId> = async (
-  req,
-  res
-) => {
+const DELETE: ApiHandler<DeleteDirectoriesId> = async (req, res) => {
   const id = req.query.id;
 
   const db = await dbConnect();

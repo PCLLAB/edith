@@ -4,9 +4,7 @@ import type {
   Quota,
 } from "../../../../lib/common/types/models";
 import { InvalidArgsError } from "../../../../lib/server/errors";
-import initHandler, {
-  TypedApiHandlerWithAuth,
-} from "../../../../lib/server/initHandler";
+import initHandler, { ApiHandler } from "../../../../lib/server/initHandler";
 import Counterbalance from "../../../../models/Counterbalance";
 import { modelForCollection } from "../../../../models/DataEntry";
 import Experiment from "../../../../models/Experiment";
@@ -23,10 +21,7 @@ export type GetCounterbalancesExpId = {
   data: CounterbalanceJson;
 };
 
-const GET: TypedApiHandlerWithAuth<GetCounterbalancesExpId> = async (
-  req,
-  res
-) => {
+const GET: ApiHandler<GetCounterbalancesExpId> = async (req, res) => {
   const expId = req.query.expId;
 
   const cb = await Counterbalance.findOne({ experiment: expId }).lean();
@@ -49,10 +44,7 @@ export type PutCounterbalancesExpId = {
   data: CounterbalanceJson;
 };
 
-const PUT: TypedApiHandlerWithAuth<PutCounterbalancesExpId> = async (
-  req,
-  res
-) => {
+const PUT: ApiHandler<PutCounterbalancesExpId> = async (req, res) => {
   const expId = req.query.expId;
 
   const cb = await Counterbalance.findOne({ experiment: expId });

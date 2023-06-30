@@ -1,7 +1,5 @@
 import { ExperimentJson } from "../../../../../lib/common/types/models";
-import initHandler, {
-  TypedApiHandlerWithAuth,
-} from "../../../../../lib/server/initHandler";
+import initHandler, { ApiHandler } from "../../../../../lib/server/initHandler";
 import Experiment, {
   ArchivedExperiment,
 } from "../../../../../models/Experiment";
@@ -20,7 +18,7 @@ export type GetExperimentsId = {
   data: ExperimentJson;
 };
 
-const GET: TypedApiHandlerWithAuth<GetExperimentsId> = async (req, res) => {
+const GET: ApiHandler<GetExperimentsId> = async (req, res) => {
   const id = req.query.id;
 
   const experiment = await Experiment.findById(id).lean();
@@ -43,7 +41,7 @@ export type PutExperimentsId = {
   data: ExperimentJson;
 };
 
-const PUT: TypedApiHandlerWithAuth<PutExperimentsId> = async (req, res) => {
+const PUT: ApiHandler<PutExperimentsId> = async (req, res) => {
   const id = req.query.id;
 
   const { name, enabled, user, directory } = req.body;
@@ -72,10 +70,7 @@ export type DeleteExperimentsId = {
   };
 };
 
-const DELETE: TypedApiHandlerWithAuth<DeleteExperimentsId> = async (
-  req,
-  res
-) => {
+const DELETE: ApiHandler<DeleteExperimentsId> = async (req, res) => {
   const id = req.query.id;
 
   const experiment = await Experiment.findById(id);
@@ -105,7 +100,7 @@ export type PostExperimentsId = {
   };
 };
 
-const POST: TypedApiHandlerWithAuth<PostExperimentsId> = async (req, res) => {
+const POST: ApiHandler<PostExperimentsId> = async (req, res) => {
   const id = req.query.id;
 
   const archivedExp = await ArchivedExperiment.findById(id);

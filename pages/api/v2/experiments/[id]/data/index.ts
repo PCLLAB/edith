@@ -3,7 +3,7 @@ import {
   Quota,
 } from "../../../../../../lib/common/types/models";
 import initHandler, {
-  TypedApiHandlerWithAuth,
+  ApiHandler,
 } from "../../../../../../lib/server/initHandler";
 import Counterbalance from "../../../../../../models/Counterbalance";
 import {
@@ -28,7 +28,7 @@ export type GetExperimentsIdData = {
   data: DataEntryJson[];
 };
 
-const GET: TypedApiHandlerWithAuth<GetExperimentsIdData> = async (req, res) => {
+const GET: ApiHandler<GetExperimentsIdData> = async (req, res) => {
   const { id, skip, limit, startDate, endDate } = req.query;
 
   const expObj = await Experiment.findById(id).lean();
@@ -60,10 +60,7 @@ export type PostExperimentsIdData = {
   data: void;
 };
 
-const POST: TypedApiHandlerWithAuth<PostExperimentsIdData> = async (
-  req,
-  res
-) => {
+const POST: ApiHandler<PostExperimentsIdData> = async (req, res) => {
   const id = req.query.id;
 
   const exp = await Experiment.findById(id).lean();

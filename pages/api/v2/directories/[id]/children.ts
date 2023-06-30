@@ -3,9 +3,7 @@ import {
   ExperimentJson,
 } from "../../../../../lib/common/types/models";
 import { getPath } from "../../../../../lib/common/utils";
-import initHandler, {
-  TypedApiHandlerWithAuth,
-} from "../../../../../lib/server/initHandler";
+import initHandler, { ApiHandler } from "../../../../../lib/server/initHandler";
 import Directory from "../../../../../models/Directory";
 import Experiment from "../../../../../models/Experiment";
 
@@ -23,10 +21,7 @@ export type GetDirectoriesIdChildren = {
   };
 };
 
-const GET: TypedApiHandlerWithAuth<GetDirectoriesIdChildren> = async (
-  req,
-  res
-) => {
+const GET: ApiHandler<GetDirectoriesIdChildren> = async (req, res) => {
   const { id } = req.query;
 
   const parent = await Directory.findById(id);

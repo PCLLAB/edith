@@ -9,9 +9,7 @@ import {
   ModelNotFoundError,
   UserPermissionError,
 } from "../../../../../lib/server/errors";
-import initHandler, {
-  TypedApiHandlerWithAuth,
-} from "../../../../../lib/server/initHandler";
+import initHandler, { ApiHandler } from "../../../../../lib/server/initHandler";
 import User from "../../../../../models/User";
 
 export const ENDPOINT = "/api/v2/users/[id]";
@@ -25,7 +23,7 @@ export type GetUsersId = {
   data: UserJson;
 };
 
-const GET: TypedApiHandlerWithAuth<GetUsersId> = async (req, res) => {
+const GET: ApiHandler<GetUsersId> = async (req, res) => {
   const user = await User.findById(req.query.id).lean();
   return res.json(user);
 };
@@ -46,7 +44,7 @@ export type PutUsersId = {
   data: UserJson;
 };
 
-const PUT: TypedApiHandlerWithAuth<PutUsersId> = async (req, res) => {
+const PUT: ApiHandler<PutUsersId> = async (req, res) => {
   const id = req.query.id;
 
   if (req.auth._id !== id && !req.auth.superuser) {
@@ -106,7 +104,7 @@ export type DeleteUsersId = {
   };
 };
 
-const DELETE: TypedApiHandlerWithAuth<DeleteUsersId> = async (req, res) => {
+const DELETE: ApiHandler<DeleteUsersId> = async (req, res) => {
   if (!req.auth.superuser) {
     throw new UserPermissionError();
   }

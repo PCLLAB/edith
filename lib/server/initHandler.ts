@@ -6,14 +6,14 @@ import dbConnect from "./dbConnect";
 import { NotAllowedMethodError } from "./errors";
 import jwtAuth from "./jwtAuth";
 
-export type TypedApiHandlerWithAuth<T extends ApiSignature> = (
+export type ApiHandler<T extends ApiSignature> = (
   /** Includes `auth` field as decoded jwt payload */
   req: Omit<NextApiRequest, "body"> &
     Pick<T, ("query" | "body") & keyof T> & { auth: UserJson },
   res: NextApiResponse<FieldsWithAny<T["data"]>>
 ) => void | Promise<void>;
 
-export type TypedApiHandler<T extends ApiSignature> = (
+export type ApiHandlerNoAuth<T extends ApiSignature> = (
   req: Omit<NextApiRequest, "body"> & Pick<T, ("query" | "body") & keyof T>,
   res: NextApiResponse<FieldsWithAny<T["data"]>>
 ) => void | Promise<void>;
@@ -35,7 +35,7 @@ export type StringifyFields<T> = {
 };
 
 export type MatchAction = Partial<
-  Record<HTTP_METHOD, TypedApiHandlerWithAuth<any> | TypedApiHandler<any>>
+  Record<HTTP_METHOD, ApiHandler<any> | ApiHandlerNoAuth<any>>
 >;
 
 /**

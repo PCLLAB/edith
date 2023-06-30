@@ -1,8 +1,6 @@
 import { ExperimentJson } from "../../../../lib/common/types/models";
 import { MissingArgsError } from "../../../../lib/server/errors";
-import initHandler, {
-  TypedApiHandlerWithAuth,
-} from "../../../../lib/server/initHandler";
+import initHandler, { ApiHandler } from "../../../../lib/server/initHandler";
 import Experiment from "../../../../models/Experiment";
 import MongoDBData from "../../../../models/MongoDBData";
 
@@ -14,7 +12,7 @@ export type GetExperiments = {
   data: ExperimentJson[];
 };
 
-const GET: TypedApiHandlerWithAuth<GetExperiments> = async (req, res) => {
+const GET: ApiHandler<GetExperiments> = async (req, res) => {
   const experiments = await Experiment.find().lean();
   res.json(experiments);
 };
@@ -30,7 +28,7 @@ export type PostExperiments = {
   data: ExperimentJson;
 };
 
-const POST: TypedApiHandlerWithAuth<PostExperiments> = async (req, res) => {
+const POST: ApiHandler<PostExperiments> = async (req, res) => {
   const { name, directory, enabled = false } = req.body;
   const user = req.auth._id;
 

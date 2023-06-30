@@ -10,8 +10,8 @@ import {
 import config from "../../../../lib/config";
 import { MissingArgsError } from "../../../../lib/server/errors";
 import initHandler, {
-  TypedApiHandler,
-  TypedApiHandlerWithAuth,
+  ApiHandlerNoAuth,
+  ApiHandler,
 } from "../../../../lib/server/initHandler";
 import User from "../../../../models/User";
 
@@ -23,7 +23,7 @@ export type GetUsersAuth = {
   data: UserJson;
 };
 
-const GET: TypedApiHandlerWithAuth<GetUsersAuth> = async (req, res) => {
+const GET: ApiHandler<GetUsersAuth> = async (req, res) => {
   res.json(req.auth);
 };
 
@@ -40,7 +40,7 @@ export type PostUsersAuth = {
   };
 };
 
-const POST: TypedApiHandler<PostUsersAuth> = async (req, res) => {
+const POST: ApiHandlerNoAuth<PostUsersAuth> = async (req, res) => {
   req.query;
   const { email, password } = req.body;
 
@@ -88,7 +88,7 @@ export type DeleteUsersAuth = {
   data: void;
 };
 
-const DELETE: TypedApiHandlerWithAuth<DeleteUsersAuth> = async (req, res) => {
+const DELETE: ApiHandler<DeleteUsersAuth> = async (req, res) => {
   res.setHeader(
     "Set-Cookie",
     `${JWT_COOKIE_KEY}=; Secure; HttpOnly; SameSite=Lax; Path=${config.NEXT_PUBLIC_BASE_PATH}/api/v2; Max-Age=0`

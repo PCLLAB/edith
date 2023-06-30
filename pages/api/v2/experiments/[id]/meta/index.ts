@@ -3,7 +3,7 @@ import { MetadataJson } from "../../../../../../lib/common/types/misc";
 import { getLocalDayISO } from "../../../../../../lib/common/utils";
 
 import initHandler, {
-  TypedApiHandlerWithAuth,
+  ApiHandler,
 } from "../../../../../../lib/server/initHandler";
 import { modelForCollection } from "../../../../../../models/DataEntry";
 import Experiment from "../../../../../../models/Experiment";
@@ -22,7 +22,7 @@ export type GetExperimentsIdMeta = {
   data: MetadataJson;
 };
 
-const GET: TypedApiHandlerWithAuth<GetExperimentsIdMeta> = async (req, res) => {
+const GET: ApiHandler<GetExperimentsIdMeta> = async (req, res) => {
   const id = req.query.id;
 
   const expObj = await Experiment.findById(id).lean();
