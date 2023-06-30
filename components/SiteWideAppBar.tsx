@@ -24,7 +24,7 @@ import { useRouter } from "next/router";
 import config from "../lib/config";
 import Link from "next/link";
 import { fetcher } from "../lib/client/fetcher";
-import { UsersAuthDeleteSignature } from "../pages/api/v2/users/auth";
+import { DeleteUsersAuth } from "../pages/api/v2/users/auth";
 
 export const SiteWideAppBar = () => {
   const { me } = useContext(AuthContext);
@@ -41,7 +41,7 @@ export const SiteWideAppBar = () => {
     .join("");
 
   const onLogout = () => {
-    fetcher<UsersAuthDeleteSignature>({
+    fetcher<DeleteUsersAuth>({
       method: "DELETE",
       url: "/api/v2/users/auth",
     }).then(() => {

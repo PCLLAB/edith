@@ -21,7 +21,7 @@ import { SiteWideAppBar } from "../components/SiteWideAppBar";
 import { AuthContext } from "../lib/client/context/AuthProvider";
 import { DialogContextProvider } from "../lib/client/context/DialogContext";
 import { useBoundStore } from "../lib/client/hooks/stores/useBoundStore";
-import { UsersIdPutSignature } from "./api/v2/users/[id]";
+import { PutUsersId } from "./api/v2/users/[id]";
 
 const Account: NextPage = () => {
   const { me } = useContext(AuthContext);
@@ -47,7 +47,7 @@ const Account: NextPage = () => {
 
   const onSubmit = handleSubmit(
     async ({ name, email, oldPassword, newPassword }) => {
-      const update: UsersIdPutSignature["body"] = {};
+      const update: PutUsersId["body"] = {};
 
       if (dirtyFields.name) update.name = name;
       if (dirtyFields.email) update.email = email;

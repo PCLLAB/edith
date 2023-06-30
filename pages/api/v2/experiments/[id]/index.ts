@@ -11,7 +11,7 @@ export const ENDPOINT = "/api/v2/experiments/[id]";
 // This reflects the collaborative way this is used
 // Maybe do a share, private, public thing?
 
-export type ExperimentsIdGetSignature = {
+export type GetExperimentsId = {
   url: typeof ENDPOINT;
   method: "GET";
   query: {
@@ -20,10 +20,7 @@ export type ExperimentsIdGetSignature = {
   data: ExperimentJson;
 };
 
-const get: TypedApiHandlerWithAuth<ExperimentsIdGetSignature> = async (
-  req,
-  res
-) => {
+const GET: TypedApiHandlerWithAuth<GetExperimentsId> = async (req, res) => {
   const id = req.query.id;
 
   const experiment = await Experiment.findById(id).lean();
@@ -31,7 +28,7 @@ const get: TypedApiHandlerWithAuth<ExperimentsIdGetSignature> = async (
   res.json(experiment);
 };
 
-export type ExperimentsIdPutSignature = {
+export type PutExperimentsId = {
   url: typeof ENDPOINT;
   method: "PUT";
   query: {
@@ -46,10 +43,7 @@ export type ExperimentsIdPutSignature = {
   data: ExperimentJson;
 };
 
-const put: TypedApiHandlerWithAuth<ExperimentsIdPutSignature> = async (
-  req,
-  res
-) => {
+const PUT: TypedApiHandlerWithAuth<PutExperimentsId> = async (req, res) => {
   const id = req.query.id;
 
   const { name, enabled, user, directory } = req.body;
@@ -67,7 +61,7 @@ const put: TypedApiHandlerWithAuth<ExperimentsIdPutSignature> = async (
   res.json(experiment);
 };
 
-export type ExperimentsIdDeleteSignature = {
+export type DeleteExperimentsId = {
   url: typeof ENDPOINT;
   method: "DELETE";
   query: {
@@ -78,7 +72,7 @@ export type ExperimentsIdDeleteSignature = {
   };
 };
 
-const del: TypedApiHandlerWithAuth<ExperimentsIdDeleteSignature> = async (
+const DELETE: TypedApiHandlerWithAuth<DeleteExperimentsId> = async (
   req,
   res
 ) => {
@@ -100,7 +94,7 @@ const del: TypedApiHandlerWithAuth<ExperimentsIdDeleteSignature> = async (
   });
 };
 
-export type ExperimentsIdPostSignature = {
+export type PostExperimentsId = {
   url: typeof ENDPOINT;
   method: "POST";
   query: {
@@ -111,10 +105,7 @@ export type ExperimentsIdPostSignature = {
   };
 };
 
-const post: TypedApiHandlerWithAuth<ExperimentsIdPostSignature> = async (
-  req,
-  res
-) => {
+const POST: TypedApiHandlerWithAuth<PostExperimentsId> = async (req, res) => {
   const id = req.query.id;
 
   const archivedExp = await ArchivedExperiment.findById(id);
@@ -134,8 +125,8 @@ const post: TypedApiHandlerWithAuth<ExperimentsIdPostSignature> = async (
 };
 
 export default initHandler({
-  GET: get,
-  POST: post,
-  PUT: put,
-  DELETE: del,
+  GET,
+  POST,
+  PUT,
+  DELETE,
 });

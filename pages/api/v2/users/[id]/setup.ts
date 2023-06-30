@@ -6,7 +6,7 @@ import User from "../../../../../models/User";
 
 export const ENDPOINT = "/api/v2/users/[id]/setup";
 
-export type UsersIdSetupPostSignature = {
+export type PostUsersIdSetup = {
   url: typeof ENDPOINT;
   method: "POST";
   query: {
@@ -19,7 +19,7 @@ export type UsersIdSetupPostSignature = {
   data: void;
 };
 
-const post: TypedApiHandler<UsersIdSetupPostSignature> = async (req, res) => {
+const POST: TypedApiHandler<PostUsersIdSetup> = async (req, res) => {
   // USER MUST EXIST (created by admin via invite)
   const user = await User.findById(req.query.id);
 
@@ -40,5 +40,5 @@ const post: TypedApiHandler<UsersIdSetupPostSignature> = async (req, res) => {
 };
 
 export default initHandler({
-  POST: post,
+  POST,
 });

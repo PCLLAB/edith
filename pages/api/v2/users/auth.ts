@@ -17,20 +17,17 @@ import User from "../../../../models/User";
 
 export const ENDPOINT = "/api/v2/users/auth";
 
-export type UsersAuthGetSignature = {
+export type GetUsersAuth = {
   url: typeof ENDPOINT;
   method: "GET";
   data: UserJson;
 };
 
-const get: TypedApiHandlerWithAuth<UsersAuthGetSignature> = async (
-  req,
-  res
-) => {
+const GET: TypedApiHandlerWithAuth<GetUsersAuth> = async (req, res) => {
   res.json(req.auth);
 };
 
-export type UsersAuthPostSignature = {
+export type PostUsersAuth = {
   url: typeof ENDPOINT;
   method: "POST";
   body: {
@@ -43,7 +40,7 @@ export type UsersAuthPostSignature = {
   };
 };
 
-const post: TypedApiHandler<UsersAuthPostSignature> = async (req, res) => {
+const POST: TypedApiHandler<PostUsersAuth> = async (req, res) => {
   req.query;
   const { email, password } = req.body;
 
@@ -85,16 +82,13 @@ const post: TypedApiHandler<UsersAuthPostSignature> = async (req, res) => {
   });
 };
 
-export type UsersAuthDeleteSignature = {
+export type DeleteUsersAuth = {
   url: typeof ENDPOINT;
   method: "DELETE";
   data: void;
 };
 
-const del: TypedApiHandlerWithAuth<UsersAuthDeleteSignature> = async (
-  req,
-  res
-) => {
+const DELETE: TypedApiHandlerWithAuth<DeleteUsersAuth> = async (req, res) => {
   res.setHeader(
     "Set-Cookie",
     `${JWT_COOKIE_KEY}=; Secure; HttpOnly; SameSite=Lax; Path=${config.NEXT_PUBLIC_BASE_PATH}/api/v2; Max-Age=0`
@@ -103,7 +97,7 @@ const del: TypedApiHandlerWithAuth<UsersAuthDeleteSignature> = async (
 };
 
 export default initHandler({
-  GET: get,
-  POST: post,
-  DELETE: del,
+  GET,
+  POST,
+  DELETE,
 });

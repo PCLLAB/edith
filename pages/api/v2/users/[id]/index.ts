@@ -16,7 +16,7 @@ import User from "../../../../../models/User";
 
 export const ENDPOINT = "/api/v2/users/[id]";
 
-export type UsersIdGetSignature = {
+export type GetUsersId = {
   url: typeof ENDPOINT;
   method: "GET";
   query: {
@@ -25,12 +25,12 @@ export type UsersIdGetSignature = {
   data: UserJson;
 };
 
-const get: TypedApiHandlerWithAuth<UsersIdGetSignature> = async (req, res) => {
+const GET: TypedApiHandlerWithAuth<GetUsersId> = async (req, res) => {
   const user = await User.findById(req.query.id).lean();
   return res.json(user);
 };
 
-export type UsersIdPutSignature = {
+export type PutUsersId = {
   url: typeof ENDPOINT;
   method: "PUT";
   query: {
@@ -46,7 +46,7 @@ export type UsersIdPutSignature = {
   data: UserJson;
 };
 
-const put: TypedApiHandlerWithAuth<UsersIdPutSignature> = async (req, res) => {
+const PUT: TypedApiHandlerWithAuth<PutUsersId> = async (req, res) => {
   const id = req.query.id;
 
   if (req.auth._id !== id && !req.auth.superuser) {
@@ -95,7 +95,7 @@ const put: TypedApiHandlerWithAuth<UsersIdPutSignature> = async (req, res) => {
   return res.json(user);
 };
 
-export type UsersIdDeleteSignature = {
+export type DeleteUsersId = {
   url: typeof ENDPOINT;
   method: "DELETE";
   query: {
@@ -106,10 +106,7 @@ export type UsersIdDeleteSignature = {
   };
 };
 
-const del: TypedApiHandlerWithAuth<UsersIdDeleteSignature> = async (
-  req,
-  res
-) => {
+const DELETE: TypedApiHandlerWithAuth<DeleteUsersId> = async (req, res) => {
   if (!req.auth.superuser) {
     throw new UserPermissionError();
   }
@@ -125,7 +122,7 @@ const del: TypedApiHandlerWithAuth<UsersIdDeleteSignature> = async (
 };
 
 export default initHandler({
-  GET: get,
-  PUT: put,
-  DELETE: del,
+  GET,
+  PUT,
+  DELETE,
 });

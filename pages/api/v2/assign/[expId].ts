@@ -6,7 +6,7 @@ import Counterbalance from "../../../../models/Counterbalance";
 
 export const ENDPOINT = "/api/v2/assign/[expId]";
 
-export type AssignExpIdGetSignature = {
+export type GetAssignExpId = {
   url: typeof ENDPOINT;
   method: "GET";
   query: {
@@ -15,10 +15,7 @@ export type AssignExpIdGetSignature = {
   data: void;
 };
 
-const get: TypedApiHandlerWithAuth<AssignExpIdGetSignature> = async (
-  req,
-  res
-) => {
+const GET: TypedApiHandlerWithAuth<GetAssignExpId> = async (req, res) => {
   const expId = req.query.expId;
   const cb: CounterbalanceDoc = await Counterbalance.findOne({
     experiment: expId,
@@ -54,5 +51,5 @@ const get: TypedApiHandlerWithAuth<AssignExpIdGetSignature> = async (
 };
 
 export default initHandler({
-  GET: get,
+  GET,
 });

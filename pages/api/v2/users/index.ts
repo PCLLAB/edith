@@ -10,25 +10,25 @@ import User from "../../../../models/User";
 
 export const ENDPOINT = "/api/v2/users";
 
-export type UsersGetSignature = {
+export type GetUsers = {
   url: typeof ENDPOINT;
   method: "GET";
   data: UserJson[];
 };
 
-const get: TypedApiHandlerWithAuth<UsersGetSignature> = async (req, res) => {
+const GET: TypedApiHandlerWithAuth<GetUsers> = async (req, res) => {
   const users = await User.find().lean();
   return res.json(users);
 };
 
-export type UsersPostSignature = {
+export type PostUsers = {
   url: typeof ENDPOINT;
   method: "POST";
   body: { email: string; superuser: boolean };
   data: UserJson;
 };
 
-const post: TypedApiHandlerWithAuth<UsersPostSignature> = async (req, res) => {
+const POST: TypedApiHandlerWithAuth<PostUsers> = async (req, res) => {
   if (!req.auth.superuser) {
     throw new UserPermissionError();
   }
@@ -52,6 +52,6 @@ const post: TypedApiHandlerWithAuth<UsersPostSignature> = async (req, res) => {
 };
 
 export default initHandler({
-  GET: get,
-  POST: post,
+  GET,
+  POST,
 });

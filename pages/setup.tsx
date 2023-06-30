@@ -17,7 +17,7 @@ import {
 import { fetcher } from "../lib/client/fetcher";
 import { UserJson } from "../lib/common/types/models";
 import User from "../models/User";
-import { UsersIdSetupPostSignature } from "./api/v2/users/[id]/setup";
+import { PostUsersIdSetup } from "./api/v2/users/[id]/setup";
 import { useEffect } from "react";
 
 type Props = {
@@ -70,7 +70,7 @@ const Setup: NextPage<Props> = ({ user }) => {
 
   const onSubmit = handleSubmit(async ({ name, newPassword: password }) => {
     try {
-      await fetcher<UsersIdSetupPostSignature>({
+      await fetcher<PostUsersIdSetup>({
         body: {
           name,
           password,

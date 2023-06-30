@@ -11,7 +11,7 @@ import Experiment from "../../../../../models/Experiment";
 
 export const ENDPOINT = "/api/v2/directories/[id]/children";
 
-export type DirectoriesIdChildrenGetSignature = {
+export type GetDirectoriesIdChildren = {
   url: typeof ENDPOINT;
   method: "GET";
   query: {
@@ -23,7 +23,7 @@ export type DirectoriesIdChildrenGetSignature = {
   };
 };
 
-const get: TypedApiHandlerWithAuth<DirectoriesIdChildrenGetSignature> = async (
+const GET: TypedApiHandlerWithAuth<GetDirectoriesIdChildren> = async (
   req,
   res
 ) => {
@@ -45,5 +45,5 @@ const get: TypedApiHandlerWithAuth<DirectoriesIdChildrenGetSignature> = async (
 };
 
 export default initHandler({
-  GET: get,
+  GET,
 });

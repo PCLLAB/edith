@@ -9,7 +9,7 @@ import Experiment from "../../../../../models/Experiment";
 
 export const ENDPOINT = "/api/v2/directories/[id]";
 
-export type DirectoriesIdGetSignature = {
+export type GetDirectoriesId = {
   url: typeof ENDPOINT;
   method: "GET";
   query: {
@@ -18,10 +18,7 @@ export type DirectoriesIdGetSignature = {
   data: DirectoryJson;
 };
 
-const get: TypedApiHandlerWithAuth<DirectoriesIdGetSignature> = async (
-  req,
-  res
-) => {
+const GET: TypedApiHandlerWithAuth<GetDirectoriesId> = async (req, res) => {
   const id = req.query.id;
 
   const dir = await Directory.findById(id).lean();
@@ -29,7 +26,7 @@ const get: TypedApiHandlerWithAuth<DirectoriesIdGetSignature> = async (
   res.json(dir);
 };
 
-export type DirectoriesIdPutSignature = {
+export type PutDirectoriesId = {
   url: typeof ENDPOINT;
   method: "PUT";
   query: {
@@ -43,10 +40,7 @@ export type DirectoriesIdPutSignature = {
   data: DirectoryJson;
 };
 
-const put: TypedApiHandlerWithAuth<DirectoriesIdPutSignature> = async (
-  req,
-  res
-) => {
+const PUT: TypedApiHandlerWithAuth<PutDirectoriesId> = async (req, res) => {
   const id = req.query.id;
 
   const dir = await Directory.findById(id);
@@ -68,7 +62,7 @@ const put: TypedApiHandlerWithAuth<DirectoriesIdPutSignature> = async (
   res.json(dir);
 };
 
-export type DirectoriesIdDeleteSignature = {
+export type DeleteDirectoriesId = {
   url: typeof ENDPOINT;
   method: "DELETE";
   query: {
@@ -79,7 +73,7 @@ export type DirectoriesIdDeleteSignature = {
   };
 };
 
-const del: TypedApiHandlerWithAuth<DirectoriesIdDeleteSignature> = async (
+const DELETE: TypedApiHandlerWithAuth<DeleteDirectoriesId> = async (
   req,
   res
 ) => {
@@ -116,7 +110,7 @@ const del: TypedApiHandlerWithAuth<DirectoriesIdDeleteSignature> = async (
 };
 
 export default initHandler({
-  GET: get,
-  PUT: put,
-  DELETE: del,
+  GET,
+  PUT,
+  DELETE,
 });

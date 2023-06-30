@@ -6,20 +6,17 @@ import Directory from "../../../../../models/Directory";
 
 export const ENDPOINT = "/api/v2/directories/roots";
 
-export type DirectoriesRootsGetSignature = {
+export type GetDirectoriesRoots = {
   url: typeof ENDPOINT;
   method: "GET";
   data: DirectoryJson[];
 };
 
-const get: TypedApiHandlerWithAuth<DirectoriesRootsGetSignature> = async (
-  req,
-  res
-) => {
+const GET: TypedApiHandlerWithAuth<GetDirectoriesRoots> = async (req, res) => {
   const dirs = await Directory.find({ prefixPath: "" }).lean();
   res.json(dirs);
 };
 
 export default initHandler({
-  GET: get,
+  GET,
 });

@@ -14,7 +14,7 @@ import Typography from "@mui/material/Typography";
 
 import { fetcher } from "../lib/client/fetcher";
 import betty from "../public/betty.png";
-import { UsersAuthPostSignature } from "./api/v2/users/auth";
+import { PostUsersAuth } from "./api/v2/users/auth";
 import { CardContent, Container } from "@mui/material";
 import config from "../lib/config";
 
@@ -32,32 +32,30 @@ const Login: NextPage = () => {
     handleSubmit,
     setFocus,
     formState: { errors },
-  } = useForm<UsersAuthPostSignature["body"]>();
+  } = useForm<PostUsersAuth["body"]>();
 
-  const onSubmit = handleSubmit(
-    async (formData: UsersAuthPostSignature["body"]) => {
-      setLoading(true);
+  const onSubmit = handleSubmit(async (formData: PostUsersAuth["body"]) => {
+    setLoading(true);
 
-      try {
-        const data = await fetcher<UsersAuthPostSignature>({
-          url: "/api/v2/users/auth",
-          method: "POST",
-          body: formData,
-        });
-        console.debug("login data", data);
-        router.push("/explorer");
-      } catch (e: any) {
-        setLoading(false);
+    try {
+      const data = await fetcher<PostUsersAuth>({
+        url: "/api/v2/users/auth",
+        method: "POST",
+        body: formData,
+      });
+      console.debug("login data", data);
+      router.push("/explorer");
+    } catch (e: any) {
+      setLoading(false);
 
-        if (e.status === 401) {
-          setShowAlert(UNAUTHORIZED_ALERT);
-          return;
-        }
-
-        setShowAlert(SERVER_ERROR_ALERT);
+      if (e.status === 401) {
+        setShowAlert(UNAUTHORIZED_ALERT);
+        return;
       }
+
+      setShowAlert(SERVER_ERROR_ALERT);
     }
-  );
+  });
 
   const onRequestAccess = useCallback(() => {
     // TODO

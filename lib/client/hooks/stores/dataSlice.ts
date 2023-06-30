@@ -1,5 +1,5 @@
 import { StateCreator } from "zustand";
-import { ExperimentsIdDataGetSignature } from "../../../../pages/api/v2/experiments/[id]/data";
+import { GetExperimentsIdData } from "../../../../pages/api/v2/experiments/[id]/data";
 import { DataEntryJson } from "../../../common/types/models";
 import { fetcher } from "../../fetcher";
 
@@ -44,7 +44,7 @@ export const createDataSlice: StateCreator<DataSlice> = (set, get) => ({
       Object.values(existing.options).every((v) => v == null) &&
       Object.values(options).every((v) => v == null)
     ) {
-      const newEntries = await fetcher<ExperimentsIdDataGetSignature>({
+      const newEntries = await fetcher<GetExperimentsIdData>({
         url: "/api/v2/experiments/[id]/data",
         method: "GET",
         query: {
@@ -78,7 +78,7 @@ export const createDataSlice: StateCreator<DataSlice> = (set, get) => ({
       return { dataMap: rest };
     });
 
-    const entries = await fetcher<ExperimentsIdDataGetSignature>({
+    const entries = await fetcher<GetExperimentsIdData>({
       url: "/api/v2/experiments/[id]/data",
       method: "GET",
       query: {

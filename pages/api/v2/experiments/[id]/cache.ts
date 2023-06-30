@@ -7,7 +7,7 @@ import { CachedDataEntry } from "../../../../../models/DataEntry";
 
 export const ENDPOINT = "/api/v2/experiments/[id]/cache";
 
-export type ExperimentsIdCacheGetSignature = {
+export type GetExperimentsIdCache = {
   url: typeof ENDPOINT;
   method: "GET";
   query: {
@@ -16,7 +16,7 @@ export type ExperimentsIdCacheGetSignature = {
   data: CachedDataEntryJson[];
 };
 
-const get: TypedApiHandlerWithAuth<ExperimentsIdCacheGetSignature> = async (
+const GET: TypedApiHandlerWithAuth<GetExperimentsIdCache> = async (
   req,
   res
 ) => {
@@ -26,7 +26,7 @@ const get: TypedApiHandlerWithAuth<ExperimentsIdCacheGetSignature> = async (
   res.json(data);
 };
 
-export type ExperimentsIdCacheDeleteSignature = {
+export type DeleteExperimentsIdCache = {
   url: typeof ENDPOINT;
   method: "DELETE";
   query: {
@@ -38,7 +38,7 @@ export type ExperimentsIdCacheDeleteSignature = {
   };
 };
 
-const del: TypedApiHandlerWithAuth<ExperimentsIdCacheDeleteSignature> = async (
+const DELETE: TypedApiHandlerWithAuth<DeleteExperimentsIdCache> = async (
   req,
   res
 ) => {
@@ -56,6 +56,6 @@ const del: TypedApiHandlerWithAuth<ExperimentsIdCacheDeleteSignature> = async (
 };
 
 export default initHandler({
-  GET: get,
-  DELETE: del,
+  GET,
+  DELETE,
 });

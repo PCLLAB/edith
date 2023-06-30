@@ -13,7 +13,7 @@ import MongoDBData, {
 
 export const ENDPOINT = "/api/v2/experiments/[id]/meta";
 
-export type ExperimentsIdMetaGetSignature = {
+export type GetExperimentsIdMeta = {
   url: typeof ENDPOINT;
   method: "GET";
   query: {
@@ -22,10 +22,7 @@ export type ExperimentsIdMetaGetSignature = {
   data: MetadataJson;
 };
 
-const get: TypedApiHandlerWithAuth<ExperimentsIdMetaGetSignature> = async (
-  req,
-  res
-) => {
+const GET: TypedApiHandlerWithAuth<GetExperimentsIdMeta> = async (req, res) => {
   const id = req.query.id;
 
   const expObj = await Experiment.findById(id).lean();
@@ -55,5 +52,5 @@ const get: TypedApiHandlerWithAuth<ExperimentsIdMetaGetSignature> = async (
 };
 
 export default initHandler({
-  GET: get,
+  GET,
 });

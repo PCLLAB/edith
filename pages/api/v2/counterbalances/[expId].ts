@@ -14,7 +14,7 @@ import MongoDBData from "../../../../models/MongoDBData";
 
 export const ENDPOINT = "/api/v2/counterbalances/[expId]";
 
-export type CounterbalancesExpIdGetSignature = {
+export type GetCounterbalancesExpId = {
   url: typeof ENDPOINT;
   method: "GET";
   query: {
@@ -23,7 +23,7 @@ export type CounterbalancesExpIdGetSignature = {
   data: CounterbalanceJson;
 };
 
-const get: TypedApiHandlerWithAuth<CounterbalancesExpIdGetSignature> = async (
+const GET: TypedApiHandlerWithAuth<GetCounterbalancesExpId> = async (
   req,
   res
 ) => {
@@ -34,7 +34,7 @@ const get: TypedApiHandlerWithAuth<CounterbalancesExpIdGetSignature> = async (
   res.json(cb);
 };
 
-export type CounterbalancesExpIdPutSignature = {
+export type PutCounterbalancesExpId = {
   url: typeof ENDPOINT;
   method: "PUT";
   query: {
@@ -49,7 +49,7 @@ export type CounterbalancesExpIdPutSignature = {
   data: CounterbalanceJson;
 };
 
-const put: TypedApiHandlerWithAuth<CounterbalancesExpIdPutSignature> = async (
+const PUT: TypedApiHandlerWithAuth<PutCounterbalancesExpId> = async (
   req,
   res
 ) => {
@@ -104,6 +104,6 @@ const put: TypedApiHandlerWithAuth<CounterbalancesExpIdPutSignature> = async (
 };
 
 export default initHandler({
-  GET: get,
-  PUT: put,
+  GET,
+  PUT,
 });

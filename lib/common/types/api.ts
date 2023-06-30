@@ -1,54 +1,51 @@
-import { CounterbalancesPostSignature } from "../../../pages/api/v2/counterbalances";
+import { PostCounterbalances } from "../../../pages/api/v2/counterbalances";
 import {
-  DirectoriesGetSignature,
-  DirectoriesPostSignature,
+  GetDirectories,
+  PostDirectories,
 } from "../../../pages/api/v2/directories";
 import {
-  DirectoriesIdDeleteSignature,
-  DirectoriesIdGetSignature,
-  DirectoriesIdPutSignature,
+  DeleteDirectoriesId,
+  GetDirectoriesId,
+  PutDirectoriesId,
 } from "../../../pages/api/v2/directories/[id]";
-import { DirectoriesIdChildrenGetSignature } from "../../../pages/api/v2/directories/[id]/children";
-import { DirectoriesRootsGetSignature } from "../../../pages/api/v2/directories/roots";
+import { GetDirectoriesIdChildren } from "../../../pages/api/v2/directories/[id]/children";
+import { GetDirectoriesRoots } from "../../../pages/api/v2/directories/roots";
 import {
-  ExperimentsGetSignature,
-  ExperimentsPostSignature,
+  GetExperiments,
+  PostExperiments,
 } from "../../../pages/api/v2/experiments";
 import {
-  ExperimentsIdDeleteSignature,
-  ExperimentsIdGetSignature,
-  ExperimentsIdPostSignature,
-  ExperimentsIdPutSignature,
+  DeleteExperimentsId,
+  GetExperimentsId,
+  PostExperimentsId,
+  PutExperimentsId,
 } from "../../../pages/api/v2/experiments/[id]";
 import {
-  ExperimentsIdCacheDeleteSignature,
-  ExperimentsIdCacheGetSignature,
+  DeleteExperimentsIdCache,
+  GetExperimentsIdCache,
 } from "../../../pages/api/v2/experiments/[id]/cache";
 import {
-  ExperimentsIdDataGetSignature,
-  ExperimentsIdDataPostSignature,
+  GetExperimentsIdData,
+  PostExperimentsIdData,
 } from "../../../pages/api/v2/experiments/[id]/data";
-import { ExperimentsIdMetaGetSignature } from "../../../pages/api/v2/experiments/[id]/meta";
+import { GetExperimentsIdMeta } from "../../../pages/api/v2/experiments/[id]/meta";
+import { GetUsers, PostUsers } from "../../../pages/api/v2/users";
 import {
-  UsersGetSignature,
-  UsersPostSignature,
-} from "../../../pages/api/v2/users";
-import {
-  UsersIdDeleteSignature,
-  UsersIdGetSignature,
-  UsersIdPutSignature,
+  DeleteUsersId,
+  GetUsersId,
+  PutUsersId,
 } from "../../../pages/api/v2/users/[id]";
 import {
-  UsersAuthDeleteSignature,
-  UsersAuthGetSignature,
-  UsersAuthPostSignature,
+  DeleteUsersAuth,
+  GetUsersAuth,
+  PostUsersAuth,
 } from "../../../pages/api/v2/users/auth";
 import {
-  CounterbalancesExpIdGetSignature,
-  CounterbalancesExpIdPutSignature,
+  GetCounterbalancesExpId,
+  PutCounterbalancesExpId,
 } from "../../../pages/api/v2/counterbalances/[expId]";
-import { UsersIdSetupPostSignature } from "../../../pages/api/v2/users/[id]/setup";
-import { AssignExpIdGetSignature } from "../../../pages/api/v2/assign/[expId]";
+import { PostUsersIdSetup } from "../../../pages/api/v2/users/[id]/setup";
+import { GetAssignExpId } from "../../../pages/api/v2/assign/[expId]";
 
 /** Each unioned type represents a single URL endpoint */
 export type ApiSignature =
@@ -68,44 +65,28 @@ export type ApiSignature =
   | CounterbalancesExpId
   | AssignExpId;
 
-type Users = UsersGetSignature | UsersPostSignature;
-type UsersAuth =
-  | UsersAuthGetSignature
-  | UsersAuthPostSignature
-  | UsersAuthDeleteSignature;
-type UsersId =
-  | UsersIdGetSignature
-  | UsersIdPutSignature
-  | UsersIdDeleteSignature
-  | UsersIdSetupPostSignature;
+type Users = GetUsers | PostUsers;
+type UsersAuth = GetUsersAuth | PostUsersAuth | DeleteUsersAuth;
+type UsersId = GetUsersId | PutUsersId | DeleteUsersId | PostUsersIdSetup;
 
-type Experiments = ExperimentsGetSignature | ExperimentsPostSignature;
+type Experiments = GetExperiments | PostExperiments;
 type ExperimentsId =
-  | ExperimentsIdGetSignature
-  | ExperimentsIdPostSignature
-  | ExperimentsIdPutSignature
-  | ExperimentsIdDeleteSignature;
-type ExperimentsIdData =
-  | ExperimentsIdDataGetSignature
-  | ExperimentsIdDataPostSignature;
-type ExperimentsIdCache =
-  | ExperimentsIdCacheGetSignature
-  | ExperimentsIdCacheDeleteSignature;
-type ExperimentIdMeta = ExperimentsIdMetaGetSignature;
+  | GetExperimentsId
+  | PostExperimentsId
+  | PutExperimentsId
+  | DeleteExperimentsId;
+type ExperimentsIdData = GetExperimentsIdData | PostExperimentsIdData;
+type ExperimentsIdCache = GetExperimentsIdCache | DeleteExperimentsIdCache;
+type ExperimentIdMeta = GetExperimentsIdMeta;
 
-type Directories = DirectoriesGetSignature | DirectoriesPostSignature;
-type DirectoriesId =
-  | DirectoriesIdPutSignature
-  | DirectoriesIdGetSignature
-  | DirectoriesIdDeleteSignature;
-type DirectoriesIdChildren = DirectoriesIdChildrenGetSignature;
-type DirectoriesRoots = DirectoriesRootsGetSignature;
+type Directories = GetDirectories | PostDirectories;
+type DirectoriesId = PutDirectoriesId | GetDirectoriesId | DeleteDirectoriesId;
+type DirectoriesIdChildren = GetDirectoriesIdChildren;
+type DirectoriesRoots = GetDirectoriesRoots;
 
-type Counterbalances = CounterbalancesPostSignature;
-type CounterbalancesExpId =
-  | CounterbalancesExpIdGetSignature
-  | CounterbalancesExpIdPutSignature;
+type Counterbalances = PostCounterbalances;
+type CounterbalancesExpId = GetCounterbalancesExpId | PutCounterbalancesExpId;
 
-type AssignExpId = AssignExpIdGetSignature;
+type AssignExpId = GetAssignExpId;
 
 export type HTTP_METHOD = "GET" | "POST" | "PUT" | "DELETE";

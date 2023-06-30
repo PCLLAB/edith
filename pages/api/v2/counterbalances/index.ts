@@ -10,7 +10,7 @@ import Counterbalance from "../../../../models/Counterbalance";
 
 export const ENDPOINT = "/api/v2/counterbalances";
 
-export type CounterbalancesPostSignature = {
+export type PostCounterbalances = {
   url: typeof ENDPOINT;
   method: "POST";
   body: {
@@ -20,10 +20,7 @@ export type CounterbalancesPostSignature = {
   data: CounterbalanceJson;
 };
 
-const post: TypedApiHandlerWithAuth<CounterbalancesPostSignature> = async (
-  req,
-  res
-) => {
+const POST: TypedApiHandlerWithAuth<PostCounterbalances> = async (req, res) => {
   const { experiment, url } = req.body;
 
   if (experiment == null || url == null) {
@@ -44,5 +41,5 @@ const post: TypedApiHandlerWithAuth<CounterbalancesPostSignature> = async (
 };
 
 export default initHandler({
-  POST: post,
+  POST,
 });

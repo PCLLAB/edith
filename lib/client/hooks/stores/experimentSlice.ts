@@ -1,15 +1,15 @@
 import { StateCreator } from "zustand";
-import { CounterbalancesPostSignature } from "../../../../pages/api/v2/counterbalances";
+import { PostCounterbalances } from "../../../../pages/api/v2/counterbalances";
 import {
-  CounterbalancesExpIdGetSignature,
-  CounterbalancesExpIdPutSignature,
+  GetCounterbalancesExpId,
+  PutCounterbalancesExpId,
 } from "../../../../pages/api/v2/counterbalances/[expId]";
-import { ExperimentsPostSignature } from "../../../../pages/api/v2/experiments";
+import { PostExperiments } from "../../../../pages/api/v2/experiments";
 import {
-  ExperimentsIdDeleteSignature,
-  ExperimentsIdPutSignature,
+  DeleteExperimentsId,
+  PutExperimentsId,
 } from "../../../../pages/api/v2/experiments/[id]";
-import { ExperimentsIdMetaGetSignature } from "../../../../pages/api/v2/experiments/[id]/meta";
+import { GetExperimentsIdMeta } from "../../../../pages/api/v2/experiments/[id]/meta";
 import { MetadataJson } from "../../../common/types/misc";
 
 import {
@@ -22,20 +22,20 @@ export type ExperimentSlice = {
   experimentMap: Record<string, ExperimentJson>;
   updateExperiment: (
     id: string,
-    update: ExperimentsIdPutSignature["body"]
+    update: PutExperimentsId["body"]
   ) => Promise<void>;
   deleteExperiment: (id: string) => Promise<void>;
-  createExperiment: (body: ExperimentsPostSignature["body"]) => Promise<void>;
+  createExperiment: (body: PostExperiments["body"]) => Promise<void>;
   metadataMap: Record<string, MetadataJson>;
   getExperimentMeta: (id: string) => Promise<void>;
   counterbalanceMap: Record<string, CounterbalanceJson>;
   getCounterbalance: (expId: string) => Promise<void>;
   createCounterbalance: (
-    body: CounterbalancesPostSignature["body"]
+    body: PostCounterbalances["body"]
   ) => Promise<CounterbalanceJson>;
   updateCounterbalance: (
     expId: string,
-    body: CounterbalancesExpIdPutSignature["body"]
+    body: PutCounterbalancesExpId["body"]
   ) => Promise<CounterbalanceJson>;
 };
 
@@ -56,7 +56,7 @@ export const createExperimentSlice: StateCreator<ExperimentSlice> = (
     }));
 
     try {
-      const exp = await fetcher<ExperimentsIdPutSignature>({
+      const exp = await fetcher<PutExperimentsId>({
         url: "/api/v2/experiments/[id]" as const,
         method: "PUT" as const,
         query: { id },
@@ -78,7 +78,7 @@ export const createExperimentSlice: StateCreator<ExperimentSlice> = (
     }
   },
   createExperiment: async (body) => {
-    const exp = await fetcher<ExperimentsPostSignature>({
+    const exp = await fetcher<PostExperiments>({
       url: "/api/v2/experiments" as const,
       method: "POST" as const,
       body,
@@ -93,7 +93,7 @@ export const createExperimentSlice: StateCreator<ExperimentSlice> = (
     set({ experimentMap: rest });
 
     try {
-      await fetcher<ExperimentsIdDeleteSignature>({
+      await fetcher<DeleteExperimentsId>({
         url: "/api/v2/experiments/[id]" as const,
         method: "DELETE" as const,
         query: { id },
@@ -106,7 +106,7 @@ export const createExperimentSlice: StateCreator<ExperimentSlice> = (
   },
   metadataMap: {},
   getExperimentMeta: async (id) => {
-    const meta = await fetcher<ExperimentsIdMetaGetSignature>({
+    const meta = await fetcher<GetExperimentsIdMeta>({
       url: "/api/v2/experiments/[id]/meta" as const,
       method: "GET" as const,
       query: { id },
@@ -118,7 +118,7 @@ export const createExperimentSlice: StateCreator<ExperimentSlice> = (
   counterbalanceMap: {},
   getCounterbalance: async (expId) => {
     try {
-      const cb = await fetcher<CounterbalancesExpIdGetSignature>({
+      const cb = await fetcher<GetCounterbalancesExpId>({
         url: "/api/v2/counterbalances/[expId]" as const,
         method: "GET" as const,
         query: { expId },
@@ -140,7 +140,7 @@ export const createExperimentSlice: StateCreator<ExperimentSlice> = (
     }
   },
   createCounterbalance: async (body) => {
-    const cb = await fetcher<CounterbalancesPostSignature>({
+    const cb = await fetcher<PostCounterbalances>({
       body,
       url: "/api/v2/counterbalances",
       method: "POST",
@@ -153,7 +153,7 @@ export const createExperimentSlice: StateCreator<ExperimentSlice> = (
     return cb;
   },
   updateCounterbalance: async (expId, body) => {
-    const cb = await fetcher<CounterbalancesExpIdPutSignature>({
+    const cb = await fetcher<PutCounterbalancesExpId>({
       url: "/api/v2/counterbalances/[expId]",
       method: "PUT",
       query: {

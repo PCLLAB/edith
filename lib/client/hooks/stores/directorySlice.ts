@@ -1,12 +1,12 @@
 import { StateCreator } from "zustand";
-import { DirectoriesPostSignature } from "../../../../pages/api/v2/directories";
-import { DirectoriesRootsGetSignature } from "../../../../pages/api/v2/directories/roots";
+import { PostDirectories } from "../../../../pages/api/v2/directories";
+import { GetDirectoriesRoots } from "../../../../pages/api/v2/directories/roots";
 import {
-  DirectoriesIdDeleteSignature,
-  DirectoriesIdGetSignature,
-  DirectoriesIdPutSignature,
+  DeleteDirectoriesId,
+  GetDirectoriesId,
+  PutDirectoriesId,
 } from "../../../../pages/api/v2/directories/[id]";
-import { DirectoriesIdChildrenGetSignature } from "../../../../pages/api/v2/directories/[id]/children";
+import { GetDirectoriesIdChildren } from "../../../../pages/api/v2/directories/[id]/children";
 
 import { DirectoryJson } from "../../../common/types/models";
 import { getPath } from "../../../common/utils";
@@ -19,10 +19,10 @@ export type DirectorySlice = {
   getDirectory: (id: string) => Promise<void>;
   getDirectoryRoots: () => Promise<DirectoryJson[]>;
   getDirectoryContent: (id: string) => Promise<void>;
-  createDirectory: (body: DirectoriesPostSignature["body"]) => Promise<void>;
+  createDirectory: (body: PostDirectories["body"]) => Promise<void>;
   updateDirectory: (
     id: string,
-    update: DirectoriesIdPutSignature["body"]
+    update: PutDirectoriesId["body"]
   ) => Promise<void>;
 };
 
@@ -71,7 +71,7 @@ export const createDirectorySlice: StateCreator<
 > = (set, get) => ({
   directoryMap: {},
   getDirectory: async (id) => {
-    const dir = await fetcher<DirectoriesIdGetSignature>({
+    const dir = await fetcher<GetDirectoriesId>({
       url: "/api/v2/directories/[id]" as const,
       method: "GET" as const,
       query: { id },
@@ -81,7 +81,7 @@ export const createDirectorySlice: StateCreator<
     }));
   },
   getDirectoryRoots: async () => {
-    const roots = await fetcher<DirectoriesRootsGetSignature>({
+    const roots = await fetcher<GetDirectoriesRoots>({
       url: "/api/v2/directories/roots" as const,
       method: "GET" as const,
     });
@@ -91,7 +91,7 @@ export const createDirectorySlice: StateCreator<
     return roots;
   },
   getDirectoryContent: async (id) => {
-    const content = await fetcher<DirectoriesIdChildrenGetSignature>({
+    const content = await fetcher<GetDirectoriesIdChildren>({
       url: "/api/v2/directories/[id]/children" as const,
       method: "GET" as const,
       query: { id },
@@ -105,7 +105,7 @@ export const createDirectorySlice: StateCreator<
     }));
   },
   createDirectory: async (body) => {
-    const dir = await fetcher<DirectoriesPostSignature>({
+    const dir = await fetcher<PostDirectories>({
       url: "/api/v2/directories" as const,
       method: "POST" as const,
       body,
@@ -123,7 +123,7 @@ export const createDirectorySlice: StateCreator<
     }));
 
     try {
-      const dir = await fetcher<DirectoriesIdPutSignature>({
+      const dir = await fetcher<PutDirectoriesId>({
         url: "/api/v2/directories/[id]" as const,
         method: "PUT" as const,
         query: { id },
@@ -158,7 +158,7 @@ export const createDirectorySlice: StateCreator<
     set({ directoryMap: optimisticDirMap });
 
     try {
-      await fetcher<DirectoriesIdDeleteSignature>({
+      await fetcher<DeleteDirectoriesId>({
         url: "/api/v2/directories/[id]",
         method: "DELETE",
         query: {

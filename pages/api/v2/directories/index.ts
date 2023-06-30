@@ -7,21 +7,18 @@ import Directory from "../../../../models/Directory";
 
 export const ENDPOINT = "/api/v2/directories";
 
-export type DirectoriesGetSignature = {
+export type GetDirectories = {
   url: typeof ENDPOINT;
   method: "GET";
   data: DirectoryJson[];
 };
 
-const get: TypedApiHandlerWithAuth<DirectoriesGetSignature> = async (
-  req,
-  res
-) => {
+const GET: TypedApiHandlerWithAuth<GetDirectories> = async (req, res) => {
   const dirs = await Directory.find().lean();
   res.json(dirs);
 };
 
-export type DirectoriesPostSignature = {
+export type PostDirectories = {
   url: typeof ENDPOINT;
   method: "POST";
   body: {
@@ -31,10 +28,7 @@ export type DirectoriesPostSignature = {
   data: DirectoryJson;
 };
 
-const post: TypedApiHandlerWithAuth<DirectoriesPostSignature> = async (
-  req,
-  res
-) => {
+const POST: TypedApiHandlerWithAuth<PostDirectories> = async (req, res) => {
   const { name, prefixPath } = req.body;
   const user = req.auth._id;
 
@@ -57,6 +51,6 @@ const post: TypedApiHandlerWithAuth<DirectoriesPostSignature> = async (
 };
 
 export default initHandler({
-  GET: get,
-  POST: post,
+  GET,
+  POST,
 });

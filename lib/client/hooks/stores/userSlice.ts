@@ -1,24 +1,18 @@
 import { StateCreator } from "zustand";
+import { GetUsers, PostUsers } from "../../../../pages/api/v2/users";
+import { GetUsersAuth } from "../../../../pages/api/v2/users/auth";
 import {
-  UsersGetSignature,
-  UsersPostSignature,
-} from "../../../../pages/api/v2/users";
-import { UsersAuthGetSignature } from "../../../../pages/api/v2/users/auth";
-import {
-  UsersIdDeleteSignature,
-  UsersIdGetSignature,
-  UsersIdPutSignature,
+  DeleteUsersId,
+  GetUsersId,
+  PutUsersId,
 } from "../../../../pages/api/v2/users/[id]";
 import { UserJson } from "../../../common/types/models";
 import { fetcher } from "../../fetcher";
 
 export type UserSlice = {
   userMap: Record<string, UserJson>;
-  updateUser: (
-    id: string,
-    update: UsersIdPutSignature["body"]
-  ) => Promise<UserJson>;
-  createUser: (body: UsersPostSignature["body"]) => Promise<UserJson>;
+  updateUser: (id: string, update: PutUsersId["body"]) => Promise<UserJson>;
+  createUser: (body: PostUsers["body"]) => Promise<UserJson>;
   deleteUser: (id: string) => Promise<void>;
   getUser: (id: string) => Promise<void>;
   getMe: () => Promise<UserJson>;
@@ -33,7 +27,7 @@ export const createUserSlice: StateCreator<UserSlice> = (set, get) => ({
     set({ userMap: rest });
 
     try {
-      await fetcher<UsersIdDeleteSignature>({
+      await fetcher<DeleteUsersId>({
         url: "/api/v2/users/[id]",
         method: "DELETE",
         query: {
@@ -45,7 +39,7 @@ export const createUserSlice: StateCreator<UserSlice> = (set, get) => ({
     }
   },
   createUser: async (body) => {
-    const user = await fetcher<UsersPostSignature>({
+    const user = await fetcher<PostUsers>({
       body,
       url: "/api/v2/users",
       method: "POST",
@@ -64,7 +58,7 @@ export const createUserSlice: StateCreator<UserSlice> = (set, get) => ({
 
     // return original;
     // try {
-    const user = await fetcher<UsersIdPutSignature>({
+    const user = await fetcher<PutUsersId>({
       url: "/api/v2/users/[id]",
       method: "PUT",
       query: {
@@ -81,7 +75,7 @@ export const createUserSlice: StateCreator<UserSlice> = (set, get) => ({
     // }
   },
   getUser: async (id) => {
-    const user = await fetcher<UsersIdGetSignature>({
+    const user = await fetcher<GetUsersId>({
       url: "/api/v2/users/[id]",
       method: "GET",
       query: {
@@ -92,7 +86,7 @@ export const createUserSlice: StateCreator<UserSlice> = (set, get) => ({
     set((state) => ({ userMap: { ...state.userMap, [id]: user } }));
   },
   getMe: async () => {
-    const me = await fetcher<UsersAuthGetSignature>({
+    const me = await fetcher<GetUsersAuth>({
       url: "/api/v2/users/auth",
       method: "GET",
     });
@@ -100,7 +94,7 @@ export const createUserSlice: StateCreator<UserSlice> = (set, get) => ({
     return me;
   },
   getUsers: async () => {
-    const users = await fetcher<UsersGetSignature>({
+    const users = await fetcher<GetUsers>({
       method: "GET",
       url: "/api/v2/users",
     });

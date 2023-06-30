@@ -15,7 +15,7 @@ import MongoDBData from "../../../../../../models/MongoDBData";
 
 export const ENDPOINT = "/api/v2/experiments/[id]/data";
 
-export type ExperimentsIdDataGetSignature = {
+export type GetExperimentsIdData = {
   url: typeof ENDPOINT;
   method: "GET";
   query: {
@@ -28,10 +28,7 @@ export type ExperimentsIdDataGetSignature = {
   data: DataEntryJson[];
 };
 
-const get: TypedApiHandlerWithAuth<ExperimentsIdDataGetSignature> = async (
-  req,
-  res
-) => {
+const GET: TypedApiHandlerWithAuth<GetExperimentsIdData> = async (req, res) => {
   const { id, skip, limit, startDate, endDate } = req.query;
 
   const expObj = await Experiment.findById(id).lean();
@@ -53,7 +50,7 @@ const get: TypedApiHandlerWithAuth<ExperimentsIdDataGetSignature> = async (
   res.json(data);
 };
 
-export type ExperimentsIdDataPostSignature = {
+export type PostExperimentsIdData = {
   url: typeof ENDPOINT;
   method: "POST";
   query: {
@@ -63,7 +60,7 @@ export type ExperimentsIdDataPostSignature = {
   data: void;
 };
 
-const post: TypedApiHandlerWithAuth<ExperimentsIdDataPostSignature> = async (
+const POST: TypedApiHandlerWithAuth<PostExperimentsIdData> = async (
   req,
   res
 ) => {
@@ -116,6 +113,6 @@ const post: TypedApiHandlerWithAuth<ExperimentsIdDataPostSignature> = async (
 };
 
 export default initHandler({
-  GET: get,
-  POST: post,
+  GET,
+  POST,
 });

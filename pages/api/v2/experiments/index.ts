@@ -8,21 +8,18 @@ import MongoDBData from "../../../../models/MongoDBData";
 
 export const ENDPOINT = "/api/v2/experiments";
 
-export type ExperimentsGetSignature = {
+export type GetExperiments = {
   url: typeof ENDPOINT;
   method: "GET";
   data: ExperimentJson[];
 };
 
-const get: TypedApiHandlerWithAuth<ExperimentsGetSignature> = async (
-  req,
-  res
-) => {
+const GET: TypedApiHandlerWithAuth<GetExperiments> = async (req, res) => {
   const experiments = await Experiment.find().lean();
   res.json(experiments);
 };
 
-export type ExperimentsPostSignature = {
+export type PostExperiments = {
   url: typeof ENDPOINT;
   method: "POST";
   body: {
@@ -33,10 +30,7 @@ export type ExperimentsPostSignature = {
   data: ExperimentJson;
 };
 
-const post: TypedApiHandlerWithAuth<ExperimentsPostSignature> = async (
-  req,
-  res
-) => {
+const POST: TypedApiHandlerWithAuth<PostExperiments> = async (req, res) => {
   const { name, directory, enabled = false } = req.body;
   const user = req.auth._id;
 
@@ -68,6 +62,6 @@ const post: TypedApiHandlerWithAuth<ExperimentsPostSignature> = async (
 };
 
 export default initHandler({
-  GET: get,
-  POST: post,
+  GET,
+  POST,
 });
