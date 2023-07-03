@@ -5,3 +5,4 @@ export { InviteUserDialog } from "./InviteUser";
 export { RenameFileDialog } from "./RenameFile";
 export { DialogTitleWithClose } from "./DialogTitleWithClose";
 export { DataGridDialog } from "./DataGrid";
+export { CacheGridDialog } from "./DataGrid";

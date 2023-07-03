@@ -37,7 +37,8 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
 
   const anchorRef = useRef(null);
 
-  const [loading, setLoading] = useState(false);
+  const [dataLoading, setDataLoading] = useState(false);
+  const [cacheLoading, setCacheLoading] = useState(false);
 
   const {
     register,
@@ -73,9 +74,9 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
   };
 
   const onSubmit = handleSubmit(async (options) => {
-    setLoading(true);
+    setDataLoading(true);
     await queryData(options);
-    setLoading(false);
+    setDataLoading(false);
     openDialog("DATA", { id: exp._id }, { maxWidth: "xl" });
   });
 
@@ -101,7 +102,7 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
 
         const a = document.createElement("a");
         a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
-        a.download = "test_title.csv";
+        a.download = `${exp.name}.csv`;
         a.click();
       }),
     },
@@ -114,12 +115,21 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
         a.href = URL.createObjectURL(
           new Blob([JSON.stringify(entries)], { type: "application/json" })
         );
-        a.download = "test_title.json";
+        a.download = `${exp.name}.json`;
         a.click();
       }),
     },
   ];
+
   const getData = useBoundStore((state) => state.getData);
+  const getCache = useBoundStore((state) => state.getCache);
+
+  const onShowCache = async () => {
+    setCacheLoading(true);
+    await getCache(exp._id);
+    setCacheLoading(false);
+    openDialog("CACHE", { id: exp._id }, { maxWidth: "xl" });
+  };
 
   const { openDialog } = useDialogContext<ExplorerDialog>();
   return (
@@ -127,7 +137,24 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
       <Card>
         <CardContent>
           <Typography variant="h6" component="h2">
-            Collected Data
+            Test Data
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Data gathered in Test mode. Can be moved to Live data or deleted.
+          </Typography>
+        </CardContent>
+        <CardActions sx={{ px: 2 }}>
+          <LoadingButton
+            onClick={onShowCache}
+            variant="contained"
+            loading={cacheLoading}
+          >
+            View data
+          </LoadingButton>
+        </CardActions>
+        <CardContent>
+          <Typography variant="h6" component="h2">
+            Live Data
           </Typography>
           <Typography variant="body2" color="text.secondary">
             (Optional) Set number of entries to skip and/or limit the number of
@@ -184,7 +211,7 @@ export const DataDownloadCard = ({ exp }: CardProps) => {
           <LoadingButton
             onClick={onSubmit}
             variant="contained"
-            loading={loading}
+            loading={dataLoading}
           >
             View data
           </LoadingButton>

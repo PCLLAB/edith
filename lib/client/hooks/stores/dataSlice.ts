@@ -1,7 +1,11 @@
 import { StateCreator } from "zustand";
 import { GetExperimentsIdData } from "../../../../pages/api/v2/experiments/[id]/data";
-import { DataEntryJson } from "../../../common/types/models";
+import {
+  CachedDataEntryJson,
+  DataEntryJson,
+} from "../../../common/types/models";
 import { fetcher } from "../../fetcher";
+import { GetExperimentsIdCache } from "../../../../pages/api/v2/experiments/[id]/cache";
 
 type DataEntryWrapper = {
   options: {
@@ -24,6 +28,8 @@ export type DataSlice = {
       endDate?: string;
     }
   ) => Promise<DataEntryJson[]>;
+  cacheMap: Record<string, CachedDataEntryJson[]>;
+  getCache: (expId: string) => Promise<CachedDataEntryJson[]>;
 };
 
 export const createDataSlice: StateCreator<DataSlice> = (set, get) => ({
@@ -99,6 +105,20 @@ export const createDataSlice: StateCreator<DataSlice> = (set, get) => ({
         },
       },
     }));
+
+    return entries;
+  },
+  cacheMap: {},
+  getCache: async (expId) => {
+    const entries = await fetcher<GetExperimentsIdCache>({
+      url: "/api/v2/experiments/[id]/cache",
+      method: "GET",
+      query: {
+        id: expId,
+      },
+    });
+
+    set((state) => ({ cacheMap: { ...state.cacheMap, [expId]: entries } }));
 
     return entries;
   },

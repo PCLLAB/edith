@@ -44,9 +44,8 @@ export const UserManagement = ({ sx }: Props) => {
       </Typography>
       <Paper sx={{ flex: 1 }}>
         <DataGrid
-          experimentalFeatures={{ newEditingApi: true }}
-          components={{ Toolbar: CustomToolbar }}
-          componentsProps={{
+          slots={{ toolbar: CustomToolbar }}
+          slotProps={{
             toolbar: {
               onInvite: () => openDialog("Invite", { id: undefined }),
             },
@@ -117,9 +116,6 @@ export const UserManagement = ({ sx }: Props) => {
               flex: 1,
               getActions: (params) => [
                 <GridActionsCellItem
-                  nonce={undefined}
-                  onResize={undefined}
-                  onResizeCapture={undefined}
                   key={0}
                   icon={<DeleteIcon />}
                   label="Delete"

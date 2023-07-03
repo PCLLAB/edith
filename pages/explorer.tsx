@@ -3,6 +3,7 @@ import { useContext, useEffect } from "react";
 import { Box } from "@mui/material";
 
 import {
+  CacheGridDialog,
   CreateFileDialog,
   DataGridDialog,
   DeleteFileDialog,
@@ -28,6 +29,7 @@ const ExplorerDialogRenderMap = {
   DELETE: DeleteFileDialog,
   CREATE: CreateFileDialog,
   DATA: DataGridDialog,
+  CACHE: CacheGridDialog,
 };
 
 const Explorer: NextPage = () => {
