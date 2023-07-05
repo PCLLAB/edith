@@ -5,7 +5,13 @@ import dbConnect from "./dbConnect";
 import { NotAllowedMethodError } from "./errors";
 import jwtAuth from "./jwtAuth";
 
-export type HTTP_METHOD = "GET" | "POST" | "PUT" | "DELETE";
+export type HTTP_METHOD =
+  | "GET"
+  | "POST"
+  | "PUT"
+  | "PATCH"
+  | "DELETE"
+  | "OPTIONS";
 
 type JsonValue =
   | string
@@ -65,11 +71,14 @@ export type MatchAction = Partial<
 const initHandler = (matcher: MatchAction) => {
   return async (req: NextApiRequest, res: NextApiResponse) => {
     try {
-      // need before jwtAuth, because we verify users
-      await dbConnect();
+      // preflight doesn't need db connection or auth
+      if (req.method !== "OPTIONS") {
+        // need before jwtAuth, because we verify users
+        await dbConnect();
 
-      // run global middleware here
-      await jwtAuth(req, res);
+        // run global middleware here
+        await jwtAuth(req, res);
+      }
 
       if (req.method && matcher.hasOwnProperty(req.method)) {
         // @ts-ignore: `req.auth` is added by jwtAuth
@@ -88,7 +97,6 @@ const initHandler = (matcher: MatchAction) => {
 };
 
 const errorHandler = (err: any, res: NextApiResponse) => {
-  // console.log(err)
   if (typeof err === "string") {
     // Handle one off errors
     return res.status(400).json({ message: err });

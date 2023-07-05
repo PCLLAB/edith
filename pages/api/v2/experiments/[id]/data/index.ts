@@ -2,6 +2,10 @@ import {
   DataEntryJson,
   Quota,
 } from "../../../../../../lib/common/types/models";
+import {
+  allowCors,
+  makePreflightHandler,
+} from "../../../../../../lib/server/allowCors";
 import initHandler, {
   ApiHandler,
 } from "../../../../../../lib/server/initHandler";
@@ -61,6 +65,8 @@ export type PostExperimentsIdData = {
 };
 
 const POST: ApiHandler<PostExperimentsIdData> = async (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+
   const id = req.query.id;
 
   const exp = await Experiment.findById(id).lean();
@@ -112,4 +118,5 @@ const POST: ApiHandler<PostExperimentsIdData> = async (req, res) => {
 export default initHandler({
   GET,
   POST,
+  OPTIONS: makePreflightHandler({ allowedMethods: ["OPTIONS", "POST"] }),
 });
