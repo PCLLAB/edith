@@ -66,7 +66,7 @@ export const AssignLink = ({ expId, cb }: Props) => {
         onBlur={onBlur}
       />
       {cb && (
-        <CodeBlock>{`${config.NEXT_PUBLIC_SITE_URL}/api/v2/assign/${cb.experiment}`}</CodeBlock>
+        <CodeBlock>{`${config.NEXT_PUBLIC_SITE_URL}${config.NEXT_PUBLIC_BASE_PATH}/api/v2/assign/${cb.experiment}`}</CodeBlock>
       )}
     </Box>
   );

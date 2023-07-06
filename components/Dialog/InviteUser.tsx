@@ -113,7 +113,7 @@ export const InviteUserDialog = ({ onClose, id }: InviteUserProps) => {
               below to manually send a prefilled email.
             </DialogContentText>
             <CodeBlock>
-              {`${config.NEXT_PUBLIC_SITE_URL}/setup?id=${createdUserId}`}
+              {`${config.NEXT_PUBLIC_SITE_URL}${config.NEXT_PUBLIC_BASE_PATH}/setup?id=${createdUserId}`}
             </CodeBlock>
           </>
         )}
@@ -130,7 +130,7 @@ export const InviteUserDialog = ({ onClose, id }: InviteUserProps) => {
             href={createMailtoLink(
               email,
               `${config.NEXT_PUBLIC_SITE_NAME} Account Setup`,
-              `Welcome to ${config.NEXT_PUBLIC_SITE_NAME}!\r\n\r\nUse the following link to create your password.\r\n\r\n${config.NEXT_PUBLIC_SITE_URL}/setup?id=${createdUserId}\r\n\r\nOnce setup is complete, the link will no longer work.`
+              `Welcome to ${config.NEXT_PUBLIC_SITE_NAME}!\r\n\r\nUse the following link to create your password.\r\n\r\n${config.NEXT_PUBLIC_SITE_URL}${config.NEXT_PUBLIC_BASE_PATH}/setup?id=${createdUserId}\r\n\r\nOnce setup is complete, the link will no longer work.`
             )}
           >
             Open email client

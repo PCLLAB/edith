@@ -2,10 +2,7 @@ import {
   DataEntryJson,
   Quota,
 } from "../../../../../../lib/common/types/models";
-import {
-  allowCors,
-  makePreflightHandler,
-} from "../../../../../../lib/server/allowCors";
+import { makePreflightHandler } from "../../../../../../lib/server/allowCors";
 import initHandler, {
   ApiHandler,
 } from "../../../../../../lib/server/initHandler";
